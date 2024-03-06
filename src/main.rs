@@ -1,4 +1,6 @@
 mod vertex;
+mod mesh;
+mod torus;
 
 #[macro_use]
 extern crate glium;
@@ -19,21 +21,23 @@ fn main() {
 
     let mut egui_glium = egui_glium::EguiGlium::new(&display, &window, &event_loop);
     
-    let shape = vec![
-        Vertex { position: [-1.0, -1.0] },
-        Vertex { position: [ 0.0,  1.0] },
-        Vertex { position: [ 1.0, -0.25] }
-    ];
-    let vertex_buffer = glium::VertexBuffer::new(&display, &shape).unwrap();
-    let indices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
+    let torus = torus::Torus {
+        major_radius: 1.0,
+        minor_radius: 0.5,
+        major_segments: 32,
+        minor_segments: 16,
+    };
+    let shape = mesh::Mesh::from_torus(&torus);
+    let vertex_buffer = glium::VertexBuffer::new(&display, &shape.vertices).unwrap();
+    let indices = glium::IndexBuffer::new(&display, glium::index::PrimitiveType::TrianglesList, &shape.indices).unwrap();
 
     let vertex_shader_src = r#"
         #version 140
 
-        in vec2 position;
+        in vec3 position;
 
         void main() {
-            gl_Position = vec4(position, 0.0, 1.0);
+            gl_Position = vec4(position, 1.0);
         }
     "#;
 
