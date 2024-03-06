@@ -30,14 +30,17 @@ fn main() {
     let shape = mesh::Mesh::from_torus(&torus);
     let vertex_buffer = glium::VertexBuffer::new(&display, &shape.vertices).unwrap();
     let indices = glium::IndexBuffer::new(&display, glium::index::PrimitiveType::TrianglesList, &shape.indices).unwrap();
-
+    
     let vertex_shader_src = r#"
         #version 140
 
         in vec3 position;
+        
+        uniform mat4 perspective;
+        uniform mat4 model_matrix;
 
         void main() {
-            gl_Position = vec4(position, 1.0);
+            gl_Position = perspective * model_matrix * vec4(position, 1.0);
         }
     "#;
 
@@ -52,12 +55,6 @@ fn main() {
     "#;
 
     let program = glium::Program::from_source(&display, vertex_shader_src, fragment_shader_src, None).unwrap();
-
-    let mut target = display.draw();
-    target.clear_color(0.0, 0.0, 1.0, 1.0);
-    target.draw(&vertex_buffer, &indices, &program, &glium::uniforms::EmptyUniforms,
-                &Default::default()).unwrap();
-    target.finish().unwrap();
 
     event_loop.run(move |event, _window_target, control_flow| {
         let mut redraw = || {
@@ -86,6 +83,30 @@ fn main() {
             };
 
             {
+                let model_matrix = [
+                    [1.0, 0.0, 0.0, 0.0],
+                    [0.0, 1.0, 0.0, 0.0],
+                    [0.0, 0.0, 1.0, 0.0],
+                    [0.0, 0.0, 2.0, 1.0f32]
+                ];
+                
+                let perspective = {
+                    let aspect_ratio = height as f32 / width as f32;
+
+                    let fov: f32 = std::f32::consts::PI / 3.0;
+                    let zfar = 1024.0;
+                    let znear = 0.1;
+
+                    let f = 1.0 / (fov / 2.0).tan();
+
+                    [
+                        [f *   aspect_ratio   ,    0.0,              0.0              ,   0.0],
+                        [         0.0         ,     f ,              0.0              ,   0.0],
+                        [         0.0         ,    0.0,  (zfar+znear)/(zfar-znear)    ,   1.0],
+                        [         0.0         ,    0.0, -(2.0*zfar*znear)/(zfar-znear),   0.0],
+                    ]
+                };
+                
                 let mut target = display.draw();
                 
                 let mut drawing_parameters = DrawParameters::default();
@@ -101,8 +122,7 @@ fn main() {
 
                 egui_glium.paint(&display, &mut target);
 
-                target.draw(&vertex_buffer, &indices, &program, &glium::uniforms::EmptyUniforms,
-                            &drawing_parameters).unwrap();
+                target.draw(&vertex_buffer, &indices, &program, &uniform! { perspective: perspective, model_matrix: model_matrix }, &drawing_parameters).unwrap();
 
                 target.finish().unwrap();
             }
