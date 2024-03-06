@@ -22,8 +22,8 @@ fn main() {
     let mut egui_glium = egui_glium::EguiGlium::new(&display, &window, &event_loop);
     
     let torus = torus::Torus {
-        major_radius: 1.0,
-        minor_radius: 0.5,
+        major_radius: 0.5,
+        minor_radius: 0.25,
         major_segments: 32,
         minor_segments: 16,
     };

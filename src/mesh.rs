@@ -24,10 +24,10 @@ impl Mesh {
                     position: [x as f32, y as f32, z as f32],
                 });
 
-                let a = i * torus.minor_segments + j + 1;
-                let b = (i + 1) % torus.major_segments * torus.minor_segments + j + 1;
-                let c = (i + 1) % torus.major_segments * torus.minor_segments + (j + 1) % torus.minor_segments + 1;
-                let d = i * torus.minor_segments + (j + 1) % torus.minor_segments + 1;
+                let a = i * torus.minor_segments + j;
+                let b = (i + 1) % torus.major_segments * torus.minor_segments + j;
+                let c = (i + 1) % torus.major_segments * torus.minor_segments + (j + 1) % torus.minor_segments;
+                let d = i * torus.minor_segments + (j + 1) % torus.minor_segments;
                 indices.push(a);
                 indices.push(b);
                 indices.push(c);
