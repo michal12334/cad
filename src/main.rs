@@ -95,6 +95,7 @@ fn main() {
                     width: width - 200,
                     height: height,
                 });
+                drawing_parameters.polygon_mode = glium::draw_parameters::PolygonMode::Line;
 
                 target.clear_color(0.0, 0.0, 1.0, 1.0);
 
