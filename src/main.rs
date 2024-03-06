@@ -1,7 +1,10 @@
+mod vertex;
+
 #[macro_use]
 extern crate glium;
 use glium::{DrawParameters, Surface};
 use winit::{event, event_loop};
+use crate::vertex::Vertex;
 
 fn main() {
     let mut width = 800;
@@ -15,12 +18,7 @@ fn main() {
         .build(&event_loop);
 
     let mut egui_glium = egui_glium::EguiGlium::new(&display, &window, &event_loop);
-
-    #[derive(Copy, Clone)]
-    struct Vertex {
-        position: [f32; 2],
-    }
-    implement_vertex!(Vertex, position);
+    
     let shape = vec![
         Vertex { position: [-1.0, -1.0] },
         Vertex { position: [ 0.0,  1.0] },
