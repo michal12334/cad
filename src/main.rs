@@ -1,10 +1,12 @@
 mod vertex;
 mod mesh;
 mod torus;
+mod transformer;
 
 #[macro_use]
 extern crate glium;
 use glium::{DrawParameters, Surface};
+use glium::vertex::MultiVerticesSource;
 use winit::{event, event_loop};
 use crate::vertex::Vertex;
 
@@ -28,6 +30,13 @@ fn main() {
         minor_segments: 16,
     };
     let shape = mesh::Mesh::from_torus(&torus);
+    
+    let transformer = transformer::Transformer {
+        position: (0.5, 0.0, 2.0),
+        rotation: (1.0, -1.0, 0.0),
+        scale: (1.0, 1.0, 1.0),
+    };
+    
     let vertex_buffer = glium::VertexBuffer::new(&display, &shape.vertices).unwrap();
     let indices = glium::IndexBuffer::new(&display, glium::index::PrimitiveType::TrianglesList, &shape.indices).unwrap();
     
@@ -83,12 +92,7 @@ fn main() {
             };
 
             {
-                let model_matrix = [
-                    [1.0, 0.0, 0.0, 0.0],
-                    [0.0, 1.0, 0.0, 0.0],
-                    [0.0, 0.0, 1.0, 0.0],
-                    [0.0, 0.0, 2.0, 1.0f32]
-                ];
+                let model_matrix = transformer.get_model_matrix();
                 
                 let perspective = {
                     let aspect_ratio = height as f32 / width as f32;
