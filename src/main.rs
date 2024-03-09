@@ -5,10 +5,14 @@ mod transformer;
 
 #[macro_use]
 extern crate glium;
+
+use std::ops::DerefMut;
 use glium::{DrawParameters, Surface};
 use glium::vertex::MultiVerticesSource;
 use winit::{event, event_loop};
+use user_interface::ui::build_ui;
 use crate::vertex::Vertex;
+extern crate user_interface;
 
 fn main() {
     let mut width = 800;
@@ -23,7 +27,7 @@ fn main() {
 
     let mut egui_glium = egui_glium::EguiGlium::new(&display, &window, &event_loop);
     
-    let torus = torus::Torus {
+    let mut torus = torus::Torus {
         major_radius: 0.5,
         minor_radius: 0.25,
         major_segments: 32,
@@ -64,23 +68,12 @@ fn main() {
     "#;
 
     let program = glium::Program::from_source(&display, vertex_shader_src, fragment_shader_src, None).unwrap();
-
+    
     event_loop.run(move |event, _window_target, control_flow| {
         let mut redraw = || {
-            let mut quit = false;
+            let repaint_after = egui_glium.run(&window, build_ui());
 
-            let repaint_after = egui_glium.run(&window, |egui_ctx| {
-                egui::SidePanel::left("side_panel").exact_width(183.0).show(egui_ctx, |ui| {
-                    ui.heading("Hello World!");
-                    if ui.button("Quit").clicked() {
-                        quit = true;
-                    }
-                });
-            });
-
-            *control_flow = if quit {
-                event_loop::ControlFlow::Exit
-            } else if repaint_after.is_zero() {
+            *control_flow = if repaint_after.is_zero() {
                 window.request_redraw();
                 event_loop::ControlFlow::Poll
             } else if let Some(repaint_after_instant) =

@@ -260,6 +260,7 @@ dependencies = [
  "glutin 0.31.3",
  "glutin-winit 0.4.2",
  "nalgebra",
+ "user_interface",
  "winit 0.28.7",
 ]
 
@@ -1911,6 +1912,13 @@ dependencies = [
  "form_urlencoded",
  "idna",
  "percent-encoding",
+]
+
+[[package]]
+name = "user_interface"
+version = "0.1.0"
+dependencies = [
+ "egui",
 ]
 
 [[package]]
