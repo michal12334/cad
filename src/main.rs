@@ -10,7 +10,7 @@ use std::ops::DerefMut;
 use glium::{DrawParameters, Surface};
 use glium::vertex::MultiVerticesSource;
 use winit::{event, event_loop};
-use user_interface::ui::build_ui;
+use user_interface::ui::Ui;
 use crate::vertex::Vertex;
 extern crate user_interface;
 
@@ -69,9 +69,11 @@ fn main() {
 
     let program = glium::Program::from_source(&display, vertex_shader_src, fragment_shader_src, None).unwrap();
     
+    let mut ui = Ui::new();
+    
     event_loop.run(move |event, _window_target, control_flow| {
         let mut redraw = || {
-            let repaint_after = egui_glium.run(&window, build_ui());
+            let repaint_after = egui_glium.run(&window, ui.build());
 
             *control_flow = if repaint_after.is_zero() {
                 window.request_redraw();
