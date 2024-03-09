@@ -5,6 +5,7 @@ use std::ops::DerefMut;
 use glium::{DrawParameters, Surface};
 use glium::vertex::MultiVerticesSource;
 use winit::{event, event_loop};
+use backend::app_state::AppState;
 use user_interface::ui::Ui;
 use backend::domain::*;
 extern crate user_interface;
@@ -22,22 +23,10 @@ fn main() {
 
     let mut egui_glium = egui_glium::EguiGlium::new(&display, &window, &event_loop);
     
-    let mut torus = torus::Torus {
-        major_radius: 0.5,
-        minor_radius: 0.25,
-        major_segments: 32,
-        minor_segments: 16,
-    };
-    let shape = mesh::Mesh::from_torus(&torus);
+    let app_state = AppState::new();
     
-    let transformer = transformer::Transformer {
-        position: (0.5, 0.0, 2.0),
-        rotation: (1.0, -1.0, 0.0),
-        scale: (1.0, 1.0, 1.0),
-    };
-    
-    let vertex_buffer = glium::VertexBuffer::new(&display, &shape.vertices).unwrap();
-    let indices = glium::IndexBuffer::new(&display, glium::index::PrimitiveType::TrianglesList, &shape.indices).unwrap();
+    let vertex_buffer = glium::VertexBuffer::new(&display, &app_state.mesh.vertices).unwrap();
+    let indices = glium::IndexBuffer::new(&display, glium::index::PrimitiveType::TrianglesList, &app_state.mesh.indices).unwrap();
     
     let vertex_shader_src = r#"
         #version 140
@@ -82,7 +71,7 @@ fn main() {
             };
 
             {
-                let model_matrix = transformer.get_model_matrix();
+                let model_matrix = app_state.transformer.get_model_matrix();
                 
                 let perspective = {
                     let aspect_ratio = height as f32 / (width - 200) as f32;
