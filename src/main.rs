@@ -95,7 +95,7 @@ fn main() {
                 let model_matrix = transformer.get_model_matrix();
                 
                 let perspective = {
-                    let aspect_ratio = height as f32 / width as f32;
+                    let aspect_ratio = height as f32 / (width - 200) as f32;
 
                     let fov: f32 = std::f32::consts::PI / 3.0;
                     let zfar = 1024.0;
