@@ -6,6 +6,7 @@ use glium::{DrawParameters, Surface};
 use glium::vertex::MultiVerticesSource;
 use winit::{event, event_loop};
 use backend::app_state::AppState;
+use backend::cqrs::cqrs::CQRS;
 use user_interface::ui::Ui;
 use backend::domain::*;
 extern crate user_interface;
@@ -23,10 +24,7 @@ fn main() {
 
     let mut egui_glium = egui_glium::EguiGlium::new(&display, &window, &event_loop);
     
-    let app_state = AppState::new();
-    
-    let vertex_buffer = glium::VertexBuffer::new(&display, &app_state.mesh.vertices).unwrap();
-    let indices = glium::IndexBuffer::new(&display, glium::index::PrimitiveType::TrianglesList, &app_state.mesh.indices).unwrap();
+    let mut app_state = AppState::new();
     
     let vertex_shader_src = r#"
         #version 140
@@ -57,7 +55,8 @@ fn main() {
     
     event_loop.run(move |event, _window_target, control_flow| {
         let mut redraw = || {
-            let repaint_after = egui_glium.run(&window, ui.build());
+            let mut cqrs = CQRS::new(&mut app_state);
+            let repaint_after = egui_glium.run(&window, ui.build(&mut cqrs));
 
             *control_flow = if repaint_after.is_zero() {
                 window.request_redraw();
@@ -71,6 +70,8 @@ fn main() {
             };
 
             {
+                let vertex_buffer = glium::VertexBuffer::new(&display, &app_state.mesh.vertices).unwrap();
+                let indices = glium::IndexBuffer::new(&display, glium::index::PrimitiveType::TrianglesList, &app_state.mesh.indices).unwrap();
                 let model_matrix = app_state.transformer.get_model_matrix();
                 
                 let perspective = {
