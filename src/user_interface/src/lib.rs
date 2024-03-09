@@ -1,2 +1,2 @@
 pub mod ui;
-mod text_buffers;
+mod typed_text_buffer;

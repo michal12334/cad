@@ -19,9 +19,9 @@ impl<'a> CQRS<'a> {
 }
 
 pub trait Command<TCommand> {
-    fn execute(command: &TCommand, cqrs: &mut AppState);
+    fn execute(command: &TCommand, app_state: &mut AppState);
 }
 
 pub trait Query<TQuery, TResult> {
-    fn get(query: &TQuery, cqrs: &AppState) -> TResult;
+    fn get(query: &TQuery, app_state: &AppState) -> TResult;
 }
