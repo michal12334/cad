@@ -1,4 +1,4 @@
-workspace = { members = ["src/user_interface"] }
+workspace = { members = [ "src/backend","src/user_interface"] }
 [package]
 name = "cad"
 version = "0.1.0"
@@ -13,7 +13,7 @@ egui_glium = "0.23"
 glium = "0.33"
 glutin = "0.31.3"
 glutin-winit = "0.4.2"
-nalgebra = "0.32.4"
 winit = "0.28"
 
 user_interface = { path = "src/user_interface" }
+backend = { path = "src/backend" }

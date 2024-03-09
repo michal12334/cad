@@ -1,8 +1,3 @@
-mod vertex;
-mod mesh;
-mod torus;
-mod transformer;
-
 #[macro_use]
 extern crate glium;
 
@@ -11,7 +6,7 @@ use glium::{DrawParameters, Surface};
 use glium::vertex::MultiVerticesSource;
 use winit::{event, event_loop};
 use user_interface::ui::Ui;
-use crate::vertex::Vertex;
+use backend::domain::*;
 extern crate user_interface;
 
 fn main() {

@@ -1,5 +1,5 @@
-use crate::torus::Torus;
-use crate::vertex::Vertex;
+use crate::domain::torus::Torus;
+use crate::domain::vertex::Vertex;
 
 pub struct Mesh {
     pub vertices: Vec<Vertex>,

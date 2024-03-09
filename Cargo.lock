@@ -147,6 +147,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d468802bab17cbc0cc575e9b053f41e72aa36bfa6b7f55e3529ffa43161b97fa"
 
 [[package]]
+name = "backend"
+version = "0.1.0"
+dependencies = [
+ "glium",
+ "nalgebra",
+]
+
+[[package]]
 name = "backtrace"
 version = "0.3.69"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -253,13 +261,13 @@ checksum = "a2bd12c1caf447e69cd4528f47f94d203fd2582878ecb9e9465484c4148a8223"
 name = "cad"
 version = "0.1.0"
 dependencies = [
+ "backend",
  "egui",
  "egui-winit",
  "egui_glium",
  "glium",
  "glutin 0.31.3",
  "glutin-winit 0.4.2",
- "nalgebra",
  "user_interface",
  "winit 0.28.7",
 ]
