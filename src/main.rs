@@ -4,6 +4,7 @@ extern crate glium;
 use std::ops::DerefMut;
 use glium::{DrawParameters, Surface};
 use glium::vertex::MultiVerticesSource;
+use nalgebra::{Matrix4, Point3, Vector3};
 use winit::{event, event_loop};
 use backend::app_state::AppState;
 use backend::cqrs::cqrs::CQRS;
@@ -33,9 +34,10 @@ fn main() {
         
         uniform mat4 perspective;
         uniform mat4 model_matrix;
+        uniform mat4 view;
 
         void main() {
-            gl_Position = perspective * model_matrix * vec4(position, 1.0);
+            gl_Position = perspective * view * model_matrix * vec4(position, 1.0);
         }
     "#;
 
@@ -52,6 +54,10 @@ fn main() {
     let program = glium::Program::from_source(&display, vertex_shader_src, fragment_shader_src, None).unwrap();
     
     let mut ui = Ui::new();
+    
+    let mut mouse_position = (0.0, 0.0);
+    let mut camera_position = Point3::new(0.0f32, 0.0, 4.0);
+    let mut view_matrix = Matrix4::face_towards(&camera_position, &Point3::new(0.0, 0.0, 0.0), &Vector3::new(0.0, 1.0, 0.0));
     
     event_loop.run(move |event, _window_target, control_flow| {
         let mut redraw = || {
@@ -73,6 +79,7 @@ fn main() {
                 let vertex_buffer = glium::VertexBuffer::new(&display, &app_state.mesh.vertices).unwrap();
                 let indices = glium::IndexBuffer::new(&display, glium::index::PrimitiveType::TrianglesList, &app_state.mesh.indices).unwrap();
                 let model_matrix = app_state.transformer.get_model_matrix();
+                let view_matrix = *view_matrix.as_ref();
                 
                 let perspective = {
                     let aspect_ratio = height as f32 / (width - 200) as f32;
@@ -106,7 +113,7 @@ fn main() {
 
                 egui_glium.paint(&display, &mut target);
 
-                target.draw(&vertex_buffer, &indices, &program, &uniform! { perspective: perspective, model_matrix: model_matrix }, &drawing_parameters).unwrap();
+                target.draw(&vertex_buffer, &indices, &program, &uniform! { perspective: perspective, model_matrix: model_matrix, view: view_matrix }, &drawing_parameters).unwrap();
 
                 target.finish().unwrap();
             }
@@ -118,12 +125,16 @@ fn main() {
                 use event::WindowEvent;
                 match &event {
                     WindowEvent::CloseRequested | WindowEvent::Destroyed => {
-                        *control_flow = winit::event_loop::ControlFlow::Exit;
+                        *control_flow = event_loop::ControlFlow::Exit;
                     }
                     WindowEvent::Resized(new_size) => {
                         display.resize((*new_size).into());
                         width = new_size.width;
                         height = new_size.height;
+                    }
+                    WindowEvent::CursorMoved { position, .. } => {
+                        let delta = (position.x - mouse_position.0, position.y - mouse_position.1);
+                        mouse_position = (position.x, position.y);
                     }
                     _ => {}
                 }
