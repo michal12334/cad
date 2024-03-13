@@ -23,7 +23,7 @@ fn main() {
         .with_title("CAD")
         .with_inner_size(width, height)
         .build(&event_loop);
-
+    
     let mut egui_glium = egui_glium::EguiGlium::new(&display, &window, &event_loop);
     
     let mut app_state = AppState::new();
@@ -79,7 +79,7 @@ fn main() {
 
             {
                 let vertex_buffer = glium::VertexBuffer::new(&display, &app_state.mesh.vertices).unwrap();
-                let indices = glium::IndexBuffer::new(&display, glium::index::PrimitiveType::TrianglesList, &app_state.mesh.indices).unwrap();
+                let indices = glium::IndexBuffer::new(&display, glium::index::PrimitiveType::LinesList, &app_state.mesh.indices).unwrap();
                 let model_matrix = app_state.transformer.get_model_matrix();
                 let view_matrix = *view_matrix.as_ref();
                 
