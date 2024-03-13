@@ -6,6 +6,7 @@ use glium::{DrawParameters, Surface};
 use glium::vertex::MultiVerticesSource;
 use nalgebra::{Matrix4, Point3, Vector3};
 use winit::{event, event_loop};
+use winit::event::MouseButton;
 use backend::app_state::AppState;
 use backend::cqrs::cqrs::CQRS;
 use user_interface::ui::Ui;
@@ -58,6 +59,7 @@ fn main() {
     let mut mouse_position = (0.0, 0.0);
     let mut camera_position = Point3::new(0.0f32, 0.0, 4.0);
     let mut view_matrix = Matrix4::face_towards(&camera_position, &Point3::new(0.0, 0.0, 0.0), &Vector3::new(0.0, 1.0, 0.0));
+    let mut mouse_middle_button_pressed = false;
     
     event_loop.run(move |event, _window_target, control_flow| {
         let mut redraw = || {
@@ -135,7 +137,25 @@ fn main() {
                     WindowEvent::CursorMoved { position, .. } => {
                         let delta = (position.x - mouse_position.0, position.y - mouse_position.1);
                         mouse_position = (position.x, position.y);
+                        if mouse_middle_button_pressed {
+                            camera_position = camera_position + Vector3::new(-delta.0 as f32 / width as f32, delta.1 as f32 / height as f32, 0.0);
+                            view_matrix = Matrix4::face_towards(&camera_position, &Point3::new(0.0, 0.0, 0.0), &Vector3::new(0.0, 1.0, 0.0));
+                        }
                     }
+                    WindowEvent::MouseInput { state, button, .. } => {
+                        if *button == MouseButton::Middle { 
+                            mouse_middle_button_pressed = *state == event::ElementState::Pressed;
+                        } 
+                    }
+                    WindowEvent::MouseWheel { delta, .. } => {
+                        match delta {
+                            event::MouseScrollDelta::LineDelta(_x, y) => {
+                                camera_position = camera_position + Vector3::new(0.0, 0.0, -*y / 10.0);
+                                view_matrix = Matrix4::face_towards(&camera_position, &Point3::new(0.0, 0.0, 0.0), &Vector3::new(0.0, 1.0, 0.0));
+                            }
+                            _ => {}
+                        }
+                        }
                     _ => {}
                 }
 
