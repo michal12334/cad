@@ -1,54 +1,76 @@
 use backend::cqrs::cqrs::{Command, CQRS};
 use backend::cqrs::torus_details::TorusDetails;
 use backend::cqrs::update_torus::UpdateTorus;
+use backend::cqrs::update_transformer::UpdateTransformer;
+use crate::torus::Torus;
 use crate::typed_text_buffer::TypedTextBuffer;
 
-pub struct Ui { }
+pub struct Ui {
+    torus: Option<Torus>,
+}
 
 impl Ui {
     pub fn new() -> Self {
-        Self { }
+        Self { torus: None }
     }
     
     pub fn build<'a>(&'a mut self, cqrs: &'a mut CQRS<'a>) -> impl FnMut(&egui::Context) + '_ {
         move |egui_ctx| {
             egui::SidePanel::left("side_panel").exact_width(183.0).show(egui_ctx, |ui| {
-                let torus = cqrs.get(&TorusDetails {});
-                let mut major_radius = TypedTextBuffer::new(torus.major_radius);
-                let mut minor_radius = TypedTextBuffer::new(torus.minor_radius);
-                let mut major_segments = TypedTextBuffer::new(torus.major_segments);
-                let mut minor_segments = TypedTextBuffer::new(torus.minor_segments);
-                if ui.text_edit_singleline(&mut major_radius).changed() {
-                    cqrs.execute(&UpdateTorus {
-                        major_radius: major_radius.value(),
-                        minor_radius: torus.minor_radius,
-                        major_segments: torus.major_segments,
-                        minor_segments: torus.minor_segments,
-                    });
+                if self.torus.is_none() {
+                    self.torus = Some(Torus::from_dto(&cqrs.get(&TorusDetails {})));
                 }
-                if ui.text_edit_singleline(&mut minor_radius).changed() {
+                
+                let torus_boxes = vec![
+                    ui.text_edit_singleline(&mut self.torus.as_mut().unwrap().major_radius),
+                    ui.text_edit_singleline(&mut self.torus.as_mut().unwrap().minor_radius),
+                    ui.text_edit_singleline(&mut self.torus.as_mut().unwrap().major_segments),
+                    ui.text_edit_singleline(&mut self.torus.as_mut().unwrap().minor_segments),
+                ];
+                
+                if torus_boxes.iter().any(|f| f.changed()) { 
+                    let torus = self.torus.as_ref().unwrap();
                     cqrs.execute(&UpdateTorus {
-                        major_radius: torus.major_radius,
-                        minor_radius: minor_radius.value(),
-                        major_segments: torus.major_segments,
-                        minor_segments: torus.minor_segments,
+                        major_radius: torus.major_radius.value(),
+                        minor_radius: torus.minor_radius.value(),
+                        major_segments: torus.major_segments.value(),
+                        minor_segments: torus.minor_segments.value(),
                     });
+                    self.torus = Some(Torus::from_dto(&cqrs.get(&TorusDetails {})));
                 }
-                if ui.text_edit_singleline(&mut major_segments).changed() {
-                    cqrs.execute(&UpdateTorus {
-                        major_radius: torus.major_radius,
-                        minor_radius: torus.minor_radius,
-                        major_segments: major_segments.value(),
-                        minor_segments: torus.minor_segments,
+
+                let transformer_boxes = vec![
+                    ui.text_edit_singleline(&mut self.torus.as_mut().unwrap().position.0),
+                    ui.text_edit_singleline(&mut self.torus.as_mut().unwrap().position.1),
+                    ui.text_edit_singleline(&mut self.torus.as_mut().unwrap().position.2),
+                    ui.text_edit_singleline(&mut self.torus.as_mut().unwrap().rotation.0),
+                    ui.text_edit_singleline(&mut self.torus.as_mut().unwrap().rotation.1),
+                    ui.text_edit_singleline(&mut self.torus.as_mut().unwrap().rotation.2),
+                    ui.text_edit_singleline(&mut self.torus.as_mut().unwrap().scale.0),
+                    ui.text_edit_singleline(&mut self.torus.as_mut().unwrap().scale.1),
+                    ui.text_edit_singleline(&mut self.torus.as_mut().unwrap().scale.2),
+                ];
+                
+                if transformer_boxes.iter().any(|f| f.changed()) { 
+                    let torus = self.torus.as_ref().unwrap();
+                    cqrs.execute(&UpdateTransformer {
+                        position: (
+                            torus.position.0.value(),
+                            torus.position.1.value(),
+                            torus.position.2.value(),
+                        ),
+                        rotation: (
+                            torus.rotation.0.value(),
+                            torus.rotation.1.value(),
+                            torus.rotation.2.value(),
+                        ),
+                        scale: (
+                            torus.scale.0.value(),
+                            torus.scale.1.value(),
+                            torus.scale.2.value(),
+                        ),
                     });
-                }
-                if ui.text_edit_singleline(&mut minor_segments).changed() {
-                    cqrs.execute(&UpdateTorus {
-                        major_radius: torus.major_radius,
-                        minor_radius: torus.minor_radius,
-                        major_segments: torus.major_segments,
-                        minor_segments: minor_segments.value(),
-                    });
+                    self.torus = Some(Torus::from_dto(&cqrs.get(&TorusDetails {})));
                 }
             });
         }
