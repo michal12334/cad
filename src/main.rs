@@ -38,7 +38,7 @@ fn main() {
         uniform mat4 view;
 
         void main() {
-            gl_Position = perspective * view * model_matrix * vec4(position, 1.0);
+            gl_Position = perspective * model_matrix * vec4(position, 1.0);
         }
     "#;
 
