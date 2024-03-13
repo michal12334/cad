@@ -17,7 +17,7 @@ impl AppState {
             minor_segments: 16,
         };
         let transformer = Transformer {
-            position: (0.0, 0.0, 0.0),
+            position: (0.0, 0.0, 2.0),
             rotation: (1.0, 0.0, 0.0),
             scale: (1.0, 1.0, 1.0),
         };

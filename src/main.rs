@@ -48,7 +48,7 @@ fn main() {
         out vec4 color;
 
         void main() {
-            color = vec4(1.0, 0.0, 0.0, 1.0);
+            color = vec4(1.0, 1.0, 1.0, 1.0);
         }
     "#;
 
@@ -111,7 +111,7 @@ fn main() {
                 });
                 drawing_parameters.polygon_mode = glium::draw_parameters::PolygonMode::Line;
 
-                target.clear_color(0.0, 0.0, 1.0, 1.0);
+                target.clear_color_and_depth((0.0, 0.0, 0.0, 1.0), 1.0);
 
                 egui_glium.paint(&display, &mut target);
 
