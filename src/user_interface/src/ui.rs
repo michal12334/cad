@@ -1,76 +1,66 @@
+use egui::{Slider, Widget};
 use backend::cqrs::cqrs::{Command, CQRS};
-use backend::cqrs::torus_details::TorusDetails;
+use backend::cqrs::torus_details::{TorusDetails, TorusDTO};
 use backend::cqrs::update_torus::UpdateTorus;
 use backend::cqrs::update_transformer::UpdateTransformer;
 use crate::torus::Torus;
 use crate::typed_text_buffer::TypedTextBuffer;
 
 pub struct Ui {
-    torus: Option<Torus>,
+    torus: Option<TorusDTO>,
+    a: f32,
 }
 
 impl Ui {
     pub fn new() -> Self {
-        Self { torus: None }
+        Self { torus: None, a: 0.0 }
     }
     
     pub fn build<'a>(&'a mut self, cqrs: &'a mut CQRS<'a>) -> impl FnMut(&egui::Context) + '_ {
         move |egui_ctx| {
             egui::SidePanel::left("side_panel").exact_width(183.0).show(egui_ctx, |ui| {
                 if self.torus.is_none() {
-                    self.torus = Some(Torus::from_dto(&cqrs.get(&TorusDetails {})));
+                    self.torus = Some(cqrs.get(&TorusDetails {}));
                 }
                 
-                let torus_boxes = vec![
-                    ui.text_edit_singleline(&mut self.torus.as_mut().unwrap().major_radius),
-                    ui.text_edit_singleline(&mut self.torus.as_mut().unwrap().minor_radius),
-                    ui.text_edit_singleline(&mut self.torus.as_mut().unwrap().major_segments),
-                    ui.text_edit_singleline(&mut self.torus.as_mut().unwrap().minor_segments),
+                let torus_sliders = vec![
+                    Slider::new(&mut self.torus.as_mut().unwrap().major_radius, 0.01..=5.0).text("major radius").ui(ui),
+                    Slider::new(&mut self.torus.as_mut().unwrap().minor_radius, 0.01..=5.0).text("minor radius").ui(ui),
+                    Slider::new(&mut self.torus.as_mut().unwrap().major_segments, 1..=1000).text("major segments").ui(ui),
+                    Slider::new(&mut self.torus.as_mut().unwrap().minor_segments, 1..=1000).text("minor segments").ui(ui),
                 ];
                 
-                if torus_boxes.iter().any(|f| f.changed()) { 
+                if torus_sliders.iter().any(|f| f.changed()) { 
                     let torus = self.torus.as_ref().unwrap();
                     cqrs.execute(&UpdateTorus {
-                        major_radius: torus.major_radius.value(),
-                        minor_radius: torus.minor_radius.value(),
-                        major_segments: torus.major_segments.value(),
-                        minor_segments: torus.minor_segments.value(),
+                        major_radius: torus.major_radius,
+                        minor_radius: torus.minor_radius,
+                        major_segments: torus.major_segments,
+                        minor_segments: torus.minor_segments,
                     });
-                    self.torus = Some(Torus::from_dto(&cqrs.get(&TorusDetails {})));
+                    self.torus = Some(cqrs.get(&TorusDetails {}));
                 }
 
-                let transformer_boxes = vec![
-                    ui.text_edit_singleline(&mut self.torus.as_mut().unwrap().position.0),
-                    ui.text_edit_singleline(&mut self.torus.as_mut().unwrap().position.1),
-                    ui.text_edit_singleline(&mut self.torus.as_mut().unwrap().position.2),
-                    ui.text_edit_singleline(&mut self.torus.as_mut().unwrap().rotation.0),
-                    ui.text_edit_singleline(&mut self.torus.as_mut().unwrap().rotation.1),
-                    ui.text_edit_singleline(&mut self.torus.as_mut().unwrap().rotation.2),
-                    ui.text_edit_singleline(&mut self.torus.as_mut().unwrap().scale.0),
-                    ui.text_edit_singleline(&mut self.torus.as_mut().unwrap().scale.1),
-                    ui.text_edit_singleline(&mut self.torus.as_mut().unwrap().scale.2),
+                let transformers_sliders = vec![
+                    Slider::new(&mut self.torus.as_mut().unwrap().transformer.position.0, -5.0..=5.0).text("position X").ui(ui),
+                    Slider::new(&mut self.torus.as_mut().unwrap().transformer.position.1, -5.0..=5.0).text("position Y").ui(ui),
+                    Slider::new(&mut self.torus.as_mut().unwrap().transformer.position.2, -5.0..=5.0).text("position Z").ui(ui),
+                    Slider::new(&mut self.torus.as_mut().unwrap().transformer.scale.0, 0.1..=5.0).text("scale X").ui(ui),
+                    Slider::new(&mut self.torus.as_mut().unwrap().transformer.scale.1, 0.1..=5.0).text("scale Y").ui(ui),
+                    Slider::new(&mut self.torus.as_mut().unwrap().transformer.scale.2, 0.1..=5.0).text("scale Z").ui(ui),
+                    Slider::new(&mut self.torus.as_mut().unwrap().transformer.rotation.0, -std::f64::consts::PI..=std::f64::consts::PI).text("rotation X").ui(ui),
+                    Slider::new(&mut self.torus.as_mut().unwrap().transformer.rotation.1, -std::f64::consts::PI..=std::f64::consts::PI).text("rotation Y").ui(ui),
+                    Slider::new(&mut self.torus.as_mut().unwrap().transformer.rotation.2, -std::f64::consts::PI..=std::f64::consts::PI).text("rotation Z").ui(ui),
                 ];
-                
-                if transformer_boxes.iter().any(|f| f.changed()) { 
+
+                if transformers_sliders.iter().any(|f| f.changed()) {
                     let torus = self.torus.as_ref().unwrap();
                     cqrs.execute(&UpdateTransformer {
-                        position: (
-                            torus.position.0.value(),
-                            torus.position.1.value(),
-                            torus.position.2.value(),
-                        ),
-                        rotation: (
-                            torus.rotation.0.value(),
-                            torus.rotation.1.value(),
-                            torus.rotation.2.value(),
-                        ),
-                        scale: (
-                            torus.scale.0.value(),
-                            torus.scale.1.value(),
-                            torus.scale.2.value(),
-                        ),
+                        position: torus.transformer.position,
+                        rotation: torus.transformer.rotation,
+                        scale: torus.transformer.scale,
                     });
-                    self.torus = Some(Torus::from_dto(&cqrs.get(&TorusDetails {})));
+                    self.torus = Some(cqrs.get(&TorusDetails {}));
                 }
             });
         }
