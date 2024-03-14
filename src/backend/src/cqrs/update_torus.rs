@@ -1,3 +1,4 @@
+use std::ffi::c_int;
 use crate::app_state::AppState;
 use crate::cqrs::cqrs::Command;
 use crate::domain::mesh::Mesh;
@@ -11,6 +12,10 @@ pub struct UpdateTorus {
 
 impl Command<UpdateTorus> for UpdateTorus {
     fn execute(command: &UpdateTorus, app_state: &mut AppState) {
+        if command.minor_radius >= command.major_radius { 
+            return;
+        }
+        
         app_state.torus.major_radius = command.major_radius;
         app_state.torus.minor_radius = command.minor_radius;
         app_state.torus.major_segments = command.major_segments;
