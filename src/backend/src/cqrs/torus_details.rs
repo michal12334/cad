@@ -6,6 +6,7 @@ pub struct TorusDetails {
 }
 
 pub struct TorusDTO {
+    pub id: u64,
     pub major_radius: f64,
     pub minor_radius: f64,
     pub major_segments: u32,
@@ -23,6 +24,7 @@ impl Query<TorusDetails, TorusDTO> for TorusDetails {
     fn get(query: &TorusDetails, app_state: &AppState) -> TorusDTO {
         let torus = app_state.storage.toruses.get(&query.id).unwrap();
         TorusDTO {
+            id: torus.id,
             major_radius: torus.major_radius,
             minor_radius: torus.minor_radius,
             major_segments: torus.major_segments,

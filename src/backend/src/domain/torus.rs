@@ -36,4 +36,10 @@ impl Torus {
         self.minor_segments = minor_segments;
         self.mesh = Mesh::from_torus(major_radius, minor_radius, major_segments, minor_segments);
     }
+    
+    pub fn transform(&mut self, position: (f64, f64, f64), rotation: (f64, f64, f64), scale: (f64, f64, f64)) {
+        self.transformer.position = position;
+        self.transformer.rotation = rotation;
+        self.transformer.scale = scale;
+    }
 }
