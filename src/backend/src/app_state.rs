@@ -1,11 +1,13 @@
 use crate::domain::mesh::Mesh;
 use crate::domain::torus::Torus;
 use crate::domain::transformer::Transformer;
+use crate::services::services::Services;
 
 pub struct AppState {
     pub torus: Torus,
     pub transformer: Transformer,
     pub mesh: Mesh,
+    pub services: Services,
 }
 
 impl AppState {
@@ -26,6 +28,7 @@ impl AppState {
             torus,
             transformer,
             mesh,
+            services: Services::new(),
         }
     }
 }
