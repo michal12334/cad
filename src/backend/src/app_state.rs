@@ -1,3 +1,4 @@
+use crate::data_access::storage::Storage;
 use crate::domain::mesh::Mesh;
 use crate::domain::torus::Torus;
 use crate::domain::transformer::Transformer;
@@ -8,6 +9,7 @@ pub struct AppState {
     pub transformer: Transformer,
     pub mesh: Mesh,
     pub services: Services,
+    pub storage: Storage,
 }
 
 impl AppState {
@@ -29,6 +31,7 @@ impl AppState {
             transformer,
             mesh,
             services: Services::new(),
+            storage: Storage::new(),
         }
     }
 }
