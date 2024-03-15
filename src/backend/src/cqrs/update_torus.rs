@@ -4,6 +4,7 @@ use crate::cqrs::cqrs::Command;
 use crate::domain::mesh::Mesh;
 
 pub struct UpdateTorus {
+    pub id: u64,
     pub major_radius: f64,
     pub minor_radius: f64,
     pub major_segments: u32,
@@ -16,10 +17,7 @@ impl Command<UpdateTorus> for UpdateTorus {
             return;
         }
         
-        app_state.torus.major_radius = command.major_radius;
-        app_state.torus.minor_radius = command.minor_radius;
-        app_state.torus.major_segments = command.major_segments;
-        app_state.torus.minor_segments = command.minor_segments;
-        app_state.mesh = Mesh::from_torus(&app_state.torus);
+        let torus = app_state.storage.toruses.get_mut(&command.id).unwrap();
+        torus.update(command.major_radius, command.minor_radius, command.major_segments, command.minor_segments);
     }
 }

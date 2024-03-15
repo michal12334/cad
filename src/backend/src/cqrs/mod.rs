@@ -1,4 +1,5 @@
 pub mod cqrs;
 pub mod update_torus;
 pub mod torus_details;
-pub mod update_transformer;
+pub mod add_torus;
+pub mod new_id;

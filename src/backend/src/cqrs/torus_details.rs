@@ -1,7 +1,9 @@
 use crate::app_state::AppState;
 use crate::cqrs::cqrs::Query;
 
-pub struct TorusDetails {}
+pub struct TorusDetails {
+    pub id: u64,
+}
 
 pub struct TorusDTO {
     pub major_radius: f64,
@@ -18,16 +20,17 @@ pub struct TransformerDTO {
 }
 
 impl Query<TorusDetails, TorusDTO> for TorusDetails {
-    fn get(_query: &TorusDetails, app_state: &AppState) -> TorusDTO {
+    fn get(query: &TorusDetails, app_state: &AppState) -> TorusDTO {
+        let torus = app_state.storage.toruses.get(&query.id).unwrap();
         TorusDTO {
-            major_radius: app_state.torus.major_radius,
-            minor_radius: app_state.torus.minor_radius,
-            major_segments: app_state.torus.major_segments,
-            minor_segments: app_state.torus.minor_segments,
+            major_radius: torus.major_radius,
+            minor_radius: torus.minor_radius,
+            major_segments: torus.major_segments,
+            minor_segments: torus.minor_segments,
             transformer: TransformerDTO {
-                position: app_state.transformer.position,
-                rotation: app_state.transformer.rotation,
-                scale: app_state.transformer.scale,
+                position: torus.transformer.position,
+                rotation: torus.transformer.rotation,
+                scale: torus.transformer.scale,
             },
         }
     }

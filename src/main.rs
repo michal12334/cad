@@ -78,9 +78,6 @@ fn main() {
             };
 
             {
-                let vertex_buffer = glium::VertexBuffer::new(&display, &app_state.mesh.vertices).unwrap();
-                let indices = glium::IndexBuffer::new(&display, glium::index::PrimitiveType::LinesList, &app_state.mesh.indices).unwrap();
-                let model_matrix = app_state.transformer.get_model_matrix();
                 let view_matrix = *view_matrix.as_ref();
                 
                 let perspective = {
@@ -107,7 +104,12 @@ fn main() {
 
                 target.clear_color_and_depth((0.0, 0.0, 0.0, 1.0), 1.0);
 
-                target.draw(&vertex_buffer, &indices, &program, &uniform! { perspective: perspective, model_matrix: model_matrix, view: view_matrix }, &drawing_parameters).unwrap();
+                for torus in app_state.storage.toruses.iter() {
+                    let vertex_buffer = glium::VertexBuffer::new(&display, &torus.1.mesh.vertices).unwrap();
+                    let indices = glium::IndexBuffer::new(&display, glium::index::PrimitiveType::LinesList, &torus.1.mesh.indices).unwrap();
+                    let model_matrix = torus.1.transformer.get_model_matrix();
+                    target.draw(&vertex_buffer, &indices, &program, &uniform! { perspective: perspective, model_matrix: model_matrix, view: view_matrix }, &drawing_parameters).unwrap();
+                }
 
                 egui_glium.paint(&display, &mut target);
                 

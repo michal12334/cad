@@ -7,6 +7,14 @@ pub struct Transformer {
 }
 
 impl Transformer {
+    pub fn new() -> Self {
+        Self {
+            position: (0.0, 0.0, 2.0),
+            rotation: (0.0, 0.0, 0.0),
+            scale: (1.0, 1.0, 1.0),
+        }
+    }
+    
     pub fn get_model_matrix(&self) -> [[f32; 4]; 4] {
         let translation = Matrix4::new_translation(&Vector3::new(self.position.0 as f32, self.position.1 as f32, self.position.2 as f32));
         let rotation = Matrix4::new_rotation(Vector3::new(self.rotation.0 as f32, self.rotation.1 as f32, self.rotation.2 as f32));
