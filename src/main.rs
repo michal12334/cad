@@ -84,7 +84,7 @@ fn main() {
                 let view_matrix = *view_matrix.as_ref();
                 
                 let perspective = {
-                    let aspect_ratio = height as f32 / (width - 200) as f32;
+                    let aspect_ratio = height as f32 / width as f32;
 
                     let fov: f32 = std::f32::consts::PI / 3.0;
                     let zfar = 1024.0;
@@ -103,20 +103,14 @@ fn main() {
                 let mut target = display.draw();
                 
                 let mut drawing_parameters = DrawParameters::default();
-                drawing_parameters.viewport = Some(glium::Rect {
-                    left: 200,
-                    bottom: 0,
-                    width: width - 200,
-                    height: height,
-                });
                 drawing_parameters.polygon_mode = glium::draw_parameters::PolygonMode::Line;
 
                 target.clear_color_and_depth((0.0, 0.0, 0.0, 1.0), 1.0);
 
-                egui_glium.paint(&display, &mut target);
-
                 target.draw(&vertex_buffer, &indices, &program, &uniform! { perspective: perspective, model_matrix: model_matrix, view: view_matrix }, &drawing_parameters).unwrap();
 
+                egui_glium.paint(&display, &mut target);
+                
                 target.finish().unwrap();
             }
         };

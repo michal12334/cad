@@ -18,7 +18,7 @@ impl Ui {
     
     pub fn build<'a>(&'a mut self, cqrs: &'a mut CQRS<'a>) -> impl FnMut(&egui::Context) + '_ {
         move |egui_ctx| {
-            egui::SidePanel::left("side_panel").exact_width(183.0).show(egui_ctx, |ui| {
+            egui::Window::new("panel").show(egui_ctx, |ui| {
                 if self.torus.is_none() {
                     self.torus = Some(cqrs.get(&TorusDetails {}));
                 }
