@@ -2,6 +2,7 @@
 extern crate glium;
 
 use std::ops::DerefMut;
+use egui::Color32;
 use glium::{DrawParameters, Surface};
 use glium::vertex::MultiVerticesSource;
 use nalgebra::{Matrix4, Point3, Vector3};
@@ -46,9 +47,11 @@ fn main() {
         #version 140
 
         out vec4 color;
+        
+        uniform vec4 obj_color;
 
         void main() {
-            color = vec4(1.0, 1.0, 1.0, 1.0);
+            color = obj_color;
         }
     "#;
 
@@ -60,6 +63,9 @@ fn main() {
     let mut camera_position = Point3::new(0.0f32, 0.0, 4.0);
     let mut view_matrix = Matrix4::face_towards(&camera_position, &Point3::new(0.0, 0.0, 0.0), &Vector3::new(0.0, 1.0, 0.0));
     let mut mouse_middle_button_pressed = false;
+    
+    let color = Color32::WHITE.to_normalized_gamma_f32();
+    let selected_color = Color32::YELLOW.to_normalized_gamma_f32();
     
     event_loop.run(move |event, _window_target, control_flow| {
         let mut redraw = || {
@@ -108,7 +114,19 @@ fn main() {
                     let vertex_buffer = glium::VertexBuffer::new(&display, &torus.1.mesh.vertices).unwrap();
                     let indices = glium::IndexBuffer::new(&display, glium::index::PrimitiveType::LinesList, &torus.1.mesh.indices).unwrap();
                     let model_matrix = torus.1.transformer.get_model_matrix();
-                    target.draw(&vertex_buffer, &indices, &program, &uniform! { perspective: perspective, model_matrix: model_matrix, view: view_matrix }, &drawing_parameters).unwrap();
+                    let color = if app_state.storage.selected_objects.iter().any(|so| so.torus_id == *torus.0) { selected_color } else { color };
+                    target.draw(
+                        &vertex_buffer,
+                        &indices,
+                        &program,
+                        &uniform! {
+                            perspective: perspective,
+                            model_matrix: model_matrix,
+                            view: view_matrix,
+                            obj_color: color 
+                        },
+                        &drawing_parameters)
+                        .unwrap();
                 }
 
                 egui_glium.paint(&display, &mut target);

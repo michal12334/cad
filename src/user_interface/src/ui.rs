@@ -2,6 +2,7 @@ use egui::{Frame, Label, Resize, ScrollArea, Slider, TopBottomPanel, Widget};
 use backend::cqrs::add_torus::AddTorus;
 use backend::cqrs::cqrs::{Command, CQRS};
 use backend::cqrs::new_id::NewId;
+use backend::cqrs::select_objects::SelectObjects;
 use backend::cqrs::torus_details::{TorusDetails, TorusDTO, TransformerDTO};
 use backend::cqrs::transform_torus::TransformTours;
 use backend::cqrs::update_torus::UpdateTorus;
@@ -23,7 +24,7 @@ impl Ui {
             egui::Window::new("panel").show(egui_ctx, |ui| {
                 ScrollArea::vertical().id_source("a3").show(ui, |ui| {
                     self.build_object_addition_panel(ui, cqrs);
-                    self.build_object_selection_panel(ui);
+                    self.build_object_selection_panel(ui, cqrs);
                     self.build_selected_object_transformation_panel(ui, cqrs);
                 });
             });
@@ -44,14 +45,20 @@ impl Ui {
         }
     }
 
-    fn build_object_selection_panel(&mut self, ui: &mut egui::Ui) {
+    fn build_object_selection_panel(&mut self, ui: &mut egui::Ui, cqrs: &mut CQRS) {
         Resize::default().id_source("resize_1").show(ui, |ui| {
             ScrollArea::vertical().id_source("a").show(ui, |ui| {
                 for torus in self.toruses.iter_mut() {
                     if ui.selectable_label(Some(torus.id) == self.selected_object, format!("Torus {}", torus.id)).clicked() {
                         self.selected_object = match Some(torus.id) == self.selected_object { 
-                            true => None, 
-                            false => Some(torus.id),
+                            true => {
+                                cqrs.execute(&SelectObjects { objects: vec![] });
+                                None
+                            }, 
+                            false => {
+                                cqrs.execute(&SelectObjects { objects: vec![torus.id] });
+                                Some(torus.id)
+                            },
                         }
                     }
                 }
