@@ -39,7 +39,7 @@ fn main() {
         uniform mat4 view;
 
         void main() {
-            gl_Position = perspective * model_matrix * vec4(position, 1.0);
+            gl_Position = perspective * view * model_matrix * vec4(position, 1.0);
         }
     "#;
 
@@ -60,8 +60,8 @@ fn main() {
     let mut ui = Ui::new();
     
     let mut mouse_position = (0.0, 0.0);
-    let mut camera_position = Point3::new(0.0f32, 0.0, 4.0);
-    let mut view_matrix = Matrix4::face_towards(&camera_position, &Point3::new(0.0, 0.0, 0.0), &Vector3::new(0.0, 1.0, 0.0));
+    let mut camera_position = [0.0f32, 0.0, 4.0];
+    let mut view_matrix = get_view_matrix(&camera_position, &[0.0, 0.0, -1.0], &[0.0, 1.0, 0.0]);
     let mut mouse_middle_button_pressed = false;
     
     let color = Color32::WHITE.to_normalized_gamma_f32();
@@ -84,8 +84,6 @@ fn main() {
             };
 
             {
-                let view_matrix = *view_matrix.as_ref();
-                
                 let perspective = {
                     let aspect_ratio = height as f32 / width as f32;
 
@@ -157,8 +155,9 @@ fn main() {
                         let delta = (position.x - mouse_position.0, position.y - mouse_position.1);
                         mouse_position = (position.x, position.y);
                         if mouse_middle_button_pressed {
-                            camera_position = camera_position + Vector3::new(-delta.0 as f32 / width as f32, delta.1 as f32 / height as f32, 0.0);
-                            view_matrix = Matrix4::face_towards(&camera_position, &Point3::new(0.0, 0.0, 0.0), &Vector3::new(0.0, 1.0, 0.0));
+                            camera_position[0] += delta.0 as f32 / width as f32 * 5.0;
+                            camera_position[1] += delta.1 as f32 / height as f32 * 5.0;
+                            view_matrix = get_view_matrix(&camera_position, &[-camera_position[0], -camera_position[1], -camera_position[2]], &[0.0, 1.0, 0.0]);
                         }
                     }
                     WindowEvent::MouseInput { state, button, .. } => {
@@ -169,8 +168,8 @@ fn main() {
                     WindowEvent::MouseWheel { delta, .. } => {
                         match delta {
                             event::MouseScrollDelta::LineDelta(_x, y) => {
-                                camera_position = camera_position + Vector3::new(0.0, 0.0, -*y / 10.0);
-                                view_matrix = Matrix4::face_towards(&camera_position, &Point3::new(0.0, 0.0, 0.0), &Vector3::new(0.0, 1.0, 0.0));
+                                camera_position[2] += -*y / 10.0;
+                                view_matrix = get_view_matrix(&camera_position, &[-camera_position[0], -camera_position[1], -camera_position[2]], &[0.0, 1.0, 0.0]);
                             }
                             _ => {}
                         }
@@ -190,4 +189,38 @@ fn main() {
             _ => (),
         }
     });
+}
+
+fn get_view_matrix(position: &[f32; 3], direction: &[f32; 3], up: &[f32; 3]) -> [[f32; 4]; 4] {
+    let f = {
+        let f = direction;
+        let len = f[0] * f[0] + f[1] * f[1] + f[2] * f[2];
+        let len = len.sqrt();
+        [f[0] / len, f[1] / len, f[2] / len]
+    };
+
+    let s = [up[1] * f[2] - up[2] * f[1],
+        up[2] * f[0] - up[0] * f[2],
+        up[0] * f[1] - up[1] * f[0]];
+
+    let s_norm = {
+        let len = s[0] * s[0] + s[1] * s[1] + s[2] * s[2];
+        let len = len.sqrt();
+        [s[0] / len, s[1] / len, s[2] / len]
+    };
+
+    let u = [f[1] * s_norm[2] - f[2] * s_norm[1],
+        f[2] * s_norm[0] - f[0] * s_norm[2],
+        f[0] * s_norm[1] - f[1] * s_norm[0]];
+
+    let p = [-position[0] * s_norm[0] - position[1] * s_norm[1] - position[2] * s_norm[2],
+        -position[0] * u[0] - position[1] * u[1] - position[2] * u[2],
+        -position[0] * f[0] - position[1] * f[1] - position[2] * f[2]];
+
+    [
+        [s_norm[0], u[0], f[0], 0.0],
+        [s_norm[1], u[1], f[1], 0.0],
+        [s_norm[2], u[2], f[2], 0.0],
+        [p[0], p[1], p[2], 1.0],
+    ]
 }

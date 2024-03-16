@@ -9,7 +9,7 @@ pub struct Transformer {
 impl Transformer {
     pub fn new() -> Self {
         Self {
-            position: (0.0, 0.0, 2.0),
+            position: (0.0, 0.0, 0.0),
             rotation: (0.0, 0.0, 0.0),
             scale: (1.0, 1.0, 1.0),
         }
