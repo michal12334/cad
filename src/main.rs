@@ -1,3 +1,5 @@
+mod infinite_grid_drawer;
+
 #[macro_use]
 extern crate glium;
 
@@ -12,6 +14,8 @@ use backend::app_state::AppState;
 use backend::cqrs::cqrs::CQRS;
 use user_interface::ui::Ui;
 use backend::domain::*;
+use crate::infinite_grid_drawer::InfiniteGridDrawer;
+
 extern crate user_interface;
 
 fn main() {
@@ -56,6 +60,7 @@ fn main() {
     "#;
 
     let program = glium::Program::from_source(&display, vertex_shader_src, fragment_shader_src, None).unwrap();
+    let infinite_grid_drawer = InfiniteGridDrawer::new(&display);
     
     let mut ui = Ui::new();
     
@@ -131,6 +136,8 @@ fn main() {
                         &drawing_parameters)
                         .unwrap();
                 }
+                
+                infinite_grid_drawer.draw(&mut target, &perspective, &view_matrix);
 
                 egui_glium.paint(&display, &mut target);
                 
