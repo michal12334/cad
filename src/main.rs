@@ -107,6 +107,11 @@ fn main() {
                 
                 let mut drawing_parameters = DrawParameters::default();
                 drawing_parameters.polygon_mode = glium::draw_parameters::PolygonMode::Line;
+                drawing_parameters.depth = glium::Depth {
+                    test: glium::draw_parameters::DepthTest::IfLess,
+                    write: true,
+                    .. Default::default()
+                };
 
                 target.clear_color_and_depth((0.0, 0.0, 0.0, 1.0), 1.0);
 
