@@ -66,7 +66,7 @@ fn main() {
     
     let mut mouse_position = (0.0, 0.0);
     let mut camera_position = [0.0f32, 0.0, 4.0];
-    let mut view_matrix = get_view_matrix(&camera_position, &[0.0, 0.0, -1.0], &[0.0, 1.0, 0.0]);
+    let mut view_matrix = math::matrix4::Matrix4::view(&camera_position, &[0.0, 0.0, -1.0], &[0.0, 1.0, 0.0]);
     let mut mouse_middle_button_pressed = false;
     
     let color = Color32::WHITE.to_normalized_gamma_f32();
@@ -106,6 +106,8 @@ fn main() {
                     ]
                 };
                 
+                let perspective = math::matrix4::Matrix4::perspective(std::f32::consts::PI / 3.0, width as f32 / height as f32, 0.1, 1024.0);
+                
                 let mut target = display.draw();
                 
                 let mut drawing_parameters = DrawParameters::default();
@@ -128,16 +130,16 @@ fn main() {
                         &indices,
                         &program,
                         &uniform! {
-                            perspective: perspective,
+                            perspective: perspective.data,
                             model_matrix: model_matrix,
-                            view: view_matrix,
+                            view: view_matrix.data,
                             obj_color: color 
                         },
                         &drawing_parameters)
                         .unwrap();
                 }
                 
-                infinite_grid_drawer.draw(&mut target, &perspective, &view_matrix);
+                infinite_grid_drawer.draw(&mut target, &perspective.data, &view_matrix.data);
 
                 egui_glium.paint(&display, &mut target);
                 
@@ -164,7 +166,7 @@ fn main() {
                         if mouse_middle_button_pressed {
                             camera_position[0] += delta.0 as f32 / width as f32 * 5.0;
                             camera_position[1] += delta.1 as f32 / height as f32 * 5.0;
-                            view_matrix = get_view_matrix(&camera_position, &[-camera_position[0], -camera_position[1], -camera_position[2]], &[0.0, 1.0, 0.0]);
+                            view_matrix = math::matrix4::Matrix4::view(&camera_position, &[-camera_position[0], -camera_position[1], -camera_position[2]], &[0.0, 1.0, 0.0]);
                         }
                     }
                     WindowEvent::MouseInput { state, button, .. } => {
@@ -176,7 +178,7 @@ fn main() {
                         match delta {
                             event::MouseScrollDelta::LineDelta(_x, y) => {
                                 camera_position[2] += -*y / 10.0;
-                                view_matrix = get_view_matrix(&camera_position, &[-camera_position[0], -camera_position[1], -camera_position[2]], &[0.0, 1.0, 0.0]);
+                                view_matrix = math::matrix4::Matrix4::view(&camera_position, &[-camera_position[0], -camera_position[1], -camera_position[2]], &[0.0, 1.0, 0.0]);
                             }
                             _ => {}
                         }

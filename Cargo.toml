@@ -1,4 +1,4 @@
-workspace = { members = [ "src/backend","src/user_interface"] }
+workspace = { members = [ "src/backend", "src/math","src/user_interface"] }
 [package]
 name = "cad"
 version = "0.1.0"
@@ -18,3 +18,4 @@ winit = "0.28"
 
 user_interface = { path = "src/user_interface" }
 backend = { path = "src/backend" }
+math = { path = "src/math" }
