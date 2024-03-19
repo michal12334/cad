@@ -7,7 +7,6 @@ use std::ops::DerefMut;
 use egui::Color32;
 use glium::{DrawParameters, Surface};
 use glium::vertex::MultiVerticesSource;
-use nalgebra::{Matrix4, Point3, Vector3};
 use winit::{event, event_loop};
 use winit::event::MouseButton;
 use backend::app_state::AppState;
@@ -133,7 +132,7 @@ fn main() {
                         &program,
                         &uniform! {
                             perspective: perspective.data,
-                            model_matrix: model_matrix,
+                            model_matrix: model_matrix.data,
                             view: view_matrix.data,
                             obj_color: color 
                         },

@@ -81,6 +81,13 @@ impl Matrix4 {
         }
     }
     
+    pub fn rotation(x: f32, y: f32, z: f32) -> Self {
+        let x = Self::rotation_x(x);
+        let y = Self::rotation_y(y);
+        let z = Self::rotation_z(z);
+        x * y * z
+    }
+    
     pub fn get_transposed(&self) -> Self {
         let mut data = [[0.0; 4]; 4];
         for i in 0..4 {

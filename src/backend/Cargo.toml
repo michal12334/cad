@@ -7,4 +7,5 @@ edition = "2021"
 
 [dependencies]
 glium = "0.33"
-nalgebra = "0.32.4"
+
+math = { path = "../math" }
