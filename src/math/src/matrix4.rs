@@ -1,3 +1,5 @@
+use crate::vector3::Vector3;
+
 pub struct Matrix4 {
     pub data: [[f32; 4]; 4],
 }
@@ -106,38 +108,38 @@ impl Matrix4 {
         }
     }
     
-    pub fn view(position: &[f32; 3], direction: &[f32; 3], up: &[f32; 3]) -> Self {
+    pub fn view(position: Vector3, direction: Vector3, up: Vector3) -> Self {
         let f = {
             let f = direction;
-            let len = f[0] * f[0] + f[1] * f[1] + f[2] * f[2];
+            let len = f.x * f.x + f.y * f.y + f.z * f.z;
             let len = len.sqrt();
-            [f[0] / len, f[1] / len, f[2] / len]
+            Vector3::new(f.x / len, f.y / len, f.z / len)
         };
 
-        let s = [up[1] * f[2] - up[2] * f[1],
-            up[2] * f[0] - up[0] * f[2],
-            up[0] * f[1] - up[1] * f[0]];
+        let s = Vector3::new(up.y * f.z - up.z * f.y,
+            up.z * f.x - up.x * f.z,
+            up.x * f.y - up.y * f.x);
 
         let s_norm = {
-            let len = s[0] * s[0] + s[1] * s[1] + s[2] * s[2];
+            let len = s.x * s.x + s.y * s.y + s.z * s.z;
             let len = len.sqrt();
-            [s[0] / len, s[1] / len, s[2] / len]
+            Vector3::new(s.x / len, s.y / len, s.z / len)
         };
 
-        let u = [f[1] * s_norm[2] - f[2] * s_norm[1],
-            f[2] * s_norm[0] - f[0] * s_norm[2],
-            f[0] * s_norm[1] - f[1] * s_norm[0]];
+        let u = Vector3::new(f.y * s_norm.z - f.z * s_norm.y,
+            f.z * s_norm.x - f.x * s_norm.z,
+            f.x * s_norm.y - f.y * s_norm.x);
 
-        let p = [-position[0] * s_norm[0] - position[1] * s_norm[1] - position[2] * s_norm[2],
-            -position[0] * u[0] - position[1] * u[1] - position[2] * u[2],
-            -position[0] * f[0] - position[1] * f[1] - position[2] * f[2]];
+        let p = Vector3::new(-position.x * s_norm.x - position.y * s_norm.y - position.z * s_norm.z,
+            -position.x * u.x - position.y * u.y - position.z * u.z,
+            -position.x * f.x - position.y * f.y - position.z * f.z);
 
         Self {
             data: [
-                [s_norm[0], u[0], f[0], 0.0],
-                [s_norm[1], u[1], f[1], 0.0],
-                [s_norm[2], u[2], f[2], 0.0],
-                [p[0], p[1], p[2], 1.0],
+                [s_norm.x, u.x, f.x, 0.0],
+                [s_norm.y, u.y, f.y, 0.0],
+                [s_norm.z, u.z, f.z, 0.0],
+                [p.x, p.y, p.z, 1.0],
             ],
         }
     }

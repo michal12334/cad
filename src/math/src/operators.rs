@@ -84,3 +84,54 @@ impl Mul<Matrix4> for Vector4 {
         }
     }
 }
+
+impl Mul<f32> for Vector3 {
+    type Output = Self;
+
+    fn mul(self, rhs: f32) -> Self {
+        Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+        }
+    }
+}
+
+impl Mul<f32> for Vector4 {
+    type Output = Self;
+
+    fn mul(self, rhs: f32) -> Self {
+        Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+            w: self.w * rhs,
+        }
+    }
+}
+
+impl Mul<Vector3> for f32 {
+    type Output = Vector3;
+
+    fn mul(self, rhs: Vector3) -> Vector3 {
+        Vector3 {
+            x: self * rhs.x,
+            y: self * rhs.y,
+            z: self * rhs.z,
+        }
+    }
+}
+
+impl Mul<Vector4> for f32 {
+    type Output = Vector4;
+
+    fn mul(self, rhs: Vector4) -> Vector4 {
+        Vector4 {
+            x: self * rhs.x,
+            y: self * rhs.y,
+            z: self * rhs.z,
+            w: self * rhs.w,
+        }
+    }
+}
+
