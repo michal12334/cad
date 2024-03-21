@@ -65,9 +65,11 @@ fn main() {
     let mut ui = Ui::new();
     
     let mut mouse_position = (0.0, 0.0);
-    let mut camera_direction = math::vector3::Vector3::new(1.0f32, -1.0, -1.0);
+    let mut camera_direction = math::vector3::Vector3::new(0.0f32, 0.0, 1.0);
+    let mut camera_angle = math::vector3::Vector3::new(0.0f32, 0.0, 0.0);
+    let mut camera_up = math::vector3::Vector3::new(0.0f32, 1.0, 0.0);
     let mut camera_distant = 4.0f32;
-    let mut view_matrix = math::matrix4::Matrix4::view(camera_direction * camera_distant * (-1.0), camera_direction, math::vector3::Vector3::new(0.0, 1.0, 0.0));
+    let mut view_matrix = math::matrix4::Matrix4::view(camera_direction * camera_distant * (-1.0), camera_direction, camera_up);
     let mut mouse_middle_button_pressed = false;
     
     let color = Color32::WHITE.to_normalized_gamma_f32();
@@ -148,8 +150,11 @@ fn main() {
                         let delta = (position.x - mouse_position.0, position.y - mouse_position.1);
                         mouse_position = (position.x, position.y);
                         if mouse_middle_button_pressed {
-                            camera_direction = (Vector4::from_vector3(camera_direction, 0.0) * math::matrix4::Matrix4::rotation_x(-delta.1 as f32 / height as f32 * 0.5) * math::matrix4::Matrix4::rotation_y(delta.0 as f32 / width as f32 * 0.5)).xyz();
-                            view_matrix = math::matrix4::Matrix4::view(camera_direction * camera_distant * (-1.0), camera_direction, math::vector3::Vector3::new(0.0, 1.0, 0.0));
+                            camera_angle.x += delta.1 as f32 * 0.01;
+                            camera_angle.y += delta.0 as f32 * 0.01 * if camera_angle.x.cos() < 0.0 { -1.0 } else { 1.0 };
+                            camera_direction = (Vector4::new(0.0, 0.0, 1.0, 0.0) * math::matrix4::Matrix4::rotation_x(camera_angle.x) * math::matrix4::Matrix4::rotation_y(camera_angle.y)).xyz();
+                            camera_up = (Vector4::new(0.0, 1.0, 0.0, 0.0) * math::matrix4::Matrix4::rotation_x(camera_angle.x) * math::matrix4::Matrix4::rotation_y(camera_angle.y)).xyz();
+                            view_matrix = math::matrix4::Matrix4::view(camera_direction * camera_distant * (-1.0), camera_direction, camera_up);
                         }
                     }
                     WindowEvent::MouseInput { state, button, .. } => {
@@ -161,7 +166,7 @@ fn main() {
                         match delta {
                             event::MouseScrollDelta::LineDelta(_x, y) => {
                                 camera_distant += -y * 0.1;
-                                view_matrix = math::matrix4::Matrix4::view(camera_direction * camera_distant * (-1.0), camera_direction, math::vector3::Vector3::new(0.0, 1.0, 0.0));
+                                view_matrix = math::matrix4::Matrix4::view(camera_direction * camera_distant * (-1.0), camera_direction, camera_up);
                             }
                             _ => {}
                         }
