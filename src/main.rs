@@ -117,12 +117,14 @@ fn main() {
                         } 
                     }
                     WindowEvent::MouseWheel { delta, .. } => {
-                        match delta {
-                            event::MouseScrollDelta::LineDelta(_x, y) => {
-                                camera_distant += -y * 0.1;
-                                view_matrix = math::matrix4::Matrix4::view(camera_direction * camera_distant * (-1.0), camera_direction, camera_up);
+                        if !ui.is_pointer_over_area() {
+                            match delta {
+                                event::MouseScrollDelta::LineDelta(_x, y) => {
+                                    camera_distant += -y * 0.1;
+                                    view_matrix = math::matrix4::Matrix4::view(camera_direction * camera_distant * (-1.0), camera_direction, camera_up);
+                                }
+                                _ => {}
                             }
-                            _ => {}
                         }
                     }
                     _ => {}

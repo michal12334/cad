@@ -12,16 +12,27 @@ use crate::typed_text_buffer::TypedTextBuffer;
 pub struct Ui {
     toruses: Vec<TorusDTO>,
     selected_object: Option<u64>,
+    pointer_is_over_area: bool,
 }
 
 impl Ui {
     pub fn new() -> Self {
-        Self { toruses: vec![], selected_object: None, }
+        Self { toruses: vec![], selected_object: None, pointer_is_over_area: false }
+    }
+    
+    pub fn is_pointer_over_area(&self) -> bool {
+        self.pointer_is_over_area
     }
     
     pub fn build<'a>(&'a mut self, cqrs: &'a mut CQRS<'a>) -> impl FnMut(&egui::Context) + '_ {
         move |egui_ctx| {
             egui::Window::new("panel").show(egui_ctx, |ui| {
+                if egui_ctx.is_pointer_over_area() {
+                    self.pointer_is_over_area = true;
+                } else {
+                    self.pointer_is_over_area = false;
+                }
+                
                 ScrollArea::vertical().id_source("a3").show(ui, |ui| {
                     self.build_object_addition_panel(ui, cqrs);
                     self.build_object_selection_panel(ui, cqrs);
