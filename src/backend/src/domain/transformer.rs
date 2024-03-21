@@ -23,3 +23,19 @@ impl Transformer {
         translation * rotation * scale
     }
 }
+
+pub struct LittleTransformer {
+    pub position: (f64, f64, f64),
+}
+
+impl LittleTransformer {
+    pub fn new() -> Self {
+        Self {
+            position: (0.0, 0.0, 0.0),
+        }
+    }
+
+    pub fn get_model_matrix(&self) -> Matrix4 {
+        Matrix4::translation(self.position.0 as f32, self.position.1 as f32, self.position.2 as f32)
+    }
+}
