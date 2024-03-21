@@ -1,13 +1,15 @@
 use egui::{Frame, Label, Resize, ScrollArea, Slider, TopBottomPanel, Widget};
+use backend::cqrs::add_point::AddPoint;
 use backend::cqrs::add_torus::AddTorus;
 use backend::cqrs::cqrs::{Command, CQRS};
 use backend::cqrs::new_id::NewId;
+use backend::cqrs::point_details::PointDetails;
 use backend::cqrs::select_objects::SelectObjects;
 use backend::cqrs::torus_details::{TorusDetails, TorusDTO, TransformerDTO};
 use backend::cqrs::transform_torus::TransformTours;
 use backend::cqrs::update_torus::UpdateTorus;
 use crate::object::Object;
-use crate::object::Object::Torus;
+use crate::object::Object::{Point, Torus};
 
 pub struct Ui {
     objects: Vec<Object>,
@@ -58,6 +60,13 @@ impl Ui {
                 minor_segments: 100,
             });
             self.objects.push(Torus(cqrs.get(&TorusDetails { id })));
+        }
+        if ui.button("Add Point").clicked() {
+            let id = cqrs.handle(&NewId {});
+            cqrs.execute(&AddPoint {
+                id,
+            });
+            self.objects.push(Point(cqrs.get(&PointDetails { id })));
         }
     }
 

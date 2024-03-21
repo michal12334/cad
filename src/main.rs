@@ -1,5 +1,6 @@
 mod infinite_grid_drawer;
 mod torus_drawer;
+mod point_drawer;
 
 #[macro_use]
 extern crate glium;
@@ -16,6 +17,7 @@ use user_interface::ui::Ui;
 use backend::domain::*;
 use math::vector4::Vector4;
 use crate::infinite_grid_drawer::InfiniteGridDrawer;
+use crate::point_drawer::PointDrawer;
 use crate::torus_drawer::TorusDrawer;
 
 extern crate user_interface;
@@ -36,6 +38,7 @@ fn main() {
     let mut app_state = AppState::new();
     
     let torus_drawer = TorusDrawer::new(&display);
+    let point_drawer = PointDrawer::new(&display);
     let infinite_grid_drawer = InfiniteGridDrawer::new(&display);
     
     let mut ui = Ui::new();
@@ -75,8 +78,13 @@ fn main() {
                 target.clear_color_and_depth((0.0, 0.0, 0.0, 1.0), 1.0);
 
                 for torus in app_state.storage.toruses.iter() {
-                    let color = if app_state.storage.selected_objects.iter().any(|so| so.torus_id == *torus.0) { selected_color } else { color };
+                    let color = if app_state.storage.selected_objects.iter().any(|so| so.torus_id == Some(*torus.0)) { selected_color } else { color };
                     torus_drawer.draw(&mut target, &display, &torus.1, &perspective, &view_matrix, color);
+                }
+
+                for point in app_state.storage.points.iter() {
+                    let color = if app_state.storage.selected_objects.iter().any(|so| so.point_id == Some(*point.0)) { selected_color } else { color };
+                    point_drawer.draw(&mut target, &display, &point.1, &perspective, &view_matrix, color);
                 }
                 
                 infinite_grid_drawer.draw(&mut target, &perspective.data, &view_matrix.data);
