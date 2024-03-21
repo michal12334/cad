@@ -1,4 +1,5 @@
 mod infinite_grid_drawer;
+mod torus_drawer;
 
 #[macro_use]
 extern crate glium;
@@ -15,6 +16,7 @@ use user_interface::ui::Ui;
 use backend::domain::*;
 use math::vector4::Vector4;
 use crate::infinite_grid_drawer::InfiniteGridDrawer;
+use crate::torus_drawer::TorusDrawer;
 
 extern crate user_interface;
 
@@ -33,33 +35,7 @@ fn main() {
     
     let mut app_state = AppState::new();
     
-    let vertex_shader_src = r#"
-        #version 140
-
-        in vec3 position;
-        
-        uniform mat4 perspective;
-        uniform mat4 model_matrix;
-        uniform mat4 view;
-
-        void main() {
-            gl_Position = perspective * view * model_matrix * vec4(position, 1.0);
-        }
-    "#;
-
-    let fragment_shader_src = r#"
-        #version 140
-
-        out vec4 color;
-        
-        uniform vec4 obj_color;
-
-        void main() {
-            color = obj_color;
-        }
-    "#;
-
-    let program = glium::Program::from_source(&display, vertex_shader_src, fragment_shader_src, None).unwrap();
+    let torus_drawer = TorusDrawer::new(&display);
     let infinite_grid_drawer = InfiniteGridDrawer::new(&display);
     
     let mut ui = Ui::new();
@@ -95,34 +71,12 @@ fn main() {
                 let perspective = math::matrix4::Matrix4::perspective(std::f32::consts::PI / 3.0, width as f32 / height as f32, 0.1, 1024.0);
                 
                 let mut target = display.draw();
-                
-                let mut drawing_parameters = DrawParameters::default();
-                drawing_parameters.polygon_mode = glium::draw_parameters::PolygonMode::Line;
-                drawing_parameters.depth = glium::Depth {
-                    test: glium::draw_parameters::DepthTest::IfLess,
-                    write: true,
-                    .. Default::default()
-                };
 
                 target.clear_color_and_depth((0.0, 0.0, 0.0, 1.0), 1.0);
 
                 for torus in app_state.storage.toruses.iter() {
-                    let vertex_buffer = glium::VertexBuffer::new(&display, &torus.1.mesh.vertices).unwrap();
-                    let indices = glium::IndexBuffer::new(&display, glium::index::PrimitiveType::LinesList, &torus.1.mesh.indices).unwrap();
-                    let model_matrix = torus.1.transformer.get_model_matrix();
                     let color = if app_state.storage.selected_objects.iter().any(|so| so.torus_id == *torus.0) { selected_color } else { color };
-                    target.draw(
-                        &vertex_buffer,
-                        &indices,
-                        &program,
-                        &uniform! {
-                            perspective: perspective.data,
-                            model_matrix: model_matrix.data,
-                            view: view_matrix.data,
-                            obj_color: color 
-                        },
-                        &drawing_parameters)
-                        .unwrap();
+                    torus_drawer.draw(&mut target, &display, &torus.1, &perspective, &view_matrix, color);
                 }
                 
                 infinite_grid_drawer.draw(&mut target, &perspective.data, &view_matrix.data);
