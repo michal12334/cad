@@ -6,8 +6,6 @@ use backend::cqrs::select_objects::SelectObjects;
 use backend::cqrs::torus_details::{TorusDetails, TorusDTO, TransformerDTO};
 use backend::cqrs::transform_torus::TransformTours;
 use backend::cqrs::update_torus::UpdateTorus;
-use crate::torus::Torus;
-use crate::typed_text_buffer::TypedTextBuffer;
 
 pub struct Ui {
     toruses: Vec<TorusDTO>,
