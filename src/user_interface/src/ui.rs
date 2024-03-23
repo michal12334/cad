@@ -5,8 +5,10 @@ use backend::cqrs::common::new_id::NewId;
 use backend::cqrs::points::point_details::{LittleTransformerDTO, PointDetails};
 use backend::cqrs::common::select_objects::SelectObjects;
 use backend::cqrs::points::add_point::AddPoint;
+use backend::cqrs::points::rename_point::RenamePoint;
 use backend::cqrs::toruses::torus_details::{TorusDetails, TorusDTO, TransformerDTO};
 use backend::cqrs::points::transform_point::TransformPoint;
+use backend::cqrs::toruses::rename_torus::RenameTorus;
 use backend::cqrs::toruses::transform_torus::TransformTours;
 use backend::cqrs::toruses::update_torus::UpdateTorus;
 use crate::object::Object;
@@ -14,7 +16,6 @@ use crate::object::Object::{Point, Torus};
 
 pub struct Ui {
     objects: Vec<Object>,
-    // toruses: Vec<TorusDTO>,
     selected_object: Option<u64>,
     pointer_is_over_area: bool,
 }
@@ -102,6 +103,14 @@ impl Ui {
                 };
                 match object {
                     Torus(torus) => {
+                        if ui.text_edit_singleline(&mut torus.name).lost_focus() {
+                            cqrs.execute(&RenameTorus {
+                                id: torus.id,
+                                name: torus.name.clone(),
+                            });
+                            *torus = cqrs.get(&TorusDetails { id: torus.id });
+                        }
+                        
                         let torus_sliders = vec![
                             Slider::new(&mut torus.major_radius, 0.01..=5.0).text("major radius").ui(ui),
                             Slider::new(&mut torus.minor_radius, 0.01..=5.0).text("minor radius").ui(ui),
@@ -145,6 +154,14 @@ impl Ui {
                         }
                     }
                     Point(point) => {
+                        if ui.text_edit_singleline(&mut point.name).lost_focus() {
+                            cqrs.execute(&RenamePoint {
+                                id: point.id,
+                                name: point.name.clone(),
+                            });
+                            *point = cqrs.get(&PointDetails { id: point.id });
+                        }
+                        
                         let transformer_sliders = vec![
                             Slider::new(&mut point.transformer.position.0, -5.0..=5.0).text("position X").ui(ui),
                             Slider::new(&mut point.transformer.position.1, -5.0..=5.0).text("position Y").ui(ui),

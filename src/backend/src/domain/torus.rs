@@ -44,4 +44,8 @@ impl Torus {
         self.transformer.rotation = rotation;
         self.transformer.scale = scale;
     }
+    
+    pub fn rename(&mut self, name: &str) {
+        self.name = name.to_string();
+    }
 }

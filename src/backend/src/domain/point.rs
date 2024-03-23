@@ -18,4 +18,8 @@ impl Point {
     pub fn transform(&mut self, position: (f64, f64, f64)) {
         self.transformer.position = position;
     }
+    
+    pub fn rename(&mut self, name: &str) {
+        self.name = name.to_string();
+    }
 }
