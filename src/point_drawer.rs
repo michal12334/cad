@@ -39,7 +39,7 @@ impl PointDrawer {
         let program = Program::from_source(display, vertex_shader_src, fragment_shader_src, None).unwrap();
         
         let mut drawing_parameters = DrawParameters::default();
-        drawing_parameters.point_size = Some(4f32);
+        drawing_parameters.point_size = Some(8f32);
         drawing_parameters.depth = glium::Depth {
             test: glium::draw_parameters::DepthTest::IfLess,
             write: true,
