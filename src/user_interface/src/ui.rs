@@ -1,9 +1,12 @@
+use backend::cqrs::cursors::cursor_details::CursorDetails;
 use egui::{Frame, Label, Resize, ScrollArea, Slider, TopBottomPanel, Widget};
 use backend::cqrs::toruses::add_torus::AddTorus;
 use backend::cqrs::cqrs::{Command, CQRS};
 use backend::cqrs::common::new_id::NewId;
 use backend::cqrs::points::point_details::{LittleTransformerDTO, PointDetails};
 use backend::cqrs::common::select_objects::SelectObjects;
+use backend::cqrs::cursors::cursor_details::CursorDTO;
+use backend::cqrs::cursors::transform_cursor::TransformCursor;
 use backend::cqrs::points::add_point::AddPoint;
 use backend::cqrs::points::rename_point::RenamePoint;
 use backend::cqrs::toruses::torus_details::{TorusDetails, TorusDTO, TransformerDTO};
@@ -17,6 +20,8 @@ use crate::object::Object::{Point, Torus};
 pub struct Ui {
     objects: Vec<Object>,
     selected_object: Option<u64>,
+    cursor: Option<CursorDTO>,
+    cursor_selected: bool,
     pointer_is_over_area: bool,
 }
 
@@ -25,6 +30,8 @@ impl Ui {
         Self {
             objects: vec![],
             selected_object: None,
+            cursor: None,
+            cursor_selected: false,
             pointer_is_over_area: false
         }
     }
@@ -34,6 +41,7 @@ impl Ui {
     }
     
     pub fn build<'a>(&'a mut self, cqrs: &'a mut CQRS<'a>) -> impl FnMut(&egui::Context) + '_ {
+        self.cursor = Some(cqrs.get(&CursorDetails {}));
         move |egui_ctx| {
             egui::Window::new("panel").show(egui_ctx, |ui| {
                 if egui_ctx.is_pointer_over_area() {
@@ -75,6 +83,12 @@ impl Ui {
     fn build_object_selection_panel(&mut self, ui: &mut egui::Ui, cqrs: &mut CQRS) {
         Resize::default().id_source("resize_1").show(ui, |ui| {
             ScrollArea::vertical().id_source("a").show(ui, |ui| {
+                let cursor = self.cursor.as_ref().unwrap();
+                if ui.selectable_label(self.cursor_selected, &cursor.name).clicked() {
+                    self.selected_object = None;
+                    self.cursor_selected = !self.cursor_selected;
+                }
+                
                 for object in self.objects.iter_mut() {
                     let object_id = object.get_id();
                     if ui.selectable_label(Some(object_id) == self.selected_object, object.get_name()).clicked() {
@@ -85,6 +99,7 @@ impl Ui {
                             }, 
                             false => {
                                 cqrs.execute(&SelectObjects { objects: vec![object_id] });
+                                self.cursor_selected = false;
                                 Some(object_id)
                             },
                         }
@@ -97,6 +112,26 @@ impl Ui {
     fn build_selected_object_transformation_panel(&mut self, ui: &mut egui::Ui, cqrs: &mut CQRS) {
         Resize::default().id_source("resize_2").show(ui, |ui| {
             ScrollArea::vertical().id_source("a2").show(ui, |ui| {
+                if self.cursor_selected {
+                    let cursor = self.cursor.as_mut().unwrap();
+                    
+                    let transformer_sliders = vec![
+                        Slider::new(&mut cursor.transformer.position.0, -5.0..=5.0).text("position X").ui(ui),
+                        Slider::new(&mut cursor.transformer.position.1, -5.0..=5.0).text("position Y").ui(ui),
+                        Slider::new(&mut cursor.transformer.position.2, -5.0..=5.0).text("position Z").ui(ui),
+                    ];
+
+                    if transformer_sliders.iter().any(|f| f.changed()) {
+                        cqrs.execute(&TransformCursor {
+                            transformer: LittleTransformerDTO {
+                                position: cursor.transformer.position,
+                            },
+                        });
+                    }
+                    
+                    return;
+                }
+                
                 let object = match self.selected_object {
                     Some(id) => self.objects.iter_mut().find(|t| t.get_id() == id).unwrap(),
                     None => return,
