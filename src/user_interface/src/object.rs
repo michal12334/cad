@@ -13,4 +13,11 @@ impl Object {
             Object::Point(point) => point.id,
         }
     }
+    
+    pub fn get_name(&self) -> String {
+        match self { 
+            Object::Torus(torus) => torus.name.clone(),
+            Object::Point(point) => point.name.clone(),
+        }
+    }
 }

@@ -3,6 +3,7 @@ use crate::domain::transformer::Transformer;
 
 pub struct Torus {
     pub id: u64,
+    pub name: String,
     
     pub major_radius: f64,
     pub minor_radius: f64,
@@ -20,6 +21,7 @@ impl Torus {
         
         Self {
             id,
+            name: format!("Torus {}", id),
             major_radius,
             minor_radius,
             major_segments,

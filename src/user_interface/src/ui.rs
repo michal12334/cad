@@ -76,7 +76,7 @@ impl Ui {
             ScrollArea::vertical().id_source("a").show(ui, |ui| {
                 for object in self.objects.iter_mut() {
                     let object_id = object.get_id();
-                    if ui.selectable_label(Some(object_id) == self.selected_object, format!("Torus {}", object_id)).clicked() {
+                    if ui.selectable_label(Some(object_id) == self.selected_object, object.get_name()).clicked() {
                         self.selected_object = match Some(object_id) == self.selected_object { 
                             true => {
                                 cqrs.execute(&SelectObjects { objects: vec![] });

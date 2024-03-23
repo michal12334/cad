@@ -7,6 +7,7 @@ pub struct PointDetails {
 
 pub struct PointDTO {
     pub id: u64,
+    pub name: String,
     pub transformer: LittleTransformerDTO,
 }
 
@@ -19,6 +20,7 @@ impl Query<PointDetails, PointDTO> for PointDetails {
         let point = app_state.storage.points.get(&query.id).unwrap();
         PointDTO {
             id: point.id,
+            name: point.name.clone(),
             transformer: LittleTransformerDTO {
                 position: point.transformer.position,
             }
