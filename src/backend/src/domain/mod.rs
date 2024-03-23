@@ -4,3 +4,4 @@ pub mod transformer;
 pub mod vertex;
 pub mod selected_object;
 pub mod point;
+pub mod cursor;

@@ -1,6 +1,7 @@
 mod infinite_grid_drawer;
 mod torus_drawer;
 mod point_drawer;
+mod cursor_drawer;
 
 #[macro_use]
 extern crate glium;
@@ -39,6 +40,7 @@ fn main() {
     
     let torus_drawer = TorusDrawer::new(&display);
     let point_drawer = PointDrawer::new(&display);
+    let cursor_drawer = cursor_drawer::CursorDrawer::new(&display);
     let infinite_grid_drawer = InfiniteGridDrawer::new(&display);
     
     let mut ui = Ui::new();
@@ -86,6 +88,8 @@ fn main() {
                     let color = if app_state.storage.selected_objects.iter().any(|so| so.point_id == Some(*point.0)) { selected_color } else { color };
                     point_drawer.draw(&mut target, &display, &point.1, &perspective, &view_matrix, color);
                 }
+                
+                cursor_drawer.draw(&mut target, &display, &app_state.storage.cursor, &perspective, &view_matrix);
                 
                 infinite_grid_drawer.draw(&mut target, &perspective.data, &view_matrix.data);
 
