@@ -50,7 +50,7 @@ impl PointDrawer {
     }
     
     pub fn draw(&self, target: &mut Frame, display: &Display<WindowSurface>, point: &Point, perspective: &math::matrix4::Matrix4, view_matrix: &math::matrix4::Matrix4, color: [f32; 4]) {
-        let vertex_buffer = glium::VertexBuffer::new(display, &[Vertex::new(point.transformer.position)]).unwrap();
+        let vertex_buffer = glium::VertexBuffer::new(display, &[Vertex::new()]).unwrap();
         let indices = glium::IndexBuffer::new(display, glium::index::PrimitiveType::Points, &[0u16]).unwrap();
         let model_matrix = point.transformer.get_model_matrix();
         target.draw(

@@ -7,11 +7,11 @@ pub struct Point {
 }
 
 impl Point {
-    pub fn new(id: u64) -> Self {
+    pub fn new(id: u64, transformer: LittleTransformer) -> Self {
         Self {
             id,
             name: format!("Point {}", id),
-            transformer: LittleTransformer::new(),
+            transformer,
         }
     }
     

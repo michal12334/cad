@@ -15,8 +15,7 @@ pub struct Torus {
 }
 
 impl Torus {
-    pub fn new(id: u64, major_radius: f64, minor_radius: f64, major_segments: u32, minor_segments: u32) -> Self {
-        let transformer = Transformer::new();
+    pub fn new(id: u64, major_radius: f64, minor_radius: f64, major_segments: u32, minor_segments: u32, transformer: Transformer) -> Self {
         let mesh = Mesh::from_torus(major_radius, minor_radius, major_segments, minor_segments);
         
         Self {

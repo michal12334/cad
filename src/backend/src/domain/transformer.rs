@@ -1,5 +1,6 @@
 use math::matrix4::Matrix4;
 use math::vector3::Vector3;
+use crate::domain::cursor::Cursor;
 
 pub struct Transformer {
     pub position: (f64, f64, f64),
@@ -11,6 +12,14 @@ impl Transformer {
     pub fn new() -> Self {
         Self {
             position: (0.0, 0.0, 0.0),
+            rotation: (0.0, 0.0, 0.0),
+            scale: (1.0, 1.0, 1.0),
+        }
+    }
+    
+    pub fn from_cursor(cursor: &Cursor) -> Self {
+        Self {
+            position: cursor.transformer.position,
             rotation: (0.0, 0.0, 0.0),
             scale: (1.0, 1.0, 1.0),
         }
@@ -32,6 +41,12 @@ impl LittleTransformer {
     pub fn new() -> Self {
         Self {
             position: (0.0, 0.0, 0.0),
+        }
+    }
+    
+    pub fn from_cursor(cursor: &Cursor) -> Self {
+        Self {
+            position: cursor.transformer.position,
         }
     }
 
