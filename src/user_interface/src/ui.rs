@@ -3,9 +3,10 @@ use backend::cqrs::add_point::AddPoint;
 use backend::cqrs::add_torus::AddTorus;
 use backend::cqrs::cqrs::{Command, CQRS};
 use backend::cqrs::new_id::NewId;
-use backend::cqrs::point_details::PointDetails;
+use backend::cqrs::point_details::{LittleTransformerDTO, PointDetails};
 use backend::cqrs::select_objects::SelectObjects;
 use backend::cqrs::torus_details::{TorusDetails, TorusDTO, TransformerDTO};
+use backend::cqrs::transform_point::TransformPoint;
 use backend::cqrs::transform_torus::TransformTours;
 use backend::cqrs::update_torus::UpdateTorus;
 use crate::object::Object;
@@ -119,7 +120,7 @@ impl Ui {
                             *torus = cqrs.get(&TorusDetails { id: torus.id });
                         }
 
-                        let transformers_sliders = vec![
+                        let transformer_sliders = vec![
                             Slider::new(&mut torus.transformer.position.0, -5.0..=5.0).text("position X").ui(ui),
                             Slider::new(&mut torus.transformer.position.1, -5.0..=5.0).text("position Y").ui(ui),
                             Slider::new(&mut torus.transformer.position.2, -5.0..=5.0).text("position Z").ui(ui),
@@ -131,7 +132,7 @@ impl Ui {
                             Slider::new(&mut torus.transformer.rotation.2, -std::f64::consts::PI..=std::f64::consts::PI).text("rotation Z").ui(ui),
                         ];
 
-                        if transformers_sliders.iter().any(|f| f.changed()) {
+                        if transformer_sliders.iter().any(|f| f.changed()) {
                             cqrs.execute(&TransformTours {
                                 id: torus.id,
                                 transformer: TransformerDTO {
@@ -143,7 +144,23 @@ impl Ui {
                             *torus = cqrs.get(&TorusDetails { id: torus.id });
                         }
                     }
-                    _ => {},
+                    Point(point) => {
+                        let transformer_sliders = vec![
+                            Slider::new(&mut point.transformer.position.0, -5.0..=5.0).text("position X").ui(ui),
+                            Slider::new(&mut point.transformer.position.1, -5.0..=5.0).text("position Y").ui(ui),
+                            Slider::new(&mut point.transformer.position.2, -5.0..=5.0).text("position Z").ui(ui),
+                        ];
+
+                        if transformer_sliders.iter().any(|f| f.changed()) {
+                            cqrs.execute(&TransformPoint {
+                                id: point.id,
+                                transformer: LittleTransformerDTO {
+                                    position: point.transformer.position,
+                                },
+                            });
+                            *point = cqrs.get(&PointDetails { id: point.id });
+                        }
+                    },
                 }
             });
         });

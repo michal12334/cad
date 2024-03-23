@@ -7,3 +7,4 @@ pub mod transform_torus;
 pub mod select_objects;
 pub mod add_point;
 pub mod point_details;
+pub mod transform_point;
