@@ -1,5 +1,5 @@
 use crate::app_state::AppState;
-use crate::cqrs::cqrs::{Operation, Query};
+use crate::cqrs::cqrs::Operation;
 
 pub struct NewId;
 

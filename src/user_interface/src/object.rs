@@ -1,5 +1,5 @@
-use backend::cqrs::point_details::PointDTO;
-use backend::cqrs::torus_details::TorusDTO;
+use backend::cqrs::points::point_details::PointDTO;
+use backend::cqrs::toruses::torus_details::TorusDTO;
 
 pub enum Object {
     Torus(TorusDTO),

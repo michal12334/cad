@@ -1,5 +1,5 @@
 use crate::cqrs::cqrs::Command;
-use crate::cqrs::point_details::LittleTransformerDTO;
+use crate::cqrs::points::point_details::LittleTransformerDTO;
 
 pub struct TransformPoint {
     pub id: u64,

@@ -1,5 +1,5 @@
 use crate::cqrs::cqrs::Command;
-use crate::cqrs::torus_details::TransformerDTO;
+use crate::cqrs::toruses::torus_details::TransformerDTO;
 
 pub struct TransformTours {
     pub id: u64,

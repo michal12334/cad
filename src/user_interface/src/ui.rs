@@ -1,14 +1,14 @@
 use egui::{Frame, Label, Resize, ScrollArea, Slider, TopBottomPanel, Widget};
-use backend::cqrs::add_point::AddPoint;
-use backend::cqrs::add_torus::AddTorus;
+use backend::cqrs::toruses::add_torus::AddTorus;
 use backend::cqrs::cqrs::{Command, CQRS};
-use backend::cqrs::new_id::NewId;
-use backend::cqrs::point_details::{LittleTransformerDTO, PointDetails};
-use backend::cqrs::select_objects::SelectObjects;
-use backend::cqrs::torus_details::{TorusDetails, TorusDTO, TransformerDTO};
-use backend::cqrs::transform_point::TransformPoint;
-use backend::cqrs::transform_torus::TransformTours;
-use backend::cqrs::update_torus::UpdateTorus;
+use backend::cqrs::common::new_id::NewId;
+use backend::cqrs::points::point_details::{LittleTransformerDTO, PointDetails};
+use backend::cqrs::common::select_objects::SelectObjects;
+use backend::cqrs::points::add_point::AddPoint;
+use backend::cqrs::toruses::torus_details::{TorusDetails, TorusDTO, TransformerDTO};
+use backend::cqrs::points::transform_point::TransformPoint;
+use backend::cqrs::toruses::transform_torus::TransformTours;
+use backend::cqrs::toruses::update_torus::UpdateTorus;
 use crate::object::Object;
 use crate::object::Object::{Point, Torus};
 
