@@ -39,6 +39,7 @@ impl TorusDrawer {
         
         let mut drawing_parameters = DrawParameters::default();
         drawing_parameters.polygon_mode = glium::draw_parameters::PolygonMode::Line;
+        drawing_parameters.line_width = Some(1.0);
         drawing_parameters.depth = glium::Depth {
             test: glium::draw_parameters::DepthTest::IfLess,
             write: true,
