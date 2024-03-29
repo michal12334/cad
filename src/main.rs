@@ -14,6 +14,8 @@ use winit::{event, event_loop};
 use winit::event::MouseButton;
 use backend::app_state::AppState;
 use backend::cqrs::cqrs::CQRS;
+use backend::cqrs::cursors::transform_cursor::TransformCursor;
+use backend::cqrs::points::point_details::LittleTransformerDTO;
 use user_interface::ui::Ui;
 use backend::domain::*;
 use math::vector4::Vector4;
@@ -126,6 +128,15 @@ fn main() {
                     WindowEvent::MouseInput { state, button, .. } => {
                         if *button == MouseButton::Middle { 
                             mouse_middle_button_pressed = *state == event::ElementState::Pressed;
+                        } else if *button == MouseButton::Left && !ui.is_pointer_over_area() && *state == event::ElementState::Pressed { 
+                            let x = mouse_position.0 / width as f64 * 2.0 - 1.0;
+                            let y = 1.0 - mouse_position.1 / height as f64 * 2.0;
+                            let point = Vector4::new(x as f32, y as f32, -1.0, 1.0);
+                            let inversed_view_matrix = view_matrix.get_inversed();
+                            let inversed_perspective_matrix = math::matrix4::Matrix4::perspective(std::f32::consts::PI / 3.0, width as f32 / height as f32, 0.1, 1024.0).get_inversed();
+                            let point = (point * inversed_perspective_matrix * inversed_view_matrix).to_vector3();
+                            let mut cqrs = CQRS::new(&mut app_state);
+                            cqrs.execute(&TransformCursor { transformer: LittleTransformerDTO { position: (point.x as f64, point.y as f64, point.z as f64) } });
                         } 
                     }
                     WindowEvent::MouseWheel { delta, .. } => {
