@@ -4,7 +4,7 @@ use backend::cqrs::toruses::add_torus::AddTorus;
 use backend::cqrs::cqrs::{Command, CQRS};
 use backend::cqrs::common::new_id::NewId;
 use backend::cqrs::points::point_details::{LittleTransformerDTO, PointDetails};
-use backend::cqrs::common::select_objects::SelectObjects;
+use backend::cqrs::common::select_objects::{SelectionObjectDTO, SelectObjects};
 use backend::cqrs::cursors::cursor_details::CursorDTO;
 use backend::cqrs::cursors::transform_cursor::TransformCursor;
 use backend::cqrs::points::add_point::AddPoint;
@@ -92,6 +92,7 @@ impl Ui {
                 
                 for object in self.objects.iter_mut() {
                     let object_id = object.get_id();
+                    let object_type = object.get_type();
                     if ui.selectable_label(Some(object_id) == self.selected_object, object.get_name()).clicked() {
                         self.selected_object = match Some(object_id) == self.selected_object { 
                             true => {
@@ -99,7 +100,7 @@ impl Ui {
                                 None
                             }, 
                             false => {
-                                cqrs.execute(&SelectObjects { objects: vec![object_id] });
+                                cqrs.execute(&SelectObjects { objects: vec![ SelectionObjectDTO { id: object_id, object_type, } ] });
                                 self.cursor_selected = false;
                                 Some(object_id)
                             },
