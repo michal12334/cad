@@ -1,6 +1,6 @@
-use glium::{Blend, Display, IndexBuffer, Program, Surface, VertexBuffer};
-use glium::glutin::surface::WindowSurface;
 use backend::domain::vertex::Vertex;
+use glium::glutin::surface::WindowSurface;
+use glium::{Blend, Display, IndexBuffer, Program, Surface, VertexBuffer};
 
 pub struct InfiniteGridDrawer {
     program: Program,
@@ -91,29 +91,44 @@ impl InfiniteGridDrawer {
             }
         "#;
 
-        let program = Program::from_source(display, vertex_shader_src, fragment_shader_src, None).unwrap();
+        let program =
+            Program::from_source(display, vertex_shader_src, fragment_shader_src, None).unwrap();
 
         Self {
             program,
-            vertex_buffer: VertexBuffer
-                ::new(
-                    display,
-                    &[
-                        Vertex { position: [1.0, 1.0, 0.0] },
-                        Vertex { position: [1.0, -1.0, 0.0] },
-                        Vertex { position: [-1.0, -1.0, 0.0] },
-                        Vertex { position: [-1.0, 1.0, 0.0] },
-                    ])
-                .unwrap(),
+            vertex_buffer: VertexBuffer::new(
+                display,
+                &[
+                    Vertex {
+                        position: [1.0, 1.0, 0.0],
+                    },
+                    Vertex {
+                        position: [1.0, -1.0, 0.0],
+                    },
+                    Vertex {
+                        position: [-1.0, -1.0, 0.0],
+                    },
+                    Vertex {
+                        position: [-1.0, 1.0, 0.0],
+                    },
+                ],
+            )
+            .unwrap(),
             index_buffer: IndexBuffer::new(
                 display,
                 glium::index::PrimitiveType::TrianglesList,
                 &[0u16, 2, 3, 2, 0, 1],
-            ).unwrap(),
+            )
+            .unwrap(),
         }
     }
-    
-    pub fn draw(&self, target: &mut glium::Frame, perspective: &[[f32; 4]; 4], view: &[[f32; 4]; 4]) {
+
+    pub fn draw(
+        &self,
+        target: &mut glium::Frame,
+        perspective: &[[f32; 4]; 4],
+        view: &[[f32; 4]; 4],
+    ) {
         let draw_params = glium::DrawParameters {
             depth: glium::Depth {
                 test: glium::draw_parameters::DepthTest::IfLess,
@@ -124,15 +139,17 @@ impl InfiniteGridDrawer {
             ..Default::default()
         };
 
-        target.draw(
-            &self.vertex_buffer,
-            &self.index_buffer,
-            &self.program,
-            &uniform! {
-                perspective: *perspective,
-                view: *view,
-            },
-            &draw_params
-        ).unwrap();
+        target
+            .draw(
+                &self.vertex_buffer,
+                &self.index_buffer,
+                &self.program,
+                &uniform! {
+                    perspective: *perspective,
+                    view: *view,
+                },
+                &draw_params,
+            )
+            .unwrap();
     }
 }

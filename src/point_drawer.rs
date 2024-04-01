@@ -1,7 +1,7 @@
-use glium::{Display, DrawParameters, Frame, Program, Surface};
-use glium::glutin::surface::WindowSurface;
 use backend::domain::point::Point;
 use backend::domain::vertex::Vertex;
+use glium::glutin::surface::WindowSurface;
+use glium::{Display, DrawParameters, Frame, Program, Surface};
 
 pub struct PointDrawer {
     program: Program,
@@ -36,34 +36,49 @@ impl PointDrawer {
             }
         "#;
 
-        let program = Program::from_source(display, vertex_shader_src, fragment_shader_src, None).unwrap();
-        
+        let program =
+            Program::from_source(display, vertex_shader_src, fragment_shader_src, None).unwrap();
+
         let mut drawing_parameters = DrawParameters::default();
         drawing_parameters.point_size = Some(8f32);
         drawing_parameters.depth = glium::Depth {
             test: glium::draw_parameters::DepthTest::IfLess,
             write: true,
-            .. Default::default()
+            ..Default::default()
         };
-        
-        Self { program, drawing_parameters }
+
+        Self {
+            program,
+            drawing_parameters,
+        }
     }
-    
-    pub fn draw(&self, target: &mut Frame, display: &Display<WindowSurface>, point: &Point, perspective: &math::matrix4::Matrix4, view_matrix: &math::matrix4::Matrix4, color: [f32; 4]) {
+
+    pub fn draw(
+        &self,
+        target: &mut Frame,
+        display: &Display<WindowSurface>,
+        point: &Point,
+        perspective: &math::matrix4::Matrix4,
+        view_matrix: &math::matrix4::Matrix4,
+        color: [f32; 4],
+    ) {
         let vertex_buffer = glium::VertexBuffer::new(display, &[Vertex::new()]).unwrap();
-        let indices = glium::IndexBuffer::new(display, glium::index::PrimitiveType::Points, &[0u16]).unwrap();
+        let indices =
+            glium::IndexBuffer::new(display, glium::index::PrimitiveType::Points, &[0u16]).unwrap();
         let model_matrix = point.transformer.get_model_matrix();
-        target.draw(
-            &vertex_buffer,
-            &indices,
-            &self.program,
-            &uniform! {
-                perspective: perspective.data,
-                model_matrix: model_matrix.data,
-                view: view_matrix.data,
-                obj_color: color 
-            },
-            &self.drawing_parameters)
+        target
+            .draw(
+                &vertex_buffer,
+                &indices,
+                &self.program,
+                &uniform! {
+                    perspective: perspective.data,
+                    model_matrix: model_matrix.data,
+                    view: view_matrix.data,
+                    obj_color: color
+                },
+                &self.drawing_parameters,
+            )
             .unwrap();
     }
 }

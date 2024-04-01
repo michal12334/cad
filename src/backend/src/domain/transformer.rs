@@ -1,5 +1,5 @@
 use math::matrix4::Matrix4;
-use math::vector3::Vector3;
+
 use crate::domain::cursor::Cursor;
 
 pub struct Transformer {
@@ -16,7 +16,7 @@ impl Transformer {
             scale: (1.0, 1.0, 1.0),
         }
     }
-    
+
     pub fn from_cursor(cursor: &Cursor) -> Self {
         Self {
             position: cursor.transformer.position,
@@ -24,11 +24,23 @@ impl Transformer {
             scale: (1.0, 1.0, 1.0),
         }
     }
-    
+
     pub fn get_model_matrix(&self) -> Matrix4 {
-        let translation = Matrix4::translation(self.position.0 as f32, self.position.1 as f32, self.position.2 as f32);
-        let rotation = Matrix4::rotation(self.rotation.0 as f32, self.rotation.1 as f32, self.rotation.2 as f32);
-        let scale = Matrix4::scale(self.scale.0 as f32, self.scale.1 as f32, self.scale.2 as f32);
+        let translation = Matrix4::translation(
+            self.position.0 as f32,
+            self.position.1 as f32,
+            self.position.2 as f32,
+        );
+        let rotation = Matrix4::rotation(
+            self.rotation.0 as f32,
+            self.rotation.1 as f32,
+            self.rotation.2 as f32,
+        );
+        let scale = Matrix4::scale(
+            self.scale.0 as f32,
+            self.scale.1 as f32,
+            self.scale.2 as f32,
+        );
         translation * rotation * scale
     }
 }
@@ -43,7 +55,7 @@ impl LittleTransformer {
             position: (0.0, 0.0, 0.0),
         }
     }
-    
+
     pub fn from_cursor(cursor: &Cursor) -> Self {
         Self {
             position: cursor.transformer.position,
@@ -51,6 +63,10 @@ impl LittleTransformer {
     }
 
     pub fn get_model_matrix(&self) -> Matrix4 {
-        Matrix4::translation(self.position.0 as f32, self.position.1 as f32, self.position.2 as f32)
+        Matrix4::translation(
+            self.position.0 as f32,
+            self.position.1 as f32,
+            self.position.2 as f32,
+        )
     }
 }

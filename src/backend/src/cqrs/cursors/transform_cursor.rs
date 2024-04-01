@@ -8,6 +8,9 @@ pub struct TransformCursor {
 
 impl Command<TransformCursor> for TransformCursor {
     fn execute(command: &TransformCursor, app_state: &mut AppState) {
-        app_state.storage.cursor.transform(command.transformer.position);
+        app_state
+            .storage
+            .cursor
+            .transform(command.transformer.position);
     }
 }

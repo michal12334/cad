@@ -25,7 +25,7 @@ impl Query<PointDetails, PointDTO> for PointDetails {
             name: point.name.clone(),
             transformer: LittleTransformerDTO {
                 position: point.transformer.position,
-            }
+            },
         }
     }
 }

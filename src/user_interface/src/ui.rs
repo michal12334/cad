@@ -1,23 +1,24 @@
-use backend::cqrs::toruses::all_toruses::AllToruses;
-use backend::cqrs::cursors::cursor_details::CursorDetails;
-use egui::{Frame, Label, Resize, ScrollArea, Slider, TopBottomPanel, Widget};
-use egui::CursorIcon::Move;
+use egui::{Resize, ScrollArea, Slider, Widget};
 use itertools::Itertools;
-use backend::cqrs::toruses::add_torus::AddTorus;
-use backend::cqrs::cqrs::{Command, CQRS};
+
 use backend::cqrs::common::new_id::NewId;
-use backend::cqrs::points::point_details::{LittleTransformerDTO, PointDetails};
-use backend::cqrs::common::select_objects::{ObjectTypeDTO, SelectionObjectDTO, SelectObjects};
+use backend::cqrs::common::select_objects::{ObjectTypeDTO, SelectObjects, SelectionObjectDTO};
+use backend::cqrs::cqrs::CQRS;
 use backend::cqrs::cursors::cursor_details::CursorDTO;
+use backend::cqrs::cursors::cursor_details::CursorDetails;
 use backend::cqrs::cursors::transform_cursor::TransformCursor;
 use backend::cqrs::points::add_point::AddPoint;
 use backend::cqrs::points::all_points::AllPoints;
+use backend::cqrs::points::point_details::{LittleTransformerDTO, PointDetails};
 use backend::cqrs::points::rename_point::RenamePoint;
-use backend::cqrs::toruses::torus_details::{TorusDetails, TorusDTO, TransformerDTO};
 use backend::cqrs::points::transform_point::TransformPoint;
+use backend::cqrs::toruses::add_torus::AddTorus;
+use backend::cqrs::toruses::all_toruses::AllToruses;
 use backend::cqrs::toruses::rename_torus::RenameTorus;
+use backend::cqrs::toruses::torus_details::{TorusDetails, TransformerDTO};
 use backend::cqrs::toruses::transform_torus::TransformTours;
 use backend::cqrs::toruses::update_torus::UpdateTorus;
+
 use crate::object::Object;
 use crate::object::Object::{Point, Torus};
 use crate::object_id::ObjectId;
@@ -42,25 +43,30 @@ impl Ui {
             control_pressed: false,
         }
     }
-    
+
     pub fn is_pointer_over_area(&self) -> bool {
         self.pointer_is_over_area
     }
-    
+
     pub fn set_control_pressed(&mut self, control_pressed: bool) {
         self.control_pressed = control_pressed;
     }
-    
+
     pub fn fetch_objects(&mut self, cqrs: &mut CQRS) {
-        self.objects = cqrs.get(&AllToruses).iter()
+        self.objects = cqrs
+            .get(&AllToruses)
+            .iter()
             .map(|torus| Torus(torus.clone()))
-            .chain(cqrs.get(&AllPoints).iter()
-                .map(|point| Point(point.clone())))
+            .chain(
+                cqrs.get(&AllPoints)
+                    .iter()
+                    .map(|point| Point(point.clone())),
+            )
             .sorted_by_key(|object| object.get_id())
             .collect();
         self.selected_objects.clear();
     }
-    
+
     pub fn build<'a>(&'a mut self, cqrs: &'a mut CQRS<'a>) -> impl FnMut(&egui::Context) + '_ {
         self.cursor = Some(cqrs.get(&CursorDetails {}));
         move |egui_ctx| {
@@ -70,7 +76,7 @@ impl Ui {
                 } else {
                     self.pointer_is_over_area = false;
                 }
-                
+
                 ScrollArea::vertical().id_source("a3").show(ui, |ui| {
                     self.build_object_addition_panel(ui, cqrs);
                     self.build_object_selection_panel(ui, cqrs);
@@ -94,9 +100,7 @@ impl Ui {
         }
         if ui.button("Add Point").clicked() {
             let id = cqrs.handle(&NewId {});
-            cqrs.execute(&AddPoint {
-                id,
-            });
+            cqrs.execute(&AddPoint { id });
             self.objects.push(Point(cqrs.get(&PointDetails { id })));
         }
     }
@@ -105,54 +109,87 @@ impl Ui {
         Resize::default().id_source("resize_1").show(ui, |ui| {
             ScrollArea::vertical().id_source("a").show(ui, |ui| {
                 let cursor = self.cursor.as_ref().unwrap();
-                if ui.selectable_label(self.cursor_selected, &cursor.name).clicked() {
+                if ui
+                    .selectable_label(self.cursor_selected, &cursor.name)
+                    .clicked()
+                {
                     self.selected_objects.clear();
                     cqrs.execute(&SelectObjects { objects: vec![] });
                     self.cursor_selected = !self.cursor_selected;
                 }
-                
+
                 for object in self.objects.iter_mut() {
                     let object_id = object.get_id();
                     let object_type = object.get_type();
-                    let is_selected = self.selected_objects.iter().any(|so| so.get_id() == object_id);
-                    if ui.selectable_label(is_selected, object.get_name()).clicked() {
-                        match is_selected { 
+                    let is_selected = self
+                        .selected_objects
+                        .iter()
+                        .any(|so| so.get_id() == object_id);
+                    if ui
+                        .selectable_label(is_selected, object.get_name())
+                        .clicked()
+                    {
+                        match is_selected {
                             true => {
                                 if self.control_pressed {
                                     self.selected_objects.retain(|so| so.get_id() != object_id);
                                 } else {
                                     self.selected_objects.clear();
                                 }
-                                cqrs.execute(&SelectObjects { objects: self.selected_objects.iter().map(|so| SelectionObjectDTO { id: so.get_id(), object_type: so.get_type() }).collect() });
-                            }, 
+                                cqrs.execute(&SelectObjects {
+                                    objects: self
+                                        .selected_objects
+                                        .iter()
+                                        .map(|so| SelectionObjectDTO {
+                                            id: so.get_id(),
+                                            object_type: so.get_type(),
+                                        })
+                                        .collect(),
+                                });
+                            }
                             false => {
                                 self.cursor_selected = false;
                                 if !self.control_pressed {
                                     self.selected_objects.clear();
                                 }
-                                self.selected_objects.push(match object_type { 
+                                self.selected_objects.push(match object_type {
                                     ObjectTypeDTO::Torus => ObjectId::Torus(object_id),
                                     ObjectTypeDTO::Point => ObjectId::Point(object_id),
                                 });
-                                cqrs.execute(&SelectObjects { objects: self.selected_objects.iter().map(|so| SelectionObjectDTO { id: so.get_id(), object_type: so.get_type() }).collect() });
-                            },
+                                cqrs.execute(&SelectObjects {
+                                    objects: self
+                                        .selected_objects
+                                        .iter()
+                                        .map(|so| SelectionObjectDTO {
+                                            id: so.get_id(),
+                                            object_type: so.get_type(),
+                                        })
+                                        .collect(),
+                                });
+                            }
                         }
                     }
                 }
             });
         });
     }
-    
+
     fn build_selected_object_transformation_panel(&mut self, ui: &mut egui::Ui, cqrs: &mut CQRS) {
         Resize::default().id_source("resize_2").show(ui, |ui| {
             ScrollArea::vertical().id_source("a2").show(ui, |ui| {
                 if self.cursor_selected {
                     let cursor = self.cursor.as_mut().unwrap();
-                    
+
                     let transformer_sliders = vec![
-                        Slider::new(&mut cursor.transformer.position.0, -5.0..=5.0).text("position X").ui(ui),
-                        Slider::new(&mut cursor.transformer.position.1, -5.0..=5.0).text("position Y").ui(ui),
-                        Slider::new(&mut cursor.transformer.position.2, -5.0..=5.0).text("position Z").ui(ui),
+                        Slider::new(&mut cursor.transformer.position.0, -5.0..=5.0)
+                            .text("position X")
+                            .ui(ui),
+                        Slider::new(&mut cursor.transformer.position.1, -5.0..=5.0)
+                            .text("position Y")
+                            .ui(ui),
+                        Slider::new(&mut cursor.transformer.position.2, -5.0..=5.0)
+                            .text("position Z")
+                            .ui(ui),
                     ];
 
                     if transformer_sliders.iter().any(|f| f.changed()) {
@@ -162,15 +199,19 @@ impl Ui {
                             },
                         });
                     }
-                    
+
                     return;
                 }
-                
+
                 if self.selected_objects.len() != 1 {
                     return;
                 }
-                
-                let object = self.objects.iter_mut().find(|t| t.get_id() == self.selected_objects[0].get_id()).unwrap();
+
+                let object = self
+                    .objects
+                    .iter_mut()
+                    .find(|t| t.get_id() == self.selected_objects[0].get_id())
+                    .unwrap();
                 match object {
                     Torus(torus) => {
                         if ui.text_edit_singleline(&mut torus.name).lost_focus() {
@@ -180,12 +221,20 @@ impl Ui {
                             });
                             *torus = cqrs.get(&TorusDetails { id: torus.id });
                         }
-                        
+
                         let torus_sliders = vec![
-                            Slider::new(&mut torus.major_radius, 0.01..=5.0).text("major radius").ui(ui),
-                            Slider::new(&mut torus.minor_radius, 0.01..=5.0).text("minor radius").ui(ui),
-                            Slider::new(&mut torus.major_segments, 1..=1000).text("major segments").ui(ui),
-                            Slider::new(&mut torus.minor_segments, 1..=1000).text("minor segments").ui(ui),
+                            Slider::new(&mut torus.major_radius, 0.01..=5.0)
+                                .text("major radius")
+                                .ui(ui),
+                            Slider::new(&mut torus.minor_radius, 0.01..=5.0)
+                                .text("minor radius")
+                                .ui(ui),
+                            Slider::new(&mut torus.major_segments, 1..=1000)
+                                .text("major segments")
+                                .ui(ui),
+                            Slider::new(&mut torus.minor_segments, 1..=1000)
+                                .text("minor segments")
+                                .ui(ui),
                         ];
 
                         if torus_sliders.iter().any(|f| f.changed()) {
@@ -200,15 +249,42 @@ impl Ui {
                         }
 
                         let transformer_sliders = vec![
-                            Slider::new(&mut torus.transformer.position.0, -5.0..=5.0).text("position X").ui(ui),
-                            Slider::new(&mut torus.transformer.position.1, -5.0..=5.0).text("position Y").ui(ui),
-                            Slider::new(&mut torus.transformer.position.2, -5.0..=5.0).text("position Z").ui(ui),
-                            Slider::new(&mut torus.transformer.scale.0, 0.1..=5.0).text("scale X").ui(ui),
-                            Slider::new(&mut torus.transformer.scale.1, 0.1..=5.0).text("scale Y").ui(ui),
-                            Slider::new(&mut torus.transformer.scale.2, 0.1..=5.0).text("scale Z").ui(ui),
-                            Slider::new(&mut torus.transformer.rotation.0, -std::f64::consts::PI..=std::f64::consts::PI).text("rotation X").ui(ui),
-                            Slider::new(&mut torus.transformer.rotation.1, -std::f64::consts::PI..=std::f64::consts::PI).text("rotation Y").ui(ui),
-                            Slider::new(&mut torus.transformer.rotation.2, -std::f64::consts::PI..=std::f64::consts::PI).text("rotation Z").ui(ui),
+                            Slider::new(&mut torus.transformer.position.0, -5.0..=5.0)
+                                .text("position X")
+                                .ui(ui),
+                            Slider::new(&mut torus.transformer.position.1, -5.0..=5.0)
+                                .text("position Y")
+                                .ui(ui),
+                            Slider::new(&mut torus.transformer.position.2, -5.0..=5.0)
+                                .text("position Z")
+                                .ui(ui),
+                            Slider::new(&mut torus.transformer.scale.0, 0.1..=5.0)
+                                .text("scale X")
+                                .ui(ui),
+                            Slider::new(&mut torus.transformer.scale.1, 0.1..=5.0)
+                                .text("scale Y")
+                                .ui(ui),
+                            Slider::new(&mut torus.transformer.scale.2, 0.1..=5.0)
+                                .text("scale Z")
+                                .ui(ui),
+                            Slider::new(
+                                &mut torus.transformer.rotation.0,
+                                -std::f64::consts::PI..=std::f64::consts::PI,
+                            )
+                            .text("rotation X")
+                            .ui(ui),
+                            Slider::new(
+                                &mut torus.transformer.rotation.1,
+                                -std::f64::consts::PI..=std::f64::consts::PI,
+                            )
+                            .text("rotation Y")
+                            .ui(ui),
+                            Slider::new(
+                                &mut torus.transformer.rotation.2,
+                                -std::f64::consts::PI..=std::f64::consts::PI,
+                            )
+                            .text("rotation Z")
+                            .ui(ui),
                         ];
 
                         if transformer_sliders.iter().any(|f| f.changed()) {
@@ -231,11 +307,17 @@ impl Ui {
                             });
                             *point = cqrs.get(&PointDetails { id: point.id });
                         }
-                        
+
                         let transformer_sliders = vec![
-                            Slider::new(&mut point.transformer.position.0, -5.0..=5.0).text("position X").ui(ui),
-                            Slider::new(&mut point.transformer.position.1, -5.0..=5.0).text("position Y").ui(ui),
-                            Slider::new(&mut point.transformer.position.2, -5.0..=5.0).text("position Z").ui(ui),
+                            Slider::new(&mut point.transformer.position.0, -5.0..=5.0)
+                                .text("position X")
+                                .ui(ui),
+                            Slider::new(&mut point.transformer.position.1, -5.0..=5.0)
+                                .text("position Y")
+                                .ui(ui),
+                            Slider::new(&mut point.transformer.position.2, -5.0..=5.0)
+                                .text("position Z")
+                                .ui(ui),
                         ];
 
                         if transformer_sliders.iter().any(|f| f.changed()) {
@@ -247,7 +329,7 @@ impl Ui {
                             });
                             *point = cqrs.get(&PointDetails { id: point.id });
                         }
-                    },
+                    }
                 }
             });
         });

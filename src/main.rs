@@ -1,68 +1,68 @@
-mod infinite_grid_drawer;
-mod torus_drawer;
-mod point_drawer;
-mod cursor_drawer;
-
 #[macro_use]
 extern crate glium;
+extern crate user_interface;
 
-use std::ops::DerefMut;
 use egui::Color32;
-use glium::{DrawParameters, Surface};
-use glium::vertex::MultiVerticesSource;
-use winit::{event, event_loop};
+use glium::Surface;
 use winit::event::ElementState::Pressed;
 use winit::event::MouseButton;
+use winit::{event, event_loop};
+
 use backend::app_state::AppState;
 use backend::cqrs::common::selected_objects_center::SelectedObjectsCenter;
 use backend::cqrs::cqrs::CQRS;
 use backend::cqrs::cursors::transform_cursor::TransformCursor;
 use backend::cqrs::points::point_details::LittleTransformerDTO;
-use user_interface::ui::Ui;
-use backend::domain::*;
 use backend::domain::point::Point;
 use backend::domain::transformer::LittleTransformer;
 use math::vector4::Vector4;
+use user_interface::ui::Ui;
+
 use crate::infinite_grid_drawer::InfiniteGridDrawer;
 use crate::point_drawer::PointDrawer;
 use crate::torus_drawer::TorusDrawer;
 
-extern crate user_interface;
+mod cursor_drawer;
+mod infinite_grid_drawer;
+mod point_drawer;
+mod torus_drawer;
 
 fn main() {
     let mut width = 800;
     let mut height = 600;
-    
-    let event_loop = winit::event_loop::EventLoopBuilder::new()
-        .build();
+
+    let event_loop = winit::event_loop::EventLoopBuilder::new().build();
     let (window, display) = glium::backend::glutin::SimpleWindowBuilder::new()
         .with_title("CAD")
         .with_inner_size(width, height)
         .build(&event_loop);
-    
+
     let mut egui_glium = egui_glium::EguiGlium::new(&display, &window, &event_loop);
-    
+
     let mut app_state = AppState::new();
-    
+
     let torus_drawer = TorusDrawer::new(&display);
     let point_drawer = PointDrawer::new(&display);
     let cursor_drawer = cursor_drawer::CursorDrawer::new(&display);
     let infinite_grid_drawer = InfiniteGridDrawer::new(&display);
-    
+
     let mut ui = Ui::new();
-    
+
     let mut mouse_position = (0.0, 0.0);
     let mut camera_direction = math::vector3::Vector3::new(0.0f32, 0.0, 1.0);
     let mut camera_angle = math::vector3::Vector3::new(0.0f32, 0.0, 0.0);
     let mut camera_up = math::vector3::Vector3::new(0.0f32, 1.0, 0.0);
     let mut camera_distant = 4.0f32;
-    let mut view_matrix = math::matrix4::Matrix4::view(camera_direction * camera_distant * (-1.0), camera_direction, camera_up);
+    let mut view_matrix = math::matrix4::Matrix4::view(
+        camera_direction * camera_distant * (-1.0),
+        camera_direction,
+        camera_up,
+    );
     let mut mouse_middle_button_pressed = false;
-    let mut control_pressed = false;
-    
+
     let color = Color32::WHITE.to_normalized_gamma_f32();
     let selected_color = Color32::YELLOW.to_normalized_gamma_f32();
-    
+
     event_loop.run(move |event, _window_target, control_flow| {
         let mut redraw = || {
             let mut cqrs = CQRS::new(&mut app_state);
@@ -140,8 +140,8 @@ fn main() {
                     }
                     WindowEvent::MouseInput { state, button, .. } => {
                         if *button == MouseButton::Middle { 
-                            mouse_middle_button_pressed = *state == event::ElementState::Pressed;
-                        } else if *button == MouseButton::Left && !ui.is_pointer_over_area() && *state == event::ElementState::Pressed { 
+                            mouse_middle_button_pressed = *state == Pressed;
+                        } else if *button == MouseButton::Left && !ui.is_pointer_over_area() && *state == Pressed { 
                             let x = mouse_position.0 / width as f64 * 2.0 - 1.0;
                             let y = 1.0 - mouse_position.1 / height as f64 * 2.0;
                             let point = Vector4::new(x as f32, y as f32, -1.0, 1.0);
@@ -165,8 +165,7 @@ fn main() {
                     }
                     WindowEvent::KeyboardInput { input, .. } => {
                         if input.virtual_keycode == Some(event::VirtualKeyCode::LControl) {
-                            control_pressed = input.state == Pressed;
-                            ui.set_control_pressed(control_pressed);
+                            ui.set_control_pressed(input.state == Pressed);
                         } else if input.virtual_keycode == Some(event::VirtualKeyCode::Delete) && input.state == Pressed { 
                             let mut cqrs = CQRS::new(&mut app_state);
                             cqrs.execute(&backend::cqrs::common::delete_selected_objects::DeleteSelectedObjects);

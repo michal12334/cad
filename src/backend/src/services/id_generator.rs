@@ -4,9 +4,7 @@ pub struct IdGenerator {
 
 impl IdGenerator {
     pub fn new() -> Self {
-        Self {
-            next_id: 1,
-        }
+        Self { next_id: 1 }
     }
 
     pub fn next(&mut self) -> u64 {

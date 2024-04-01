@@ -5,7 +5,10 @@ pub struct AllToruses;
 
 impl Query<AllToruses, Vec<TorusDTO>> for AllToruses {
     fn get(_query: &AllToruses, app_state: &crate::app_state::AppState) -> Vec<TorusDTO> {
-        app_state.storage.toruses.values()
+        app_state
+            .storage
+            .toruses
+            .values()
             .map(|torus| TorusDTO {
                 id: torus.id,
                 name: torus.name.clone(),

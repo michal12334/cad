@@ -1,2 +1,2 @@
-pub mod services;
 pub mod id_generator;
+pub mod services;

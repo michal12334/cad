@@ -19,7 +19,8 @@ impl Command<AddTorus> for AddTorus {
             command.minor_radius,
             command.major_segments,
             command.minor_segments,
-            Transformer::from_cursor(&app_state.storage.cursor));
+            Transformer::from_cursor(&app_state.storage.cursor),
+        );
         app_state.storage.toruses.insert(command.id, torus);
     }
 }

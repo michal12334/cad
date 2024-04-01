@@ -7,14 +7,14 @@ pub enum ObjectId {
 
 impl ObjectId {
     pub fn get_id(&self) -> u64 {
-        match self { 
+        match self {
             ObjectId::Torus(id) => *id,
             ObjectId::Point(id) => *id,
         }
     }
-    
+
     pub fn get_type(&self) -> ObjectTypeDTO {
-        match self { 
+        match self {
             ObjectId::Torus(_) => ObjectTypeDTO::Torus,
             ObjectId::Point(_) => ObjectTypeDTO::Point,
         }

@@ -20,9 +20,10 @@ pub enum ObjectTypeDTO {
 
 impl Command<SelectObjects> for SelectObjects {
     fn execute(command: &SelectObjects, app_state: &mut AppState) {
-        app_state.storage.selected_objects = command.objects
+        app_state.storage.selected_objects = command
+            .objects
             .iter()
-            .map(|&obj| match obj.object_type { 
+            .map(|&obj| match obj.object_type {
                 ObjectTypeDTO::Torus => SelectedObject::new_torus(obj.id),
                 ObjectTypeDTO::Point => SelectedObject::new_point(obj.id),
             })
