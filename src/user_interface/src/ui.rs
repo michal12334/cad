@@ -4,7 +4,7 @@ use backend::cqrs::toruses::add_torus::AddTorus;
 use backend::cqrs::cqrs::{Command, CQRS};
 use backend::cqrs::common::new_id::NewId;
 use backend::cqrs::points::point_details::{LittleTransformerDTO, PointDetails};
-use backend::cqrs::common::select_objects::{SelectionObjectDTO, SelectObjects};
+use backend::cqrs::common::select_objects::{ObjectTypeDTO, SelectionObjectDTO, SelectObjects};
 use backend::cqrs::cursors::cursor_details::CursorDTO;
 use backend::cqrs::cursors::transform_cursor::TransformCursor;
 use backend::cqrs::points::add_point::AddPoint;
@@ -16,10 +16,11 @@ use backend::cqrs::toruses::transform_torus::TransformTours;
 use backend::cqrs::toruses::update_torus::UpdateTorus;
 use crate::object::Object;
 use crate::object::Object::{Point, Torus};
+use crate::object_id::ObjectId;
 
 pub struct Ui {
     objects: Vec<Object>,
-    selected_object: Option<u64>,
+    selected_objects: Vec<ObjectId>,
     cursor: Option<CursorDTO>,
     cursor_selected: bool,
     pointer_is_over_area: bool,
@@ -29,7 +30,7 @@ impl Ui {
     pub fn new() -> Self {
         Self {
             objects: vec![],
-            selected_object: None,
+            selected_objects: Vec::new(),
             cursor: None,
             cursor_selected: false,
             pointer_is_over_area: false
@@ -85,7 +86,7 @@ impl Ui {
             ScrollArea::vertical().id_source("a").show(ui, |ui| {
                 let cursor = self.cursor.as_ref().unwrap();
                 if ui.selectable_label(self.cursor_selected, &cursor.name).clicked() {
-                    self.selected_object = None;
+                    self.selected_objects.clear();
                     cqrs.execute(&SelectObjects { objects: vec![] });
                     self.cursor_selected = !self.cursor_selected;
                 }
@@ -93,16 +94,22 @@ impl Ui {
                 for object in self.objects.iter_mut() {
                     let object_id = object.get_id();
                     let object_type = object.get_type();
-                    if ui.selectable_label(Some(object_id) == self.selected_object, object.get_name()).clicked() {
-                        self.selected_object = match Some(object_id) == self.selected_object { 
+                    let is_selected = self.selected_objects.iter().any(|so| so.get_id() == object_id);
+                    if ui.selectable_label(is_selected, object.get_name()).clicked() {
+                        match is_selected { 
                             true => {
                                 cqrs.execute(&SelectObjects { objects: vec![] });
-                                None
+                                // self.selected_objects.retain(|so| so.get_id() != object_id);
+                                self.selected_objects.clear();
                             }, 
                             false => {
                                 cqrs.execute(&SelectObjects { objects: vec![ SelectionObjectDTO { id: object_id, object_type, } ] });
                                 self.cursor_selected = false;
-                                Some(object_id)
+                                self.selected_objects.clear();
+                                self.selected_objects.push(match object_type { 
+                                    ObjectTypeDTO::Torus => ObjectId::Torus(object_id),
+                                    ObjectTypeDTO::Point => ObjectId::Point(object_id),
+                                });
                             },
                         }
                     }
@@ -134,10 +141,11 @@ impl Ui {
                     return;
                 }
                 
-                let object = match self.selected_object {
-                    Some(id) => self.objects.iter_mut().find(|t| t.get_id() == id).unwrap(),
-                    None => return,
-                };
+                if self.selected_objects.len() != 1 {
+                    return;
+                }
+                
+                let object = self.objects.iter_mut().find(|t| t.get_id() == self.selected_objects[0].get_id()).unwrap();
                 match object {
                     Torus(torus) => {
                         if ui.text_edit_singleline(&mut torus.name).lost_focus() {
