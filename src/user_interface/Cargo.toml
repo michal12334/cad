@@ -9,3 +9,4 @@ edition = "2021"
 egui = "0.23.0"
 
 backend = { path = "../backend" }
+itertools = "0.12.1"

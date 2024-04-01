@@ -11,6 +11,7 @@ use egui::Color32;
 use glium::{DrawParameters, Surface};
 use glium::vertex::MultiVerticesSource;
 use winit::{event, event_loop};
+use winit::event::ElementState::Pressed;
 use winit::event::MouseButton;
 use backend::app_state::AppState;
 use backend::cqrs::common::selected_objects_center::SelectedObjectsCenter;
@@ -164,8 +165,12 @@ fn main() {
                     }
                     WindowEvent::KeyboardInput { input, .. } => {
                         if input.virtual_keycode == Some(event::VirtualKeyCode::LControl) {
-                            control_pressed = input.state == event::ElementState::Pressed;
+                            control_pressed = input.state == Pressed;
                             ui.set_control_pressed(control_pressed);
+                        } else if input.virtual_keycode == Some(event::VirtualKeyCode::Delete) && input.state == Pressed { 
+                            let mut cqrs = CQRS::new(&mut app_state);
+                            cqrs.execute(&backend::cqrs::common::delete_selected_objects::DeleteSelectedObjects);
+                            ui.fetch_objects(&mut cqrs);
                         }
                     }
                     _ => {}

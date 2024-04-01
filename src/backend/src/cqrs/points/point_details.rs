@@ -5,12 +5,14 @@ pub struct PointDetails {
     pub id: u64,
 }
 
+#[derive(Clone)]
 pub struct PointDTO {
     pub id: u64,
     pub name: String,
     pub transformer: LittleTransformerDTO,
 }
 
+#[derive(Clone)]
 pub struct LittleTransformerDTO {
     pub position: (f64, f64, f64),
 }

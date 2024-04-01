@@ -5,6 +5,7 @@ pub struct TorusDetails {
     pub id: u64,
 }
 
+#[derive(Clone)]
 pub struct TorusDTO {
     pub id: u64,
     pub name: String,
@@ -15,6 +16,7 @@ pub struct TorusDTO {
     pub transformer: TransformerDTO,
 }
 
+#[derive(Clone)]
 pub struct TransformerDTO {
     pub position: (f64, f64, f64),
     pub rotation: (f64, f64, f64),

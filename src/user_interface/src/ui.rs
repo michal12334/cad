@@ -1,5 +1,8 @@
+use backend::cqrs::toruses::all_toruses::AllToruses;
 use backend::cqrs::cursors::cursor_details::CursorDetails;
 use egui::{Frame, Label, Resize, ScrollArea, Slider, TopBottomPanel, Widget};
+use egui::CursorIcon::Move;
+use itertools::Itertools;
 use backend::cqrs::toruses::add_torus::AddTorus;
 use backend::cqrs::cqrs::{Command, CQRS};
 use backend::cqrs::common::new_id::NewId;
@@ -8,6 +11,7 @@ use backend::cqrs::common::select_objects::{ObjectTypeDTO, SelectionObjectDTO, S
 use backend::cqrs::cursors::cursor_details::CursorDTO;
 use backend::cqrs::cursors::transform_cursor::TransformCursor;
 use backend::cqrs::points::add_point::AddPoint;
+use backend::cqrs::points::all_points::AllPoints;
 use backend::cqrs::points::rename_point::RenamePoint;
 use backend::cqrs::toruses::torus_details::{TorusDetails, TorusDTO, TransformerDTO};
 use backend::cqrs::points::transform_point::TransformPoint;
@@ -45,6 +49,16 @@ impl Ui {
     
     pub fn set_control_pressed(&mut self, control_pressed: bool) {
         self.control_pressed = control_pressed;
+    }
+    
+    pub fn fetch_objects(&mut self, cqrs: &mut CQRS) {
+        self.objects = cqrs.get(&AllToruses).iter()
+            .map(|torus| Torus(torus.clone()))
+            .chain(cqrs.get(&AllPoints).iter()
+                .map(|point| Point(point.clone())))
+            .sorted_by_key(|object| object.get_id())
+            .collect();
+        self.selected_objects.clear();
     }
     
     pub fn build<'a>(&'a mut self, cqrs: &'a mut CQRS<'a>) -> impl FnMut(&egui::Context) + '_ {
