@@ -86,6 +86,7 @@ impl Ui {
                 let cursor = self.cursor.as_ref().unwrap();
                 if ui.selectable_label(self.cursor_selected, &cursor.name).clicked() {
                     self.selected_object = None;
+                    cqrs.execute(&SelectObjects { objects: vec![] });
                     self.cursor_selected = !self.cursor_selected;
                 }
                 
