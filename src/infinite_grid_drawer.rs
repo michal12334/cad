@@ -1,6 +1,7 @@
-use backend::domain::vertex::Vertex;
-use glium::glutin::surface::WindowSurface;
 use glium::{Blend, Display, IndexBuffer, Program, Surface, VertexBuffer};
+use glium::glutin::surface::WindowSurface;
+
+use backend::domain::vertex::Vertex;
 
 pub struct InfiniteGridDrawer {
     program: Program,

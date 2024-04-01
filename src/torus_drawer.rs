@@ -1,6 +1,7 @@
-use backend::domain::torus::Torus;
-use glium::glutin::surface::WindowSurface;
 use glium::{Display, DrawParameters, Frame, Program, Surface};
+use glium::glutin::surface::WindowSurface;
+
+use backend::domain::torus::Torus;
 
 pub struct TorusDrawer {
     program: Program,

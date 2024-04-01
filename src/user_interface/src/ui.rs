@@ -2,10 +2,10 @@ use egui::{Resize, ScrollArea, Slider, Widget};
 use itertools::Itertools;
 
 use backend::cqrs::common::new_id::NewId;
-use backend::cqrs::common::select_objects::{ObjectTypeDTO, SelectObjects, SelectionObjectDTO};
+use backend::cqrs::common::select_objects::{ObjectTypeDTO, SelectionObjectDTO, SelectObjects};
 use backend::cqrs::cqrs::CQRS;
-use backend::cqrs::cursors::cursor_details::CursorDTO;
 use backend::cqrs::cursors::cursor_details::CursorDetails;
+use backend::cqrs::cursors::cursor_details::CursorDTO;
 use backend::cqrs::cursors::transform_cursor::TransformCursor;
 use backend::cqrs::points::add_point::AddPoint;
 use backend::cqrs::points::all_points::AllPoints;

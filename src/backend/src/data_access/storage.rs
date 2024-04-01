@@ -1,8 +1,9 @@
+use std::collections::HashMap;
+
 use crate::domain::cursor::Cursor;
 use crate::domain::point::Point;
 use crate::domain::selected_object::SelectedObject;
 use crate::domain::torus::Torus;
-use std::collections::HashMap;
 
 pub struct Storage {
     pub toruses: HashMap<u64, Torus>,

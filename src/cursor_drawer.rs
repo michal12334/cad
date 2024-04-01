@@ -1,6 +1,7 @@
-use backend::domain::cursor::Cursor;
-use glium::glutin::surface::WindowSurface;
 use glium::{Display, DrawParameters, Frame, Program, Surface};
+use glium::glutin::surface::WindowSurface;
+
+use backend::domain::cursor::Cursor;
 
 pub struct CursorDrawer {
     program: Program,

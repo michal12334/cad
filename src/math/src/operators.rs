@@ -1,7 +1,8 @@
+use std::ops::{Add, Mul};
+
 use crate::matrix4::Matrix4;
 use crate::vector3::Vector3;
 use crate::vector4::Vector4;
-use std::ops::{Add, Mul};
 
 impl Add for Vector3 {
     type Output = Self;

@@ -4,9 +4,9 @@ extern crate user_interface;
 
 use egui::Color32;
 use glium::Surface;
+use winit::{event, event_loop};
 use winit::event::ElementState::Pressed;
 use winit::event::MouseButton;
-use winit::{event, event_loop};
 
 use backend::app_state::AppState;
 use backend::cqrs::common::selected_objects_center::SelectedObjectsCenter;
