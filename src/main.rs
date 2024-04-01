@@ -54,6 +54,7 @@ fn main() {
     let mut camera_distant = 4.0f32;
     let mut view_matrix = math::matrix4::Matrix4::view(camera_direction * camera_distant * (-1.0), camera_direction, camera_up);
     let mut mouse_middle_button_pressed = false;
+    let mut control_pressed = false;
     
     let color = Color32::WHITE.to_normalized_gamma_f32();
     let selected_color = Color32::YELLOW.to_normalized_gamma_f32();
@@ -148,6 +149,12 @@ fn main() {
                                 }
                                 _ => {}
                             }
+                        }
+                    }
+                    WindowEvent::KeyboardInput { input, .. } => {
+                        if input.virtual_keycode == Some(event::VirtualKeyCode::LControl) {
+                            control_pressed = input.state == event::ElementState::Pressed;
+                            ui.set_control_pressed(control_pressed);
                         }
                     }
                     _ => {}

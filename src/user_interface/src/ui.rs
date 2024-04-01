@@ -24,6 +24,7 @@ pub struct Ui {
     cursor: Option<CursorDTO>,
     cursor_selected: bool,
     pointer_is_over_area: bool,
+    control_pressed: bool,
 }
 
 impl Ui {
@@ -33,12 +34,17 @@ impl Ui {
             selected_objects: Vec::new(),
             cursor: None,
             cursor_selected: false,
-            pointer_is_over_area: false
+            pointer_is_over_area: false,
+            control_pressed: false,
         }
     }
     
     pub fn is_pointer_over_area(&self) -> bool {
         self.pointer_is_over_area
+    }
+    
+    pub fn set_control_pressed(&mut self, control_pressed: bool) {
+        self.control_pressed = control_pressed;
     }
     
     pub fn build<'a>(&'a mut self, cqrs: &'a mut CQRS<'a>) -> impl FnMut(&egui::Context) + '_ {
@@ -98,18 +104,23 @@ impl Ui {
                     if ui.selectable_label(is_selected, object.get_name()).clicked() {
                         match is_selected { 
                             true => {
-                                cqrs.execute(&SelectObjects { objects: vec![] });
-                                // self.selected_objects.retain(|so| so.get_id() != object_id);
-                                self.selected_objects.clear();
+                                if self.control_pressed {
+                                    self.selected_objects.retain(|so| so.get_id() != object_id);
+                                } else {
+                                    self.selected_objects.clear();
+                                }
+                                cqrs.execute(&SelectObjects { objects: self.selected_objects.iter().map(|so| SelectionObjectDTO { id: so.get_id(), object_type: so.get_type() }).collect() });
                             }, 
                             false => {
-                                cqrs.execute(&SelectObjects { objects: vec![ SelectionObjectDTO { id: object_id, object_type, } ] });
                                 self.cursor_selected = false;
-                                self.selected_objects.clear();
+                                if !self.control_pressed {
+                                    self.selected_objects.clear();
+                                }
                                 self.selected_objects.push(match object_type { 
                                     ObjectTypeDTO::Torus => ObjectId::Torus(object_id),
                                     ObjectTypeDTO::Point => ObjectId::Point(object_id),
                                 });
+                                cqrs.execute(&SelectObjects { objects: self.selected_objects.iter().map(|so| SelectionObjectDTO { id: so.get_id(), object_type: so.get_type() }).collect() });
                             },
                         }
                     }
