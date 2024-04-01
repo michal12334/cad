@@ -13,11 +13,14 @@ use glium::vertex::MultiVerticesSource;
 use winit::{event, event_loop};
 use winit::event::MouseButton;
 use backend::app_state::AppState;
+use backend::cqrs::common::selected_objects_center::SelectedObjectsCenter;
 use backend::cqrs::cqrs::CQRS;
 use backend::cqrs::cursors::transform_cursor::TransformCursor;
 use backend::cqrs::points::point_details::LittleTransformerDTO;
 use user_interface::ui::Ui;
 use backend::domain::*;
+use backend::domain::point::Point;
+use backend::domain::transformer::LittleTransformer;
 use math::vector4::Vector4;
 use crate::infinite_grid_drawer::InfiniteGridDrawer;
 use crate::point_drawer::PointDrawer;
@@ -90,6 +93,14 @@ fn main() {
                 for point in app_state.storage.points.iter() {
                     let color = if app_state.storage.selected_objects.iter().any(|so| so.point_id == Some(*point.0)) { selected_color } else { color };
                     point_drawer.draw(&mut target, &display, &point.1, &perspective, &view_matrix, color);
+                }
+                
+                let cqrs = CQRS::new(&mut app_state);
+                let center_point = cqrs.get(&SelectedObjectsCenter);
+                if let Some(center_point) = center_point {
+                    let mut transformer = LittleTransformer::new();
+                    transformer.position = center_point.position;
+                    point_drawer.draw(&mut target, &display, &Point::new(0, transformer), &perspective, &view_matrix, Color32::BROWN.to_normalized_gamma_f32());
                 }
                 
                 cursor_drawer.draw(&mut target, &display, &app_state.storage.cursor, &perspective, &view_matrix);
