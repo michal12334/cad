@@ -1,4 +1,5 @@
 use crate::vector3::Vector3;
+use crate::vector4::Vector4;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Matrix4 {
@@ -87,6 +88,34 @@ impl Matrix4 {
         let y = Self::rotation_y(y);
         let z = Self::rotation_z(z);
         x * y * z
+    }
+    
+    pub fn rotation_quaternion(quaternion: Vector4) -> Self {
+        let quaternion = quaternion.get_normalized();
+        let x = quaternion.x;
+        let y = quaternion.y;
+        let z = quaternion.z;
+        let w = quaternion.w;
+        let x2 = x + x;
+        let y2 = y + y;
+        let z2 = z + z;
+        let xx = x * x2;
+        let xy = x * y2;
+        let xz = x * z2;
+        let yy = y * y2;
+        let yz = y * z2;
+        let zz = z * z2;
+        let wx = w * x2;
+        let wy = w * y2;
+        let wz = w * z2;
+        Self {
+            data: [
+                [1.0 - (yy + zz), xy + wz, xz - wy, 0.0],
+                [xy - wz, 1.0 - (xx + zz), yz + wx, 0.0],
+                [xz + wy, yz - wx, 1.0 - (xx + yy), 0.0],
+                [0.0, 0.0, 0.0, 1.0],
+            ],
+        }
     }
 
     pub fn get_transposed(&self) -> Self {
