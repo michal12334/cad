@@ -19,7 +19,7 @@ pub struct TorusDTO {
 #[derive(Clone)]
 pub struct TransformerDTO {
     pub position: (f64, f64, f64),
-    pub rotation: (f64, f64, f64),
+    pub rotation: (f64, f64, f64, f64),
     pub scale: (f64, f64, f64),
 }
 

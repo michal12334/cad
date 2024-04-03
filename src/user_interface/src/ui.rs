@@ -269,21 +269,27 @@ impl Ui {
                                 .ui(ui),
                             Slider::new(
                                 &mut torus.transformer.rotation.0,
-                                -std::f64::consts::PI..=std::f64::consts::PI,
+                                -1.0..=1.0,
                             )
                             .text("rotation X")
                             .ui(ui),
                             Slider::new(
                                 &mut torus.transformer.rotation.1,
-                                -std::f64::consts::PI..=std::f64::consts::PI,
+                                -1.0..=1.0,
                             )
                             .text("rotation Y")
                             .ui(ui),
                             Slider::new(
                                 &mut torus.transformer.rotation.2,
-                                -std::f64::consts::PI..=std::f64::consts::PI,
+                                -1.0..=1.0,
                             )
                             .text("rotation Z")
+                            .ui(ui),
+                            Slider::new(
+                                &mut torus.transformer.rotation.3,
+                                -1.0..=1.0,
+                            )
+                            .text("rotation W")
                             .ui(ui),
                         ];
 

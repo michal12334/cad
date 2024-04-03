@@ -54,7 +54,7 @@ impl Torus {
     pub fn transform(
         &mut self,
         position: (f64, f64, f64),
-        rotation: (f64, f64, f64),
+        rotation: (f64, f64, f64, f64),
         scale: (f64, f64, f64),
     ) {
         self.transformer.position = position;
