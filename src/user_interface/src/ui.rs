@@ -3,6 +3,7 @@ use itertools::Itertools;
 
 use backend::cqrs::common::new_id::NewId;
 use backend::cqrs::common::select_objects::{ObjectTypeDTO, SelectionObjectDTO, SelectObjects};
+use backend::cqrs::common::transform_selected_objects::TransformSelectedObjects;
 use backend::cqrs::cqrs::CQRS;
 use backend::cqrs::cursors::cursor_details::CursorDetails;
 use backend::cqrs::cursors::cursor_details::CursorDTO;
@@ -30,6 +31,8 @@ pub struct Ui {
     cursor_selected: bool,
     pointer_is_over_area: bool,
     control_pressed: bool,
+    group_transformation: Option<TransformerDTO>,
+    previous_group_transformation: Option<TransformerDTO>,
 }
 
 impl Ui {
@@ -41,6 +44,8 @@ impl Ui {
             cursor_selected: false,
             pointer_is_over_area: false,
             control_pressed: false,
+            group_transformation: None,
+            previous_group_transformation: None,
         }
     }
 
@@ -133,6 +138,8 @@ impl Ui {
                             true => {
                                 if self.control_pressed {
                                     self.selected_objects.retain(|so| so.get_id() != object_id);
+                                    self.group_transformation = None;
+                                    self.previous_group_transformation = None;
                                 } else {
                                     self.selected_objects.clear();
                                 }
@@ -151,6 +158,9 @@ impl Ui {
                                 self.cursor_selected = false;
                                 if !self.control_pressed {
                                     self.selected_objects.clear();
+                                } else {
+                                    self.group_transformation = None;
+                                    self.previous_group_transformation = None;
                                 }
                                 self.selected_objects.push(match object_type {
                                     ObjectTypeDTO::Torus => ObjectId::Torus(object_id),
@@ -181,6 +191,8 @@ impl Ui {
                     self.build_cursor_transformation_panel(ui, cqrs);
                 } else if self.selected_objects.len() == 1 {
                     self.build_single_object_transformation_panel(ui, cqrs);
+                } else if self.selected_objects.len() > 1 {
+                    self.build_multiple_object_transformation_panel(ui, cqrs);
                 }
             });
         });
@@ -223,6 +235,95 @@ impl Ui {
             Point(point) => {
                 Ui::build_point_transformation_panel(ui, cqrs, point);
             }
+        }
+    }
+
+    fn build_multiple_object_transformation_panel(&mut self, ui: &mut egui::Ui, cqrs: &mut CQRS) {
+        if self.group_transformation.is_none() {
+            self.group_transformation = Some(TransformerDTO {
+                position: (0.0, 0.0, 0.0),
+                rotation: (0.0, 0.0, 0.0, 1.0),
+                scale: (1.0, 1.0, 1.0),
+            });
+            self.previous_group_transformation = Some(TransformerDTO {
+                position: (0.0, 0.0, 0.0),
+                rotation: (0.0, 0.0, 0.0, 1.0),
+                scale: (1.0, 1.0, 1.0),
+            });
+        }
+        
+        let group_transformer = self.group_transformation.as_mut().unwrap();
+
+        let transformer_sliders = vec![
+            Slider::new(&mut group_transformer.position.0, -5.0..=5.0)
+                .text("position X")
+                .ui(ui),
+            Slider::new(&mut group_transformer.position.1, -5.0..=5.0)
+                .text("position Y")
+                .ui(ui),
+            Slider::new(&mut group_transformer.position.2, -5.0..=5.0)
+                .text("position Z")
+                .ui(ui),
+            Slider::new(&mut group_transformer.scale.0, 0.1..=5.0)
+                .text("scale X")
+                .ui(ui),
+            Slider::new(&mut group_transformer.scale.1, 0.1..=5.0)
+                .text("scale Y")
+                .ui(ui),
+            Slider::new(&mut group_transformer.scale.2, 0.1..=5.0)
+                .text("scale Z")
+                .ui(ui),
+            Slider::new(
+                &mut group_transformer.rotation.0,
+                -1.0..=1.0,
+            )
+                .text("rotation X")
+                .ui(ui),
+            Slider::new(
+                &mut group_transformer.rotation.1,
+                -1.0..=1.0,
+            )
+                .text("rotation Y")
+                .ui(ui),
+            Slider::new(
+                &mut group_transformer.rotation.2,
+                -1.0..=1.0,
+            )
+                .text("rotation Z")
+                .ui(ui),
+            Slider::new(
+                &mut group_transformer.rotation.3,
+                -1.0..=1.0,
+            )
+                .text("rotation W")
+                .ui(ui),
+        ];
+
+        if transformer_sliders.iter().any(|f| f.changed()) {
+            let delta = TransformerDTO {
+                position: (
+                    group_transformer.position.0 - self.previous_group_transformation.as_ref().unwrap().position.0,
+                    group_transformer.position.1 - self.previous_group_transformation.as_ref().unwrap().position.1,
+                    group_transformer.position.2 - self.previous_group_transformation.as_ref().unwrap().position.2,
+                ),
+                rotation: (
+                    group_transformer.rotation.0 - self.previous_group_transformation.as_ref().unwrap().rotation.0,
+                    group_transformer.rotation.1 - self.previous_group_transformation.as_ref().unwrap().rotation.1,
+                    group_transformer.rotation.2 - self.previous_group_transformation.as_ref().unwrap().rotation.2,
+                    group_transformer.rotation.3 - self.previous_group_transformation.as_ref().unwrap().rotation.3,
+                ),
+                scale: (
+                    group_transformer.scale.0 - self.previous_group_transformation.as_ref().unwrap().scale.0,
+                    group_transformer.scale.1 - self.previous_group_transformation.as_ref().unwrap().scale.1,
+                    group_transformer.scale.2 - self.previous_group_transformation.as_ref().unwrap().scale.2,
+                ),
+            };
+
+            cqrs.execute(&TransformSelectedObjects {
+                transformer: delta
+            });
+
+            self.previous_group_transformation = Some(group_transformer.clone());
         }
     }
 
