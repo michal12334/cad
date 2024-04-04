@@ -144,7 +144,7 @@ fn main() {
                         } else if *button == MouseButton::Left && !ui.is_pointer_over_area() && *state == Pressed { 
                             let x = mouse_position.0 / width as f64 * 2.0 - 1.0;
                             let y = 1.0 - mouse_position.1 / height as f64 * 2.0;
-                            let point = Vector4::new(x as f32, y as f32, -1.0, 1.0);
+                            let point = Vector4::new(x as f32, y as f32, 0.95, 1.0);
                             let inversed_view_matrix = view_matrix.get_inversed();
                             let inversed_perspective_matrix = math::matrix4::Matrix4::perspective(std::f32::consts::PI / 3.0, width as f32 / height as f32, 0.1, 1024.0).get_inversed();
                             let point = (point * inversed_perspective_matrix * inversed_view_matrix).to_vector3();
