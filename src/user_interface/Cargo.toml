@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 egui = "0.23.0"
+itertools = "0.12.1"
 
 backend = { path = "../backend" }
-itertools = "0.12.1"
+math = { path = "../math" }

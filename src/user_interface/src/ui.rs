@@ -19,6 +19,7 @@ use backend::cqrs::toruses::rename_torus::RenameTorus;
 use backend::cqrs::toruses::torus_details::{TorusDetails, TorusDTO, TransformerDTO};
 use backend::cqrs::toruses::transform_torus::TransformTours;
 use backend::cqrs::toruses::update_torus::UpdateTorus;
+use math::operations::multiply_quaternions;
 
 use crate::object::Object;
 use crate::object::Object::{Point, Torus};
@@ -277,24 +278,28 @@ impl Ui {
                 &mut group_transformer.rotation.0,
                 -1.0..=1.0,
             )
+                .step_by(0.1)
                 .text("rotation X")
                 .ui(ui),
             Slider::new(
                 &mut group_transformer.rotation.1,
                 -1.0..=1.0,
             )
+                .step_by(0.1)
                 .text("rotation Y")
                 .ui(ui),
             Slider::new(
                 &mut group_transformer.rotation.2,
                 -1.0..=1.0,
             )
+                .step_by(0.1)
                 .text("rotation Z")
                 .ui(ui),
             Slider::new(
                 &mut group_transformer.rotation.3,
                 -1.0..=1.0,
             )
+                .step_by(0.1)
                 .text("rotation W")
                 .ui(ui),
         ];
@@ -306,22 +311,51 @@ impl Ui {
                     group_transformer.position.1 - self.previous_group_transformation.as_ref().unwrap().position.1,
                     group_transformer.position.2 - self.previous_group_transformation.as_ref().unwrap().position.2,
                 ),
-                rotation: (
-                    group_transformer.rotation.0 - self.previous_group_transformation.as_ref().unwrap().rotation.0,
-                    group_transformer.rotation.1 - self.previous_group_transformation.as_ref().unwrap().rotation.1,
-                    group_transformer.rotation.2 - self.previous_group_transformation.as_ref().unwrap().rotation.2,
-                    group_transformer.rotation.3 - self.previous_group_transformation.as_ref().unwrap().rotation.3,
+                rotation: multiply_quaternions(
+                    (
+                        group_transformer.rotation.0,
+                        group_transformer.rotation.1,
+                        group_transformer.rotation.2,
+                        group_transformer.rotation.3,
+                    ),
+                    (
+                        -self.previous_group_transformation.as_ref().unwrap().rotation.0,
+                        -self.previous_group_transformation.as_ref().unwrap().rotation.1,
+                        -self.previous_group_transformation.as_ref().unwrap().rotation.2,
+                        self.previous_group_transformation.as_ref().unwrap().rotation.3,
+                    ),
                 ),
                 scale: (
-                    group_transformer.scale.0 - self.previous_group_transformation.as_ref().unwrap().scale.0,
-                    group_transformer.scale.1 - self.previous_group_transformation.as_ref().unwrap().scale.1,
-                    group_transformer.scale.2 - self.previous_group_transformation.as_ref().unwrap().scale.2,
+                    group_transformer.scale.0 / self.previous_group_transformation.as_ref().unwrap().scale.0,
+                    group_transformer.scale.1 / self.previous_group_transformation.as_ref().unwrap().scale.1,
+                    group_transformer.scale.2 / self.previous_group_transformation.as_ref().unwrap().scale.2,
                 ),
             };
 
             cqrs.execute(&TransformSelectedObjects {
                 transformer: delta
             });
+
+            for so in self.selected_objects.iter() {
+                match so {
+                    ObjectId::Torus(id) => {
+                        let torus = self
+                            .objects
+                            .iter_mut()
+                            .find(|t| t.get_id() == *id)
+                            .unwrap();
+                        *torus = Torus(cqrs.get(&TorusDetails { id: *id }));
+                    }
+                    ObjectId::Point(id) => {
+                        let point = self
+                            .objects
+                            .iter_mut()
+                            .find(|t| t.get_id() == *id)
+                            .unwrap();
+                        *point = Point(cqrs.get(&PointDetails { id: *id }));
+                    }
+                }
+            }
 
             self.previous_group_transformation = Some(group_transformer.clone());
         }
