@@ -1,4 +1,4 @@
-use egui::{Resize, ScrollArea, Slider, Widget};
+use egui::{DragValue, Resize, ScrollArea, Slider, Widget};
 use itertools::Itertools;
 
 use backend::cqrs::common::new_id::NewId;
@@ -250,19 +250,22 @@ impl Ui {
     fn build_cursor_transformation_panel(&mut self, ui: &mut egui::Ui, cqrs: &mut CQRS) {
         let cursor = self.cursor.as_mut().unwrap();
 
-        let transformer_sliders = vec![
-            Slider::new(&mut cursor.transformer.position.0, -5.0..=5.0)
-                .text("position X")
-                .ui(ui),
-            Slider::new(&mut cursor.transformer.position.1, -5.0..=5.0)
-                .text("position Y")
-                .ui(ui),
-            Slider::new(&mut cursor.transformer.position.2, -5.0..=5.0)
-                .text("position Z")
-                .ui(ui),
-        ];
+        let mut transformer_drags = vec![];
+        
+        ui.horizontal(|ui| {
+            transformer_drags.push(DragValue::new(&mut cursor.transformer.position.0).speed(0.01).ui(ui));
+            ui.label("position X");
+        });
+        ui.horizontal(|ui| {
+            transformer_drags.push(DragValue::new(&mut cursor.transformer.position.1).speed(0.01).ui(ui));
+            ui.label("position Y");
+        });
+        ui.horizontal(|ui| {
+            transformer_drags.push(DragValue::new(&mut cursor.transformer.position.2).speed(0.01).ui(ui));
+            ui.label("position Z");
+        });
 
-        if transformer_sliders.iter().any(|f| f.changed()) {
+        if transformer_drags.iter().any(|f| f.changed()) {
             cqrs.execute(&TransformCursor {
                 transformer: LittleTransformerDTO {
                     position: cursor.transformer.position,
@@ -303,16 +306,22 @@ impl Ui {
         
         let group_transformer = self.group_transformation.as_mut().unwrap();
 
-        let transformer_sliders = vec![
-            Slider::new(&mut group_transformer.position.0, -5.0..=5.0)
-                .text("position X")
-                .ui(ui),
-            Slider::new(&mut group_transformer.position.1, -5.0..=5.0)
-                .text("position Y")
-                .ui(ui),
-            Slider::new(&mut group_transformer.position.2, -5.0..=5.0)
-                .text("position Z")
-                .ui(ui),
+        let mut transformer_sliders = vec![];
+        
+        ui.horizontal(|ui| {
+            transformer_sliders.push(DragValue::new(&mut group_transformer.position.0).speed(0.01).ui(ui));
+            ui.label("position X");
+        });
+        ui.horizontal(|ui| {
+            transformer_sliders.push(DragValue::new(&mut group_transformer.position.1).speed(0.01).ui(ui));
+            ui.label("position Y");
+        });
+        ui.horizontal(|ui| {
+            transformer_sliders.push(DragValue::new(&mut group_transformer.position.2).speed(0.01).ui(ui));
+            ui.label("position Z");
+        });
+
+        transformer_sliders.append(&mut vec![
             Slider::new(&mut group_transformer.scale.0, 0.1..=5.0)
                 .text("scale X")
                 .ui(ui),
@@ -350,7 +359,7 @@ impl Ui {
                 .step_by(0.1)
                 .text("rotation W")
                 .ui(ui),
-        ];
+        ]);
 
         if transformer_sliders.iter().any(|f| f.changed()) {
             let delta = TransformerDTO {
@@ -444,16 +453,22 @@ impl Ui {
             *torus = cqrs.get(&TorusDetails { id: torus.id });
         }
 
-        let transformer_sliders = vec![
-            Slider::new(&mut torus.transformer.position.0, -5.0..=5.0)
-                .text("position X")
-                .ui(ui),
-            Slider::new(&mut torus.transformer.position.1, -5.0..=5.0)
-                .text("position Y")
-                .ui(ui),
-            Slider::new(&mut torus.transformer.position.2, -5.0..=5.0)
-                .text("position Z")
-                .ui(ui),
+        let mut transformer_sliders = vec![];
+
+        ui.horizontal(|ui| {
+            transformer_sliders.push(DragValue::new(&mut torus.transformer.position.0).speed(0.01).ui(ui));
+            ui.label("position X");
+        });
+        ui.horizontal(|ui| {
+            transformer_sliders.push(DragValue::new(&mut torus.transformer.position.1).speed(0.01).ui(ui));
+            ui.label("position Y");
+        });
+        ui.horizontal(|ui| {
+            transformer_sliders.push(DragValue::new(&mut torus.transformer.position.2).speed(0.01).ui(ui));
+            ui.label("position Z");
+        });
+
+        transformer_sliders.append(&mut vec![
             Slider::new(&mut torus.transformer.scale.0, 0.1..=5.0)
                 .text("scale X")
                 .ui(ui),
@@ -487,7 +502,7 @@ impl Ui {
             )
                 .text("rotation W")
                 .ui(ui),
-        ];
+        ]);
 
         if transformer_sliders.iter().any(|f| f.changed()) {
             cqrs.execute(&TransformTours {
@@ -511,17 +526,20 @@ impl Ui {
             *point = cqrs.get(&PointDetails { id: point.id });
         }
 
-        let transformer_sliders = vec![
-            Slider::new(&mut point.transformer.position.0, -5.0..=5.0)
-                .text("position X")
-                .ui(ui),
-            Slider::new(&mut point.transformer.position.1, -5.0..=5.0)
-                .text("position Y")
-                .ui(ui),
-            Slider::new(&mut point.transformer.position.2, -5.0..=5.0)
-                .text("position Z")
-                .ui(ui),
-        ];
+        let mut transformer_sliders = vec![];
+
+        ui.horizontal(|ui| {
+            transformer_sliders.push(DragValue::new(&mut point.transformer.position.0).speed(0.01).ui(ui));
+            ui.label("position X");
+        });
+        ui.horizontal(|ui| {
+            transformer_sliders.push(DragValue::new(&mut point.transformer.position.1).speed(0.01).ui(ui));
+            ui.label("position Y");
+        });
+        ui.horizontal(|ui| {
+            transformer_sliders.push(DragValue::new(&mut point.transformer.position.2).speed(0.01).ui(ui));
+            ui.label("position Z");
+        });
 
         if transformer_sliders.iter().any(|f| f.changed()) {
             cqrs.execute(&TransformPoint {
