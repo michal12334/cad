@@ -45,7 +45,7 @@ impl Transformer {
             self.scale.1 as f32,
             self.scale.2 as f32,
         );
-        translation * rotation * scale
+        scale * rotation * translation
     }
 }
 
