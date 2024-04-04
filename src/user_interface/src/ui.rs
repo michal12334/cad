@@ -72,6 +72,54 @@ impl Ui {
             .collect();
         self.selected_objects.clear();
     }
+    
+    pub fn change_point_selection(&mut self, id: u64, cqrs: &mut CQRS) {
+        let is_selected = self
+            .selected_objects
+            .iter()
+            .any(|so| so.get_id() == id);
+        match is_selected {
+            true => {
+                if self.control_pressed {
+                    self.selected_objects.retain(|so| so.get_id() != id);
+                    self.group_transformation = None;
+                    self.previous_group_transformation = None;
+                } else {
+                    self.selected_objects.clear();
+                }
+                cqrs.execute(&SelectObjects {
+                    objects: self
+                        .selected_objects
+                        .iter()
+                        .map(|so| SelectionObjectDTO {
+                            id: so.get_id(),
+                            object_type: so.get_type(),
+                        })
+                        .collect(),
+                });
+            }
+            false => {
+                self.cursor_selected = false;
+                if !self.control_pressed {
+                    self.selected_objects.clear();
+                } else {
+                    self.group_transformation = None;
+                    self.previous_group_transformation = None;
+                }
+                self.selected_objects.push(ObjectId::Point(id));
+                cqrs.execute(&SelectObjects {
+                    objects: self
+                        .selected_objects
+                        .iter()
+                        .map(|so| SelectionObjectDTO {
+                            id: so.get_id(),
+                            object_type: so.get_type(),
+                        })
+                        .collect(),
+                });
+            }
+        }
+    }
 
     pub fn build<'a>(&'a mut self, cqrs: &'a mut CQRS<'a>) -> impl FnMut(&egui::Context) + '_ {
         self.cursor = Some(cqrs.get(&CursorDetails {}));

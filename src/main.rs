@@ -2,7 +2,10 @@
 extern crate glium;
 extern crate user_interface;
 
-use egui::Color32;
+use std::cell::{RefCell, RefMut};
+use std::ops::{Deref, DerefMut};
+use std::rc::Rc;
+use egui::{Color32, mutex};
 use glium::Surface;
 use winit::{event, event_loop};
 use winit::event::ElementState::Pressed;
@@ -12,6 +15,7 @@ use backend::app_state::AppState;
 use backend::cqrs::common::selected_objects_center::SelectedObjectsCenter;
 use backend::cqrs::cqrs::CQRS;
 use backend::cqrs::cursors::transform_cursor::TransformCursor;
+use backend::cqrs::points::all_points::AllPoints;
 use backend::cqrs::points::point_details::LittleTransformerDTO;
 use backend::domain::point::Point;
 use backend::domain::transformer::LittleTransformer;
@@ -150,7 +154,19 @@ fn main() {
                             let point = (point * inversed_perspective_matrix * inversed_view_matrix).to_vector3();
                             let mut cqrs = CQRS::new(&mut app_state);
                             cqrs.execute(&TransformCursor { transformer: LittleTransformerDTO { position: (point.x as f64, point.y as f64, point.z as f64) } });
-                        } 
+                        } else if *button == MouseButton::Right && !ui.is_pointer_over_area() && *state == Pressed {
+                            let mut cqrs = CQRS::new(&mut app_state);
+                            let points = cqrs.get(&AllPoints);
+                            for point in points {
+                                let position = Vector4::new(point.transformer.position.0 as f32, point.transformer.position.1 as f32, point.transformer.position.2 as f32, 1.0);
+                                let position = (position * view_matrix * math::matrix4::Matrix4::perspective(std::f32::consts::PI / 3.0, width as f32 / height as f32, 0.1, 1024.0)).to_vector3();
+                                let x = mouse_position.0 as f32 / width as f32 * 2.0 - 1.0;
+                                let y = 1.0 - mouse_position.1 as f32 / height as f32 * 2.0;
+                                if (position.x - x) * (position.x - x) + (position.y - y) * (position.y - y) <= 0.005 { 
+                                    ui.change_point_selection(point.id, &mut cqrs);
+                                } 
+                            }
+                        }
                     }
                     WindowEvent::MouseWheel { delta, .. } => {
                         if !ui.is_pointer_over_area() {
