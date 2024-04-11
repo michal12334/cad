@@ -1,4 +1,4 @@
-pub mod app_state;
+pub mod backend;
 pub mod cqrs;
 mod data_access;
 pub mod domain;

@@ -1,4 +1,4 @@
-use crate::app_state::AppState;
+use crate::backend::Backend;
 use crate::cqrs::cqrs::Command;
 use crate::domain::torus::Torus;
 use crate::domain::transformer::Transformer;
@@ -14,7 +14,7 @@ pub struct AddTorus {
 }
 
 impl Command<AddTorus> for AddTorus {
-    fn execute(command: &AddTorus, app_state: Rc<RefCell<AppState>>) {
+    fn execute(command: &AddTorus, app_state: Rc<RefCell<Backend>>) {
         let mut app_state = app_state.borrow_mut();
         let torus = Torus::new(
             command.id,

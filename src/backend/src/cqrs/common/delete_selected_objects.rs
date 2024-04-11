@@ -1,4 +1,4 @@
-use crate::app_state::AppState;
+use crate::backend::Backend;
 use crate::cqrs::cqrs::Command;
 use std::cell::RefCell;
 use std::ops::DerefMut;
@@ -7,7 +7,7 @@ use std::rc::Rc;
 pub struct DeleteSelectedObjects;
 
 impl Command<DeleteSelectedObjects> for DeleteSelectedObjects {
-    fn execute(_command: &DeleteSelectedObjects, app_state: Rc<RefCell<AppState>>) {
+    fn execute(_command: &DeleteSelectedObjects, app_state: Rc<RefCell<Backend>>) {
         let mut binding = app_state.borrow_mut();
         let mut app_state = binding.deref_mut();
         app_state.storage.toruses.retain(|_, torus| {

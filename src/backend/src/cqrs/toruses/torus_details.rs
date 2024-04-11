@@ -1,4 +1,4 @@
-use crate::app_state::AppState;
+use crate::backend::Backend;
 use crate::cqrs::cqrs::Query;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -26,7 +26,7 @@ pub struct TransformerDTO {
 }
 
 impl Query<TorusDetails, TorusDTO> for TorusDetails {
-    fn get(query: &TorusDetails, app_state: Rc<RefCell<AppState>>) -> TorusDTO {
+    fn get(query: &TorusDetails, app_state: Rc<RefCell<Backend>>) -> TorusDTO {
         let app_state = app_state.borrow();
         let torus = app_state.storage.toruses.get(&query.id).unwrap();
         TorusDTO {

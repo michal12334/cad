@@ -1,4 +1,4 @@
-use crate::app_state::AppState;
+use crate::backend::Backend;
 use crate::cqrs::cqrs::Command;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -12,7 +12,7 @@ pub struct UpdateTorus {
 }
 
 impl Command<UpdateTorus> for UpdateTorus {
-    fn execute(command: &UpdateTorus, app_state: Rc<RefCell<AppState>>) {
+    fn execute(command: &UpdateTorus, app_state: Rc<RefCell<Backend>>) {
         let mut app_state = app_state.borrow_mut();
         if command.minor_radius >= command.major_radius {
             return;

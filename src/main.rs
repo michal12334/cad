@@ -11,7 +11,7 @@ use winit::event::ElementState::Pressed;
 use winit::event::MouseButton;
 use winit::{event, event_loop};
 
-use backend::app_state::AppState;
+use backend::backend::Backend;
 use backend::cqrs::common::selected_objects_center::SelectedObjectsCenter;
 use backend::cqrs::cqrs::CQRS;
 use backend::cqrs::cursors::transform_cursor::TransformCursor;
@@ -43,7 +43,7 @@ fn main() {
 
     let mut egui_glium = egui_glium::EguiGlium::new(&display, &window, &event_loop);
 
-    let mut app_state = Rc::new(RefCell::new(AppState::new()));
+    let mut app_state = Rc::new(RefCell::new(Backend::new()));
 
     let torus_drawer = TorusDrawer::new(&display);
     let point_drawer = PointDrawer::new(&display);

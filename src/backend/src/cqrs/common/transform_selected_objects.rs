@@ -1,4 +1,4 @@
-use crate::app_state::AppState;
+use crate::backend::Backend;
 use crate::cqrs::common::new_id::NewId;
 use crate::cqrs::common::selected_objects_center::SelectedObjectsCenter;
 use crate::cqrs::cqrs::{Command, CQRS};
@@ -15,7 +15,7 @@ pub struct TransformSelectedObjects {
 }
 
 impl Command<TransformSelectedObjects> for TransformSelectedObjects {
-    fn execute(command: &TransformSelectedObjects, app_state: Rc<RefCell<AppState>>) {
+    fn execute(command: &TransformSelectedObjects, app_state: Rc<RefCell<Backend>>) {
         let cqrs = CQRS::new(app_state.clone());
         let center_point = cqrs.get(&SelectedObjectsCenter).unwrap();
         let mut binding = app_state.borrow_mut();

@@ -1,4 +1,4 @@
-use crate::app_state::AppState;
+use crate::backend::Backend;
 use crate::cqrs::cqrs::Command;
 use crate::domain::selected_object::SelectedObject;
 use std::cell::RefCell;
@@ -21,7 +21,7 @@ pub enum ObjectTypeDTO {
 }
 
 impl Command<SelectObjects> for SelectObjects {
-    fn execute(command: &SelectObjects, app_state: Rc<RefCell<AppState>>) {
+    fn execute(command: &SelectObjects, app_state: Rc<RefCell<Backend>>) {
         let mut app_state = app_state.borrow_mut();
         app_state.storage.selected_objects = command
             .objects

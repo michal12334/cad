@@ -1,4 +1,4 @@
-use crate::app_state::AppState;
+use crate::backend::Backend;
 use crate::cqrs::cqrs::Query;
 use crate::cqrs::points::point_details::LittleTransformerDTO;
 use std::cell::RefCell;
@@ -9,7 +9,7 @@ pub struct SelectedObjectsCenter;
 impl Query<SelectedObjectsCenter, Option<LittleTransformerDTO>> for SelectedObjectsCenter {
     fn get(
         _query: &SelectedObjectsCenter,
-        app_state: Rc<RefCell<AppState>>,
+        app_state: Rc<RefCell<Backend>>,
     ) -> Option<LittleTransformerDTO> {
         let app_state = app_state.borrow();
         if app_state.storage.selected_objects.len() >= 2 {

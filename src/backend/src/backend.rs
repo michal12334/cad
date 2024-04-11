@@ -1,14 +1,14 @@
 use crate::data_access::storage::Storage;
 use crate::services::services::Services;
 
-pub struct AppState {
+pub struct Backend {
     pub services: Services,
     pub storage: Storage,
 }
 
-impl AppState {
+impl Backend {
     pub fn new() -> Self {
-        AppState {
+        Backend {
             services: Services::new(),
             storage: Storage::new(),
         }
