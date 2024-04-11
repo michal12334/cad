@@ -142,6 +142,7 @@ name = "backend"
 version = "0.1.0"
 dependencies = [
  "glium",
+ "infrastructure",
  "math",
 ]
 
@@ -259,6 +260,7 @@ dependencies = [
  "glium",
  "glutin 0.31.3",
  "glutin-winit 0.4.2",
+ "infrastructure",
  "math",
  "user_interface",
  "winit 0.28.7",
@@ -874,6 +876,10 @@ dependencies = [
  "equivalent",
  "hashbrown",
 ]
+
+[[package]]
+name = "infrastructure"
+version = "0.1.0"
 
 [[package]]
 name = "instant"
