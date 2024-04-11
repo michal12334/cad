@@ -2,10 +2,9 @@
 extern crate glium;
 extern crate user_interface;
 
-use egui::{mutex, Color32};
+use egui::Color32;
 use glium::Surface;
-use std::cell::{RefCell, RefMut};
-use std::ops::{Deref, DerefMut};
+use std::cell::RefCell;
 use std::rc::Rc;
 use winit::event::ElementState::Pressed;
 use winit::event::MouseButton;
@@ -43,14 +42,14 @@ fn main() {
 
     let mut egui_glium = egui_glium::EguiGlium::new(&display, &window, &event_loop);
 
-    let mut app_state = Rc::new(RefCell::new(Backend::new()));
+    let app_state = Rc::new(RefCell::new(Backend::new()));
 
     let torus_drawer = TorusDrawer::new(&display);
     let point_drawer = PointDrawer::new(&display);
     let cursor_drawer = cursor_drawer::CursorDrawer::new(&display);
     let infinite_grid_drawer = InfiniteGridDrawer::new(&display);
 
-    let mut ui = Ui::new();
+    let ui = Rc::new(RefCell::new(Ui::new()));
 
     let mut mouse_position = (0.0, 0.0);
     let mut camera_direction = math::vector3::Vector3::new(0.0f32, 0.0, 1.0);
@@ -70,7 +69,7 @@ fn main() {
     event_loop.run(move |event, _window_target, control_flow| {
         let mut redraw = || {
             let mut cqrs = CQRS::new(app_state.clone());
-            let repaint_after = egui_glium.run(&window, ui.build(&mut cqrs));
+            let repaint_after = egui_glium.run(&window, ui.borrow_mut().build(&mut cqrs));
 
             *control_flow = if repaint_after.is_zero() {
                 window.request_redraw();
@@ -92,7 +91,7 @@ fn main() {
 
                 let cqrs = CQRS::new(app_state.clone());
 
-                let mut app_state = app_state.borrow();
+                let app_state = app_state.borrow();
 
                 for torus in app_state.storage.toruses.iter() {
                     let color = if app_state.storage.selected_objects.iter().any(|so| so.torus_id == Some(*torus.0)) { selected_color } else { color };
@@ -148,7 +147,7 @@ fn main() {
                     WindowEvent::MouseInput { state, button, .. } => {
                         if *button == MouseButton::Middle {
                             mouse_middle_button_pressed = *state == Pressed;
-                        } else if *button == MouseButton::Left && !ui.is_pointer_over_area() && *state == Pressed {
+                        } else if *button == MouseButton::Left && !ui.borrow().is_pointer_over_area() && *state == Pressed {
                             let x = mouse_position.0 / width as f64 * 2.0 - 1.0;
                             let y = 1.0 - mouse_position.1 / height as f64 * 2.0;
                             let point = Vector4::new(x as f32, y as f32, 0.95, 1.0);
@@ -157,7 +156,7 @@ fn main() {
                             let point = (point * inversed_perspective_matrix * inversed_view_matrix).to_vector3();
                             let mut cqrs = CQRS::new(app_state.clone());
                             cqrs.execute(&TransformCursor { transformer: LittleTransformerDTO { position: (point.x as f64, point.y as f64, point.z as f64) } });
-                        } else if *button == MouseButton::Right && !ui.is_pointer_over_area() && *state == Pressed {
+                        } else if *button == MouseButton::Right && !ui.borrow().is_pointer_over_area() && *state == Pressed {
                             let mut cqrs = CQRS::new(app_state.clone());
                             let points = cqrs.get(&AllPoints);
                             for point in points {
@@ -166,13 +165,13 @@ fn main() {
                                 let x = mouse_position.0 as f32 / width as f32 * 2.0 - 1.0;
                                 let y = 1.0 - mouse_position.1 as f32 / height as f32 * 2.0;
                                 if (position.x - x) * (position.x - x) + (position.y - y) * (position.y - y) <= 0.005 {
-                                    ui.change_point_selection(point.id, &mut cqrs);
+                                    ui.borrow_mut().change_point_selection(point.id, &mut cqrs);
                                 }
                             }
                         }
                     }
                     WindowEvent::MouseWheel { delta, .. } => {
-                        if !ui.is_pointer_over_area() {
+                        if !ui.borrow().is_pointer_over_area() {
                             match delta {
                                 event::MouseScrollDelta::LineDelta(_x, y) => {
                                     camera_distant += -y * 0.1;
@@ -184,11 +183,11 @@ fn main() {
                     }
                     WindowEvent::KeyboardInput { input, .. } => {
                         if input.virtual_keycode == Some(event::VirtualKeyCode::LControl) {
-                            ui.set_control_pressed(input.state == Pressed);
+                            ui.borrow_mut().set_control_pressed(input.state == Pressed);
                         } else if input.virtual_keycode == Some(event::VirtualKeyCode::Delete) && input.state == Pressed {
                             let mut cqrs = CQRS::new(app_state.clone());
                             cqrs.execute(&backend::cqrs::common::delete_selected_objects::DeleteSelectedObjects);
-                            ui.fetch_objects(&mut cqrs);
+                            ui.borrow_mut().fetch_objects(&mut cqrs);
                         }
                     }
                     _ => {}

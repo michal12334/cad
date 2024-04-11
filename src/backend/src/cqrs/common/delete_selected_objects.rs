@@ -9,7 +9,7 @@ pub struct DeleteSelectedObjects;
 impl Command<DeleteSelectedObjects> for DeleteSelectedObjects {
     fn execute(_command: &DeleteSelectedObjects, app_state: Rc<RefCell<Backend>>) {
         let mut binding = app_state.borrow_mut();
-        let mut app_state = binding.deref_mut();
+        let app_state = binding.deref_mut();
         app_state.storage.toruses.retain(|_, torus| {
             !app_state
                 .storage

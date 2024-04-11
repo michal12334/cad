@@ -1,5 +1,4 @@
 use crate::backend::Backend;
-use crate::cqrs::common::new_id::NewId;
 use crate::cqrs::common::selected_objects_center::SelectedObjectsCenter;
 use crate::cqrs::cqrs::{Command, CQRS};
 use crate::cqrs::toruses::torus_details::TransformerDTO;
@@ -19,7 +18,7 @@ impl Command<TransformSelectedObjects> for TransformSelectedObjects {
         let cqrs = CQRS::new(app_state.clone());
         let center_point = cqrs.get(&SelectedObjectsCenter).unwrap();
         let mut binding = app_state.borrow_mut();
-        let mut app_state = binding.deref_mut();
+        let app_state = binding.deref_mut();
         for object in app_state.storage.selected_objects.iter() {
             if let Some(torus_id) = object.torus_id {
                 let torus = app_state.storage.toruses.get_mut(&torus_id).unwrap();
