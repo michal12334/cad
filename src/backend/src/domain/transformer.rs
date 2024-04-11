@@ -32,14 +32,12 @@ impl Transformer {
             self.position.1 as f32,
             self.position.2 as f32,
         );
-        let rotation = Matrix4::rotation_quaternion(
-            Vector4::new(
-                self.rotation.0 as f32,
-                self.rotation.1 as f32,
-                self.rotation.2 as f32,
-                self.rotation.3 as f32,
-            )
-        );
+        let rotation = Matrix4::rotation_quaternion(Vector4::new(
+            self.rotation.0 as f32,
+            self.rotation.1 as f32,
+            self.rotation.2 as f32,
+            self.rotation.3 as f32,
+        ));
         let scale = Matrix4::scale(
             self.scale.0 as f32,
             self.scale.1 as f32,

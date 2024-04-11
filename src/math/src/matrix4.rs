@@ -89,7 +89,7 @@ impl Matrix4 {
         let z = Self::rotation_z(z);
         x * y * z
     }
-    
+
     pub fn rotation_quaternion(quaternion: Vector4) -> Self {
         let quaternion = quaternion.get_normalized();
         let x = quaternion.x;

@@ -2,21 +2,21 @@ use egui::{DragValue, Resize, ScrollArea, Slider, Widget};
 use itertools::Itertools;
 
 use backend::cqrs::common::new_id::NewId;
-use backend::cqrs::common::select_objects::{ObjectTypeDTO, SelectionObjectDTO, SelectObjects};
+use backend::cqrs::common::select_objects::{ObjectTypeDTO, SelectObjects, SelectionObjectDTO};
 use backend::cqrs::common::transform_selected_objects::TransformSelectedObjects;
 use backend::cqrs::cqrs::CQRS;
-use backend::cqrs::cursors::cursor_details::CursorDetails;
 use backend::cqrs::cursors::cursor_details::CursorDTO;
+use backend::cqrs::cursors::cursor_details::CursorDetails;
 use backend::cqrs::cursors::transform_cursor::TransformCursor;
 use backend::cqrs::points::add_point::AddPoint;
 use backend::cqrs::points::all_points::AllPoints;
-use backend::cqrs::points::point_details::{LittleTransformerDTO, PointDetails, PointDTO};
+use backend::cqrs::points::point_details::{LittleTransformerDTO, PointDTO, PointDetails};
 use backend::cqrs::points::rename_point::RenamePoint;
 use backend::cqrs::points::transform_point::TransformPoint;
 use backend::cqrs::toruses::add_torus::AddTorus;
 use backend::cqrs::toruses::all_toruses::AllToruses;
 use backend::cqrs::toruses::rename_torus::RenameTorus;
-use backend::cqrs::toruses::torus_details::{TorusDetails, TorusDTO, TransformerDTO};
+use backend::cqrs::toruses::torus_details::{TorusDTO, TorusDetails, TransformerDTO};
 use backend::cqrs::toruses::transform_torus::TransformTours;
 use backend::cqrs::toruses::update_torus::UpdateTorus;
 use math::operations::multiply_quaternions;
@@ -72,12 +72,9 @@ impl Ui {
             .collect();
         self.selected_objects.clear();
     }
-    
+
     pub fn change_point_selection(&mut self, id: u64, cqrs: &mut CQRS) {
-        let is_selected = self
-            .selected_objects
-            .iter()
-            .any(|so| so.get_id() == id);
+        let is_selected = self.selected_objects.iter().any(|so| so.get_id() == id);
         match is_selected {
             true => {
                 if self.control_pressed {
@@ -251,17 +248,29 @@ impl Ui {
         let cursor = self.cursor.as_mut().unwrap();
 
         let mut transformer_drags = vec![];
-        
+
         ui.horizontal(|ui| {
-            transformer_drags.push(DragValue::new(&mut cursor.transformer.position.0).speed(0.01).ui(ui));
+            transformer_drags.push(
+                DragValue::new(&mut cursor.transformer.position.0)
+                    .speed(0.01)
+                    .ui(ui),
+            );
             ui.label("position X");
         });
         ui.horizontal(|ui| {
-            transformer_drags.push(DragValue::new(&mut cursor.transformer.position.1).speed(0.01).ui(ui));
+            transformer_drags.push(
+                DragValue::new(&mut cursor.transformer.position.1)
+                    .speed(0.01)
+                    .ui(ui),
+            );
             ui.label("position Y");
         });
         ui.horizontal(|ui| {
-            transformer_drags.push(DragValue::new(&mut cursor.transformer.position.2).speed(0.01).ui(ui));
+            transformer_drags.push(
+                DragValue::new(&mut cursor.transformer.position.2)
+                    .speed(0.01)
+                    .ui(ui),
+            );
             ui.label("position Z");
         });
 
@@ -273,7 +282,7 @@ impl Ui {
             });
         }
     }
-    
+
     fn build_single_object_transformation_panel(&mut self, ui: &mut egui::Ui, cqrs: &mut CQRS) {
         let object = self
             .objects
@@ -303,21 +312,33 @@ impl Ui {
                 scale: (1.0, 1.0, 1.0),
             });
         }
-        
+
         let group_transformer = self.group_transformation.as_mut().unwrap();
 
         let mut transformer_sliders = vec![];
-        
+
         ui.horizontal(|ui| {
-            transformer_sliders.push(DragValue::new(&mut group_transformer.position.0).speed(0.01).ui(ui));
+            transformer_sliders.push(
+                DragValue::new(&mut group_transformer.position.0)
+                    .speed(0.01)
+                    .ui(ui),
+            );
             ui.label("position X");
         });
         ui.horizontal(|ui| {
-            transformer_sliders.push(DragValue::new(&mut group_transformer.position.1).speed(0.01).ui(ui));
+            transformer_sliders.push(
+                DragValue::new(&mut group_transformer.position.1)
+                    .speed(0.01)
+                    .ui(ui),
+            );
             ui.label("position Y");
         });
         ui.horizontal(|ui| {
-            transformer_sliders.push(DragValue::new(&mut group_transformer.position.2).speed(0.01).ui(ui));
+            transformer_sliders.push(
+                DragValue::new(&mut group_transformer.position.2)
+                    .speed(0.01)
+                    .ui(ui),
+            );
             ui.label("position Z");
         });
 
@@ -331,31 +352,19 @@ impl Ui {
             Slider::new(&mut group_transformer.scale.2, 0.1..=5.0)
                 .text("scale Z")
                 .ui(ui),
-            Slider::new(
-                &mut group_transformer.rotation.0,
-                -1.0..=1.0,
-            )
+            Slider::new(&mut group_transformer.rotation.0, -1.0..=1.0)
                 .step_by(0.1)
                 .text("rotation X")
                 .ui(ui),
-            Slider::new(
-                &mut group_transformer.rotation.1,
-                -1.0..=1.0,
-            )
+            Slider::new(&mut group_transformer.rotation.1, -1.0..=1.0)
                 .step_by(0.1)
                 .text("rotation Y")
                 .ui(ui),
-            Slider::new(
-                &mut group_transformer.rotation.2,
-                -1.0..=1.0,
-            )
+            Slider::new(&mut group_transformer.rotation.2, -1.0..=1.0)
                 .step_by(0.1)
                 .text("rotation Z")
                 .ui(ui),
-            Slider::new(
-                &mut group_transformer.rotation.3,
-                -1.0..=1.0,
-            )
+            Slider::new(&mut group_transformer.rotation.3, -1.0..=1.0)
                 .step_by(0.1)
                 .text("rotation W")
                 .ui(ui),
@@ -364,9 +373,27 @@ impl Ui {
         if transformer_sliders.iter().any(|f| f.changed()) {
             let delta = TransformerDTO {
                 position: (
-                    group_transformer.position.0 - self.previous_group_transformation.as_ref().unwrap().position.0,
-                    group_transformer.position.1 - self.previous_group_transformation.as_ref().unwrap().position.1,
-                    group_transformer.position.2 - self.previous_group_transformation.as_ref().unwrap().position.2,
+                    group_transformer.position.0
+                        - self
+                            .previous_group_transformation
+                            .as_ref()
+                            .unwrap()
+                            .position
+                            .0,
+                    group_transformer.position.1
+                        - self
+                            .previous_group_transformation
+                            .as_ref()
+                            .unwrap()
+                            .position
+                            .1,
+                    group_transformer.position.2
+                        - self
+                            .previous_group_transformation
+                            .as_ref()
+                            .unwrap()
+                            .position
+                            .2,
                 ),
                 rotation: multiply_quaternions(
                     (
@@ -376,39 +403,51 @@ impl Ui {
                         group_transformer.rotation.3,
                     ),
                     (
-                        -self.previous_group_transformation.as_ref().unwrap().rotation.0,
-                        -self.previous_group_transformation.as_ref().unwrap().rotation.1,
-                        -self.previous_group_transformation.as_ref().unwrap().rotation.2,
-                        self.previous_group_transformation.as_ref().unwrap().rotation.3,
+                        -self
+                            .previous_group_transformation
+                            .as_ref()
+                            .unwrap()
+                            .rotation
+                            .0,
+                        -self
+                            .previous_group_transformation
+                            .as_ref()
+                            .unwrap()
+                            .rotation
+                            .1,
+                        -self
+                            .previous_group_transformation
+                            .as_ref()
+                            .unwrap()
+                            .rotation
+                            .2,
+                        self.previous_group_transformation
+                            .as_ref()
+                            .unwrap()
+                            .rotation
+                            .3,
                     ),
                 ),
                 scale: (
-                    group_transformer.scale.0 / self.previous_group_transformation.as_ref().unwrap().scale.0,
-                    group_transformer.scale.1 / self.previous_group_transformation.as_ref().unwrap().scale.1,
-                    group_transformer.scale.2 / self.previous_group_transformation.as_ref().unwrap().scale.2,
+                    group_transformer.scale.0
+                        / self.previous_group_transformation.as_ref().unwrap().scale.0,
+                    group_transformer.scale.1
+                        / self.previous_group_transformation.as_ref().unwrap().scale.1,
+                    group_transformer.scale.2
+                        / self.previous_group_transformation.as_ref().unwrap().scale.2,
                 ),
             };
 
-            cqrs.execute(&TransformSelectedObjects {
-                transformer: delta
-            });
+            cqrs.execute(&TransformSelectedObjects { transformer: delta });
 
             for so in self.selected_objects.iter() {
                 match so {
                     ObjectId::Torus(id) => {
-                        let torus = self
-                            .objects
-                            .iter_mut()
-                            .find(|t| t.get_id() == *id)
-                            .unwrap();
+                        let torus = self.objects.iter_mut().find(|t| t.get_id() == *id).unwrap();
                         *torus = Torus(cqrs.get(&TorusDetails { id: *id }));
                     }
                     ObjectId::Point(id) => {
-                        let point = self
-                            .objects
-                            .iter_mut()
-                            .find(|t| t.get_id() == *id)
-                            .unwrap();
+                        let point = self.objects.iter_mut().find(|t| t.get_id() == *id).unwrap();
                         *point = Point(cqrs.get(&PointDetails { id: *id }));
                     }
                 }
@@ -456,15 +495,27 @@ impl Ui {
         let mut transformer_sliders = vec![];
 
         ui.horizontal(|ui| {
-            transformer_sliders.push(DragValue::new(&mut torus.transformer.position.0).speed(0.01).ui(ui));
+            transformer_sliders.push(
+                DragValue::new(&mut torus.transformer.position.0)
+                    .speed(0.01)
+                    .ui(ui),
+            );
             ui.label("position X");
         });
         ui.horizontal(|ui| {
-            transformer_sliders.push(DragValue::new(&mut torus.transformer.position.1).speed(0.01).ui(ui));
+            transformer_sliders.push(
+                DragValue::new(&mut torus.transformer.position.1)
+                    .speed(0.01)
+                    .ui(ui),
+            );
             ui.label("position Y");
         });
         ui.horizontal(|ui| {
-            transformer_sliders.push(DragValue::new(&mut torus.transformer.position.2).speed(0.01).ui(ui));
+            transformer_sliders.push(
+                DragValue::new(&mut torus.transformer.position.2)
+                    .speed(0.01)
+                    .ui(ui),
+            );
             ui.label("position Z");
         });
 
@@ -478,28 +529,16 @@ impl Ui {
             Slider::new(&mut torus.transformer.scale.2, 0.1..=5.0)
                 .text("scale Z")
                 .ui(ui),
-            Slider::new(
-                &mut torus.transformer.rotation.0,
-                -1.0..=1.0,
-            )
+            Slider::new(&mut torus.transformer.rotation.0, -1.0..=1.0)
                 .text("rotation X")
                 .ui(ui),
-            Slider::new(
-                &mut torus.transformer.rotation.1,
-                -1.0..=1.0,
-            )
+            Slider::new(&mut torus.transformer.rotation.1, -1.0..=1.0)
                 .text("rotation Y")
                 .ui(ui),
-            Slider::new(
-                &mut torus.transformer.rotation.2,
-                -1.0..=1.0,
-            )
+            Slider::new(&mut torus.transformer.rotation.2, -1.0..=1.0)
                 .text("rotation Z")
                 .ui(ui),
-            Slider::new(
-                &mut torus.transformer.rotation.3,
-                -1.0..=1.0,
-            )
+            Slider::new(&mut torus.transformer.rotation.3, -1.0..=1.0)
                 .text("rotation W")
                 .ui(ui),
         ]);
@@ -516,7 +555,7 @@ impl Ui {
             *torus = cqrs.get(&TorusDetails { id: torus.id });
         }
     }
-    
+
     fn build_point_transformation_panel(ui: &mut egui::Ui, cqrs: &mut CQRS, point: &mut PointDTO) {
         if ui.text_edit_singleline(&mut point.name).lost_focus() {
             cqrs.execute(&RenamePoint {
@@ -529,15 +568,27 @@ impl Ui {
         let mut transformer_sliders = vec![];
 
         ui.horizontal(|ui| {
-            transformer_sliders.push(DragValue::new(&mut point.transformer.position.0).speed(0.01).ui(ui));
+            transformer_sliders.push(
+                DragValue::new(&mut point.transformer.position.0)
+                    .speed(0.01)
+                    .ui(ui),
+            );
             ui.label("position X");
         });
         ui.horizontal(|ui| {
-            transformer_sliders.push(DragValue::new(&mut point.transformer.position.1).speed(0.01).ui(ui));
+            transformer_sliders.push(
+                DragValue::new(&mut point.transformer.position.1)
+                    .speed(0.01)
+                    .ui(ui),
+            );
             ui.label("position Y");
         });
         ui.horizontal(|ui| {
-            transformer_sliders.push(DragValue::new(&mut point.transformer.position.2).speed(0.01).ui(ui));
+            transformer_sliders.push(
+                DragValue::new(&mut point.transformer.position.2)
+                    .speed(0.01)
+                    .ui(ui),
+            );
             ui.label("position Z");
         });
 

@@ -1,7 +1,7 @@
-use std::cell::RefCell;
-use std::rc::Rc;
 use crate::app_state::AppState;
 use crate::cqrs::cqrs::Query;
+use std::cell::RefCell;
+use std::rc::Rc;
 
 pub struct PointDetails {
     pub id: u64,

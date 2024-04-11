@@ -2,14 +2,14 @@
 extern crate glium;
 extern crate user_interface;
 
+use egui::{mutex, Color32};
+use glium::Surface;
 use std::cell::{RefCell, RefMut};
 use std::ops::{Deref, DerefMut};
 use std::rc::Rc;
-use egui::{Color32, mutex};
-use glium::Surface;
-use winit::{event, event_loop};
 use winit::event::ElementState::Pressed;
 use winit::event::MouseButton;
+use winit::{event, event_loop};
 
 use backend::app_state::AppState;
 use backend::cqrs::common::selected_objects_center::SelectedObjectsCenter;
@@ -85,13 +85,13 @@ fn main() {
 
             {
                 let perspective = math::matrix4::Matrix4::perspective(std::f32::consts::PI / 3.0, width as f32 / height as f32, 0.1, 1024.0);
-                
+
                 let mut target = display.draw();
 
                 target.clear_color_and_depth((0.0, 0.0, 0.0, 1.0), 1.0);
 
                 let cqrs = CQRS::new(app_state.clone());
-                
+
                 let mut app_state = app_state.borrow();
 
                 for torus in app_state.storage.toruses.iter() {
@@ -103,20 +103,20 @@ fn main() {
                     let color = if app_state.storage.selected_objects.iter().any(|so| so.point_id == Some(*point.0)) { selected_color } else { color };
                     point_drawer.draw(&mut target, &display, &point.1, &perspective, &view_matrix, color);
                 }
-                
+
                 let center_point = cqrs.get(&SelectedObjectsCenter);
                 if let Some(center_point) = center_point {
                     let mut transformer = LittleTransformer::new();
                     transformer.position = center_point.position;
                     point_drawer.draw(&mut target, &display, &Point::new(0, transformer), &perspective, &view_matrix, Color32::BROWN.to_normalized_gamma_f32());
                 }
-                
+
                 cursor_drawer.draw(&mut target, &display, &app_state.storage.cursor, &perspective, &view_matrix);
-                
+
                 infinite_grid_drawer.draw(&mut target, &perspective.data, &view_matrix.data);
 
                 egui_glium.paint(&display, &mut target);
-                
+
                 target.finish().unwrap();
             }
         };
@@ -146,9 +146,9 @@ fn main() {
                         }
                     }
                     WindowEvent::MouseInput { state, button, .. } => {
-                        if *button == MouseButton::Middle { 
+                        if *button == MouseButton::Middle {
                             mouse_middle_button_pressed = *state == Pressed;
-                        } else if *button == MouseButton::Left && !ui.is_pointer_over_area() && *state == Pressed { 
+                        } else if *button == MouseButton::Left && !ui.is_pointer_over_area() && *state == Pressed {
                             let x = mouse_position.0 / width as f64 * 2.0 - 1.0;
                             let y = 1.0 - mouse_position.1 / height as f64 * 2.0;
                             let point = Vector4::new(x as f32, y as f32, 0.95, 1.0);
@@ -165,9 +165,9 @@ fn main() {
                                 let position = (position * view_matrix * math::matrix4::Matrix4::perspective(std::f32::consts::PI / 3.0, width as f32 / height as f32, 0.1, 1024.0)).to_vector3();
                                 let x = mouse_position.0 as f32 / width as f32 * 2.0 - 1.0;
                                 let y = 1.0 - mouse_position.1 as f32 / height as f32 * 2.0;
-                                if (position.x - x) * (position.x - x) + (position.y - y) * (position.y - y) <= 0.005 { 
+                                if (position.x - x) * (position.x - x) + (position.y - y) * (position.y - y) <= 0.005 {
                                     ui.change_point_selection(point.id, &mut cqrs);
-                                } 
+                                }
                             }
                         }
                     }
@@ -185,7 +185,7 @@ fn main() {
                     WindowEvent::KeyboardInput { input, .. } => {
                         if input.virtual_keycode == Some(event::VirtualKeyCode::LControl) {
                             ui.set_control_pressed(input.state == Pressed);
-                        } else if input.virtual_keycode == Some(event::VirtualKeyCode::Delete) && input.state == Pressed { 
+                        } else if input.virtual_keycode == Some(event::VirtualKeyCode::Delete) && input.state == Pressed {
                             let mut cqrs = CQRS::new(app_state.clone());
                             cqrs.execute(&backend::cqrs::common::delete_selected_objects::DeleteSelectedObjects);
                             ui.fetch_objects(&mut cqrs);

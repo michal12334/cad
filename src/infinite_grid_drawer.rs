@@ -1,5 +1,5 @@
-use glium::{Blend, Display, IndexBuffer, Program, Surface, VertexBuffer};
 use glium::glutin::surface::WindowSurface;
+use glium::{Blend, Display, IndexBuffer, Program, Surface, VertexBuffer};
 
 use backend::domain::vertex::Vertex;
 

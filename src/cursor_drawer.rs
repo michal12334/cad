@@ -1,5 +1,5 @@
-use glium::{Display, DrawParameters, Frame, Program, Surface};
 use glium::glutin::surface::WindowSurface;
+use glium::{Display, DrawParameters, Frame, Program, Surface};
 
 use backend::domain::cursor::Cursor;
 

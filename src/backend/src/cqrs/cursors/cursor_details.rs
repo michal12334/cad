@@ -1,8 +1,8 @@
-use std::cell::RefCell;
-use std::rc::Rc;
 use crate::app_state::AppState;
 use crate::cqrs::cqrs::Query;
 use crate::cqrs::points::point_details::LittleTransformerDTO;
+use std::cell::RefCell;
+use std::rc::Rc;
 
 pub struct CursorDetails;
 

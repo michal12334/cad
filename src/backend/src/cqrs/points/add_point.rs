@@ -1,9 +1,9 @@
-use std::cell::RefCell;
-use std::rc::Rc;
 use crate::app_state::AppState;
 use crate::cqrs::cqrs::Command;
 use crate::domain::point::Point;
 use crate::domain::transformer::LittleTransformer;
+use std::cell::RefCell;
+use std::rc::Rc;
 
 pub struct AddPoint {
     pub id: u64,

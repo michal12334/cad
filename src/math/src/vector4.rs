@@ -28,7 +28,7 @@ impl Vector4 {
     pub fn to_vector3(&self) -> Vector3 {
         Vector3::new(self.x / self.w, self.y / self.w, self.z / self.w)
     }
-    
+
     pub fn get_normalized(&self) -> Self {
         let length = self.length();
         Self {
@@ -38,7 +38,7 @@ impl Vector4 {
             w: self.w / length,
         }
     }
-    
+
     pub fn length(&self) -> f32 {
         (self.x * self.x + self.y * self.y + self.z * self.z + self.w * self.w).sqrt()
     }
