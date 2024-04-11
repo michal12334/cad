@@ -1,3 +1,5 @@
+use std::cell::RefCell;
+use std::rc::Rc;
 use crate::app_state::AppState;
 use crate::cqrs::cqrs::Command;
 
@@ -7,7 +9,8 @@ pub struct RenamePoint {
 }
 
 impl Command<RenamePoint> for RenamePoint {
-    fn execute(command: &RenamePoint, app_state: &mut AppState) {
+    fn execute(command: &RenamePoint, app_state: Rc<RefCell<AppState>>) {
+        let mut app_state = app_state.borrow_mut();
         let point = app_state.storage.points.get_mut(&command.id).unwrap();
         point.rename(&command.name);
     }

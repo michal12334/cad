@@ -1,3 +1,6 @@
+use std::cell::RefCell;
+use std::ops::DerefMut;
+use std::rc::Rc;
 use math::matrix4::Matrix4;
 use math::operations::multiply_quaternions;
 use math::vector4::Vector4;
@@ -12,9 +15,11 @@ pub struct TransformSelectedObjects {
 }
 
 impl Command<TransformSelectedObjects> for TransformSelectedObjects {
-    fn execute(command: &TransformSelectedObjects, app_state: &mut AppState) {
-        let cqrs = CQRS::new(app_state);
+    fn execute(command: &TransformSelectedObjects, app_state: Rc<RefCell<AppState>>) {
+        let cqrs = CQRS::new(app_state.clone());
         let center_point = cqrs.get(&SelectedObjectsCenter).unwrap();
+        let mut binding = app_state.borrow_mut();
+        let mut app_state = binding.deref_mut();
         for object in app_state.storage.selected_objects.iter() {
             if let Some(torus_id) = object.torus_id {
                 let torus = app_state.storage.toruses.get_mut(&torus_id).unwrap();

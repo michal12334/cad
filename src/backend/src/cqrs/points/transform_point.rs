@@ -1,3 +1,6 @@
+use std::cell::RefCell;
+use std::rc::Rc;
+use crate::app_state::AppState;
 use crate::cqrs::cqrs::Command;
 use crate::cqrs::points::point_details::LittleTransformerDTO;
 
@@ -7,7 +10,8 @@ pub struct TransformPoint {
 }
 
 impl Command<TransformPoint> for TransformPoint {
-    fn execute(command: &TransformPoint, app_state: &mut crate::app_state::AppState) {
+    fn execute(command: &TransformPoint, app_state: Rc<RefCell<AppState>>) {
+        let mut app_state = app_state.borrow_mut();
         let point = app_state.storage.points.get_mut(&command.id).unwrap();
         point.transform(command.transformer.position);
     }

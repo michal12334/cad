@@ -1,3 +1,5 @@
+use std::cell::RefCell;
+use std::rc::Rc;
 use crate::app_state::AppState;
 use crate::cqrs::cqrs::Command;
 use crate::domain::point::Point;
@@ -8,7 +10,8 @@ pub struct AddPoint {
 }
 
 impl Command<AddPoint> for AddPoint {
-    fn execute(command: &AddPoint, app_state: &mut AppState) {
+    fn execute(command: &AddPoint, app_state: Rc<RefCell<AppState>>) {
+        let mut app_state = app_state.borrow_mut();
         let point = Point::new(
             command.id,
             LittleTransformer::from_cursor(&app_state.storage.cursor),

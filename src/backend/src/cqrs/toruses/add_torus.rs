@@ -1,3 +1,5 @@
+use std::cell::RefCell;
+use std::rc::Rc;
 use crate::app_state::AppState;
 use crate::cqrs::cqrs::Command;
 use crate::domain::torus::Torus;
@@ -12,7 +14,8 @@ pub struct AddTorus {
 }
 
 impl Command<AddTorus> for AddTorus {
-    fn execute(command: &AddTorus, app_state: &mut AppState) {
+    fn execute(command: &AddTorus, app_state: Rc<RefCell<AppState>>) {
+        let mut app_state = app_state.borrow_mut();
         let torus = Torus::new(
             command.id,
             command.major_radius,

@@ -1,3 +1,6 @@
+use std::cell::RefCell;
+use std::rc::Rc;
+use crate::app_state::AppState;
 use crate::cqrs::cqrs::Command;
 use crate::cqrs::toruses::torus_details::TransformerDTO;
 
@@ -7,7 +10,8 @@ pub struct TransformTours {
 }
 
 impl Command<TransformTours> for TransformTours {
-    fn execute(command: &TransformTours, app_state: &mut crate::app_state::AppState) {
+    fn execute(command: &TransformTours, app_state: Rc<RefCell<AppState>>) {
+        let mut app_state = app_state.borrow_mut();
         let torus = app_state.storage.toruses.get_mut(&command.id).unwrap();
         torus.transform(
             command.transformer.position,

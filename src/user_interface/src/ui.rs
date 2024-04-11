@@ -121,7 +121,7 @@ impl Ui {
         }
     }
 
-    pub fn build<'a>(&'a mut self, cqrs: &'a mut CQRS<'a>) -> impl FnMut(&egui::Context) + '_ {
+    pub fn build<'a>(&'a mut self, cqrs: &'a mut CQRS) -> impl FnMut(&egui::Context) + '_ {
         self.cursor = Some(cqrs.get(&CursorDetails {}));
         move |egui_ctx| {
             egui::Window::new("panel").show(egui_ctx, |ui| {

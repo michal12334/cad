@@ -43,7 +43,7 @@ fn main() {
 
     let mut egui_glium = egui_glium::EguiGlium::new(&display, &window, &event_loop);
 
-    let mut app_state = AppState::new();
+    let mut app_state = Rc::new(RefCell::new(AppState::new()));
 
     let torus_drawer = TorusDrawer::new(&display);
     let point_drawer = PointDrawer::new(&display);
@@ -69,7 +69,7 @@ fn main() {
 
     event_loop.run(move |event, _window_target, control_flow| {
         let mut redraw = || {
-            let mut cqrs = CQRS::new(&mut app_state);
+            let mut cqrs = CQRS::new(app_state.clone());
             let repaint_after = egui_glium.run(&window, ui.build(&mut cqrs));
 
             *control_flow = if repaint_after.is_zero() {
@@ -90,6 +90,10 @@ fn main() {
 
                 target.clear_color_and_depth((0.0, 0.0, 0.0, 1.0), 1.0);
 
+                let cqrs = CQRS::new(app_state.clone());
+                
+                let mut app_state = app_state.borrow();
+
                 for torus in app_state.storage.toruses.iter() {
                     let color = if app_state.storage.selected_objects.iter().any(|so| so.torus_id == Some(*torus.0)) { selected_color } else { color };
                     torus_drawer.draw(&mut target, &display, &torus.1, &perspective, &view_matrix, color);
@@ -100,7 +104,6 @@ fn main() {
                     point_drawer.draw(&mut target, &display, &point.1, &perspective, &view_matrix, color);
                 }
                 
-                let cqrs = CQRS::new(&mut app_state);
                 let center_point = cqrs.get(&SelectedObjectsCenter);
                 if let Some(center_point) = center_point {
                     let mut transformer = LittleTransformer::new();
@@ -152,10 +155,10 @@ fn main() {
                             let inversed_view_matrix = view_matrix.get_inversed();
                             let inversed_perspective_matrix = math::matrix4::Matrix4::perspective(std::f32::consts::PI / 3.0, width as f32 / height as f32, 0.1, 1024.0).get_inversed();
                             let point = (point * inversed_perspective_matrix * inversed_view_matrix).to_vector3();
-                            let mut cqrs = CQRS::new(&mut app_state);
+                            let mut cqrs = CQRS::new(app_state.clone());
                             cqrs.execute(&TransformCursor { transformer: LittleTransformerDTO { position: (point.x as f64, point.y as f64, point.z as f64) } });
                         } else if *button == MouseButton::Right && !ui.is_pointer_over_area() && *state == Pressed {
-                            let mut cqrs = CQRS::new(&mut app_state);
+                            let mut cqrs = CQRS::new(app_state.clone());
                             let points = cqrs.get(&AllPoints);
                             for point in points {
                                 let position = Vector4::new(point.transformer.position.0 as f32, point.transformer.position.1 as f32, point.transformer.position.2 as f32, 1.0);
@@ -183,7 +186,7 @@ fn main() {
                         if input.virtual_keycode == Some(event::VirtualKeyCode::LControl) {
                             ui.set_control_pressed(input.state == Pressed);
                         } else if input.virtual_keycode == Some(event::VirtualKeyCode::Delete) && input.state == Pressed { 
-                            let mut cqrs = CQRS::new(&mut app_state);
+                            let mut cqrs = CQRS::new(app_state.clone());
                             cqrs.execute(&backend::cqrs::common::delete_selected_objects::DeleteSelectedObjects);
                             ui.fetch_objects(&mut cqrs);
                         }

@@ -1,3 +1,6 @@
+use std::cell::RefCell;
+use std::rc::Rc;
+use crate::app_state::AppState;
 use crate::cqrs::cqrs::Query;
 use crate::cqrs::points::point_details::LittleTransformerDTO;
 
@@ -9,7 +12,8 @@ pub struct CursorDTO {
 }
 
 impl Query<CursorDetails, CursorDTO> for CursorDetails {
-    fn get(_query: &CursorDetails, app_state: &crate::app_state::AppState) -> CursorDTO {
+    fn get(_query: &CursorDetails, app_state: Rc<RefCell<AppState>>) -> CursorDTO {
+        let app_state = app_state.borrow();
         let cursor = &app_state.storage.cursor;
         CursorDTO {
             name: cursor.name.clone(),

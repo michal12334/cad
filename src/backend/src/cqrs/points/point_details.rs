@@ -1,3 +1,5 @@
+use std::cell::RefCell;
+use std::rc::Rc;
 use crate::app_state::AppState;
 use crate::cqrs::cqrs::Query;
 
@@ -18,7 +20,8 @@ pub struct LittleTransformerDTO {
 }
 
 impl Query<PointDetails, PointDTO> for PointDetails {
-    fn get(query: &PointDetails, app_state: &AppState) -> PointDTO {
+    fn get(query: &PointDetails, app_state: Rc<RefCell<AppState>>) -> PointDTO {
+        let app_state = app_state.borrow();
         let point = app_state.storage.points.get(&query.id).unwrap();
         PointDTO {
             id: point.id,
