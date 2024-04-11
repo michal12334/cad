@@ -317,41 +317,56 @@ impl Ui {
 
         let mut transformer_sliders = vec![];
 
+        ui.label("Position");
+        
         ui.horizontal(|ui| {
             transformer_sliders.push(
                 DragValue::new(&mut group_transformer.position.0)
                     .speed(0.01)
                     .ui(ui),
             );
-            ui.label("position X");
-        });
-        ui.horizontal(|ui| {
+            ui.label("X");
             transformer_sliders.push(
                 DragValue::new(&mut group_transformer.position.1)
                     .speed(0.01)
                     .ui(ui),
             );
-            ui.label("position Y");
-        });
-        ui.horizontal(|ui| {
+            ui.label("Y");
             transformer_sliders.push(
                 DragValue::new(&mut group_transformer.position.2)
                     .speed(0.01)
                     .ui(ui),
             );
-            ui.label("position Z");
+            ui.label("Z");
+        });
+
+        ui.label("Scale");
+
+        ui.horizontal(|ui| {
+            transformer_sliders.push(
+                DragValue::new(&mut group_transformer.scale.0)
+                    .speed(0.01)
+                    .clamp_range(0.01..=100.0)
+                    .ui(ui),
+            );
+            ui.label("X");
+            transformer_sliders.push(
+                DragValue::new(&mut group_transformer.scale.1)
+                    .speed(0.01)
+                    .clamp_range(0.01..=100.0)
+                    .ui(ui),
+            );
+            ui.label("Y");
+            transformer_sliders.push(
+                DragValue::new(&mut group_transformer.scale.2)
+                    .speed(0.01)
+                    .clamp_range(0.01..=100.0)
+                    .ui(ui),
+            );
+            ui.label("Z");
         });
 
         transformer_sliders.append(&mut vec![
-            Slider::new(&mut group_transformer.scale.0, 0.1..=5.0)
-                .text("scale X")
-                .ui(ui),
-            Slider::new(&mut group_transformer.scale.1, 0.1..=5.0)
-                .text("scale Y")
-                .ui(ui),
-            Slider::new(&mut group_transformer.scale.2, 0.1..=5.0)
-                .text("scale Z")
-                .ui(ui),
             Slider::new(&mut group_transformer.rotation.0, -1.0..=1.0)
                 .step_by(0.1)
                 .text("rotation X")
@@ -494,41 +509,56 @@ impl Ui {
 
         let mut transformer_sliders = vec![];
 
+        ui.label("Position");
+
         ui.horizontal(|ui| {
             transformer_sliders.push(
                 DragValue::new(&mut torus.transformer.position.0)
                     .speed(0.01)
                     .ui(ui),
             );
-            ui.label("position X");
-        });
-        ui.horizontal(|ui| {
+            ui.label("X");
             transformer_sliders.push(
                 DragValue::new(&mut torus.transformer.position.1)
                     .speed(0.01)
                     .ui(ui),
             );
-            ui.label("position Y");
-        });
-        ui.horizontal(|ui| {
+            ui.label("Y");
             transformer_sliders.push(
                 DragValue::new(&mut torus.transformer.position.2)
                     .speed(0.01)
                     .ui(ui),
             );
-            ui.label("position Z");
+            ui.label("Z");
+        });
+
+        ui.label("Scale");
+
+        ui.horizontal(|ui| {
+            transformer_sliders.push(
+                DragValue::new(&mut torus.transformer.scale.0)
+                    .speed(0.01)
+                    .clamp_range(0.01..=100.0)
+                    .ui(ui),
+            );
+            ui.label("X");
+            transformer_sliders.push(
+                DragValue::new(&mut torus.transformer.scale.1)
+                    .speed(0.01)
+                    .clamp_range(0.01..=100.0)
+                    .ui(ui),
+            );
+            ui.label("Y");
+            transformer_sliders.push(
+                DragValue::new(&mut torus.transformer.scale.2)
+                    .speed(0.01)
+                    .clamp_range(0.01..=100.0)
+                    .ui(ui),
+            );
+            ui.label("Z");
         });
 
         transformer_sliders.append(&mut vec![
-            Slider::new(&mut torus.transformer.scale.0, 0.1..=5.0)
-                .text("scale X")
-                .ui(ui),
-            Slider::new(&mut torus.transformer.scale.1, 0.1..=5.0)
-                .text("scale Y")
-                .ui(ui),
-            Slider::new(&mut torus.transformer.scale.2, 0.1..=5.0)
-                .text("scale Z")
-                .ui(ui),
             Slider::new(&mut torus.transformer.rotation.0, -1.0..=1.0)
                 .text("rotation X")
                 .ui(ui),
@@ -567,31 +597,29 @@ impl Ui {
 
         let mut transformer_sliders = vec![];
 
+        ui.label("Position");
+
         ui.horizontal(|ui| {
             transformer_sliders.push(
                 DragValue::new(&mut point.transformer.position.0)
                     .speed(0.01)
                     .ui(ui),
             );
-            ui.label("position X");
-        });
-        ui.horizontal(|ui| {
+            ui.label("X");
             transformer_sliders.push(
                 DragValue::new(&mut point.transformer.position.1)
                     .speed(0.01)
                     .ui(ui),
             );
-            ui.label("position Y");
-        });
-        ui.horizontal(|ui| {
+            ui.label("Y");
             transformer_sliders.push(
                 DragValue::new(&mut point.transformer.position.2)
                     .speed(0.01)
                     .ui(ui),
             );
-            ui.label("position Z");
+            ui.label("Z");
         });
-
+        
         if transformer_sliders.iter().any(|f| f.changed()) {
             cqrs.execute(&TransformPoint {
                 id: point.id,
