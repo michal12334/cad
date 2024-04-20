@@ -43,12 +43,12 @@ impl Command<TransformSelectedObjects> for TransformSelectedObjects {
                     command.transformer.rotation.2 as f32,
                     command.transformer.rotation.3 as f32,
                 ));
-                let delta_position = Vector4::new(
+                let delta_position = rotation_matrix * Vector4::new(
                     delta_position.0 as f32,
                     delta_position.1 as f32,
                     delta_position.2 as f32,
                     0.0,
-                ) * rotation_matrix;
+                );
                 let delta_position = (
                     delta_position.x as f64,
                     delta_position.y as f64,
@@ -81,12 +81,12 @@ impl Command<TransformSelectedObjects> for TransformSelectedObjects {
                     command.transformer.rotation.2 as f32,
                     command.transformer.rotation.3 as f32,
                 ));
-                let delta_position = Vector4::new(
+                let delta_position = rotation_matrix * Vector4::new(
                     delta_position.0 as f32,
                     delta_position.1 as f32,
                     delta_position.2 as f32,
                     0.0,
-                ) * rotation_matrix;
+                );
                 let delta_position = (
                     delta_position.x as f64,
                     delta_position.y as f64,

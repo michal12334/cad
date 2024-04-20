@@ -50,10 +50,10 @@ impl Mul for Matrix4 {
         let mut result = Matrix4::identity();
         for i in 0..4 {
             for j in 0..4 {
-                result.data[i][j] = self.data[i][0] * rhs.data[0][j]
-                    + self.data[i][1] * rhs.data[1][j]
-                    + self.data[i][2] * rhs.data[2][j]
-                    + self.data[i][3] * rhs.data[3][j];
+                result.data[i][j] = self.data[0][j] * rhs.data[i][0]
+                    + self.data[1][j] * rhs.data[i][1]
+                    + self.data[2][j] * rhs.data[i][2]
+                    + self.data[3][j] * rhs.data[i][3];
             }
         }
         result
@@ -66,20 +66,20 @@ impl Mul<Vector4> for Matrix4 {
     fn mul(self, rhs: Vector4) -> Vector4 {
         Vector4 {
             x: self.data[0][0] * rhs.x
-                + self.data[0][1] * rhs.y
-                + self.data[0][2] * rhs.z
-                + self.data[0][3] * rhs.w,
-            y: self.data[1][0] * rhs.x
+                + self.data[1][0] * rhs.y
+                + self.data[2][0] * rhs.z
+                + self.data[3][0] * rhs.w,
+            y: self.data[0][1] * rhs.x
                 + self.data[1][1] * rhs.y
-                + self.data[1][2] * rhs.z
-                + self.data[1][3] * rhs.w,
-            z: self.data[2][0] * rhs.x
-                + self.data[2][1] * rhs.y
+                + self.data[2][1] * rhs.z
+                + self.data[3][1] * rhs.w,
+            z: self.data[0][2] * rhs.x
+                + self.data[1][2] * rhs.y
                 + self.data[2][2] * rhs.z
-                + self.data[2][3] * rhs.w,
-            w: self.data[3][0] * rhs.x
-                + self.data[3][1] * rhs.y
-                + self.data[3][2] * rhs.z
+                + self.data[3][2] * rhs.w,
+            w: self.data[0][3] * rhs.x
+                + self.data[1][3] * rhs.y
+                + self.data[2][3] * rhs.z
                 + self.data[3][3] * rhs.w,
         }
     }
@@ -91,20 +91,20 @@ impl Mul<Matrix4> for Vector4 {
     fn mul(self, rhs: Matrix4) -> Vector4 {
         Vector4 {
             x: self.x * rhs.data[0][0]
-                + self.y * rhs.data[1][0]
-                + self.z * rhs.data[2][0]
-                + self.w * rhs.data[3][0],
-            y: self.x * rhs.data[0][1]
+                + self.y * rhs.data[0][1]
+                + self.z * rhs.data[0][2]
+                + self.w * rhs.data[0][3],
+            y: self.x * rhs.data[1][0]
                 + self.y * rhs.data[1][1]
-                + self.z * rhs.data[2][1]
-                + self.w * rhs.data[3][1],
-            z: self.x * rhs.data[0][2]
-                + self.y * rhs.data[1][2]
+                + self.z * rhs.data[1][2]
+                + self.w * rhs.data[1][3],
+            z: self.x * rhs.data[2][0]
+                + self.y * rhs.data[2][1]
                 + self.z * rhs.data[2][2]
-                + self.w * rhs.data[3][2],
-            w: self.x * rhs.data[0][3]
-                + self.y * rhs.data[1][3]
-                + self.z * rhs.data[2][3]
+                + self.w * rhs.data[2][3],
+            w: self.x * rhs.data[3][0]
+                + self.y * rhs.data[3][1]
+                + self.z * rhs.data[3][2]
                 + self.w * rhs.data[3][3],
         }
     }

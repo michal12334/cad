@@ -139,8 +139,8 @@ fn main() {
                         if mouse_middle_button_pressed {
                             camera_angle.x += delta.1 as f32 * 0.01;
                             camera_angle.y += delta.0 as f32 * 0.01 * if camera_angle.x.cos() < 0.0 { -1.0 } else { 1.0 };
-                            camera_direction = (Vector4::new(0.0, 0.0, 1.0, 0.0) * math::matrix4::Matrix4::rotation_x(camera_angle.x) * math::matrix4::Matrix4::rotation_y(camera_angle.y)).xyz();
-                            camera_up = (Vector4::new(0.0, 1.0, 0.0, 0.0) * math::matrix4::Matrix4::rotation_x(camera_angle.x) * math::matrix4::Matrix4::rotation_y(camera_angle.y)).xyz();
+                            camera_direction = (math::matrix4::Matrix4::rotation_x(camera_angle.x) * math::matrix4::Matrix4::rotation_y(camera_angle.y) * Vector4::new(0.0, 0.0, 1.0, 0.0)).xyz();
+                            camera_up = (math::matrix4::Matrix4::rotation_x(camera_angle.x) * math::matrix4::Matrix4::rotation_y(camera_angle.y) * Vector4::new(0.0, 1.0, 0.0, 0.0)).xyz();
                             view_matrix = math::matrix4::Matrix4::view(camera_direction * camera_distant * (-1.0), camera_direction, camera_up);
                         }
                     }
@@ -153,7 +153,7 @@ fn main() {
                             let point = Vector4::new(x as f32, y as f32, 0.95, 1.0);
                             let inversed_view_matrix = view_matrix.get_inversed();
                             let inversed_perspective_matrix = math::matrix4::Matrix4::perspective(std::f32::consts::PI / 3.0, width as f32 / height as f32, 0.1, 1024.0).get_inversed();
-                            let point = (point * inversed_perspective_matrix * inversed_view_matrix).to_vector3();
+                            let point = (inversed_view_matrix * inversed_perspective_matrix * point).to_vector3();
                             let mut cqrs = CQRS::new(app_state.clone());
                             cqrs.execute(&TransformCursor { transformer: LittleTransformerDTO { position: (point.x as f64, point.y as f64, point.z as f64) } });
                         } else if *button == MouseButton::Right && !ui.borrow().is_pointer_over_area() && *state == Pressed {
@@ -161,7 +161,7 @@ fn main() {
                             let points = cqrs.get(&AllPoints);
                             for point in points {
                                 let position = Vector4::new(point.transformer.position.0 as f32, point.transformer.position.1 as f32, point.transformer.position.2 as f32, 1.0);
-                                let position = (position * view_matrix * math::matrix4::Matrix4::perspective(std::f32::consts::PI / 3.0, width as f32 / height as f32, 0.1, 1024.0)).to_vector3();
+                                let position = (math::matrix4::Matrix4::perspective(std::f32::consts::PI / 3.0, width as f32 / height as f32, 0.1, 1024.0) * view_matrix * position).to_vector3();
                                 let x = mouse_position.0 as f32 / width as f32 * 2.0 - 1.0;
                                 let y = 1.0 - mouse_position.1 as f32 / height as f32 * 2.0;
                                 if (position.x - x) * (position.x - x) + (position.y - y) * (position.y - y) <= 0.005 {
