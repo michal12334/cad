@@ -1,6 +1,6 @@
+use crate::consumer::AnyConsumer;
 use std::any::Any;
 use std::rc::Rc;
-use crate::consumer::AnyConsumer;
 
 pub struct EventBus {
     consumers: Vec<Box<dyn AnyConsumer>>,
@@ -12,7 +12,7 @@ impl EventBus {
             consumers: Vec::new(),
         }
     }
-    
+
     pub fn add_consumer(&mut self, consumer: impl AnyConsumer + 'static) {
         self.consumers.push(Box::new(consumer));
     }

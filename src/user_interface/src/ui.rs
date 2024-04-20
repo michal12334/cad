@@ -318,7 +318,7 @@ impl Ui {
         let mut transformer_sliders = vec![];
 
         ui.label("Position");
-        
+
         ui.horizontal(|ui| {
             transformer_sliders.push(
                 DragValue::new(&mut group_transformer.position.0)
@@ -619,7 +619,7 @@ impl Ui {
             );
             ui.label("Z");
         });
-        
+
         if transformer_sliders.iter().any(|f| f.changed()) {
             cqrs.execute(&TransformPoint {
                 id: point.id,

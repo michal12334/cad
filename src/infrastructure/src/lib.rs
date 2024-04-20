@@ -1,2 +1,2 @@
-pub mod event_bus;
 pub mod consumer;
+pub mod event_bus;
