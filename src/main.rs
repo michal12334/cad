@@ -139,8 +139,8 @@ fn main() {
                         if mouse_middle_button_pressed {
                             camera_angle.x += delta.1 as f32 * 0.01;
                             camera_angle.y += delta.0 as f32 * 0.01 * if camera_angle.x.cos() < 0.0 { -1.0 } else { 1.0 };
-                            camera_direction = (math::matrix4::Matrix4::rotation_x(camera_angle.x) * math::matrix4::Matrix4::rotation_y(camera_angle.y) * Vector4::new(0.0, 0.0, 1.0, 0.0)).xyz();
-                            camera_up = (math::matrix4::Matrix4::rotation_x(camera_angle.x) * math::matrix4::Matrix4::rotation_y(camera_angle.y) * Vector4::new(0.0, 1.0, 0.0, 0.0)).xyz();
+                            camera_direction = (math::matrix4::Matrix4::rotation_y(camera_angle.y) * math::matrix4::Matrix4::rotation_x(camera_angle.x) * Vector4::new(0.0, 0.0, 1.0, 0.0)).xyz();
+                            camera_up = (math::matrix4::Matrix4::rotation_y(camera_angle.y) * math::matrix4::Matrix4::rotation_x(camera_angle.x) * Vector4::new(0.0, 1.0, 0.0, 0.0)).xyz();
                             view_matrix = math::matrix4::Matrix4::view(camera_direction * camera_distant * (-1.0), camera_direction, camera_up);
                         }
                     }
