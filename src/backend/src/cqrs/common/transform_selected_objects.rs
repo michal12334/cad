@@ -60,7 +60,7 @@ impl Command<TransformSelectedObjects> for TransformSelectedObjects {
                     center_point.position.2 + delta_position.2 * command.transformer.scale.2,
                 );
                 let rotation =
-                    multiply_quaternions(torus.transformer.rotation, command.transformer.rotation);
+                    multiply_quaternions(command.transformer.rotation, torus.transformer.rotation);
                 torus.transform(position, rotation, scale);
             }
             if let Some(point_id) = object.point_id {
