@@ -5,7 +5,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 pub struct AddBezierC0 {
-    id: u64,
+    pub id: u64,
 }
 
 impl Command<AddBezierC0> for AddBezierC0 {

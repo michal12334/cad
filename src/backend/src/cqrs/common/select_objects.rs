@@ -18,6 +18,7 @@ pub struct SelectionObjectDTO {
 pub enum ObjectTypeDTO {
     Torus,
     Point,
+    BezierC0,
 }
 
 impl Command<SelectObjects> for SelectObjects {
@@ -29,6 +30,7 @@ impl Command<SelectObjects> for SelectObjects {
             .map(|&obj| match obj.object_type {
                 ObjectTypeDTO::Torus => SelectedObject::new_torus(obj.id),
                 ObjectTypeDTO::Point => SelectedObject::new_point(obj.id),
+                ObjectTypeDTO::BezierC0 => SelectedObject::new_bezier_c0(obj.id),
             })
             .collect();
     }

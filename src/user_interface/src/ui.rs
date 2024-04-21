@@ -1,5 +1,7 @@
 use egui::{DragValue, Resize, ScrollArea, Slider, Widget};
 use itertools::Itertools;
+use backend::cqrs::beziers_c0::add_bezier_c0::AddBezierC0;
+use backend::cqrs::beziers_c0::bezier_c0_details::BezierC0Details;
 
 use backend::cqrs::common::new_id::NewId;
 use backend::cqrs::common::select_objects::{ObjectTypeDTO, SelectObjects, SelectionObjectDTO};
@@ -22,7 +24,7 @@ use backend::cqrs::toruses::update_torus::UpdateTorus;
 use math::operations::multiply_quaternions;
 
 use crate::object::Object;
-use crate::object::Object::{Point, Torus};
+use crate::object::Object::{BeziersC0, Point, Torus};
 use crate::object_id::ObjectId;
 
 pub struct Ui {
@@ -154,6 +156,11 @@ impl Ui {
             cqrs.execute(&AddPoint { id });
             self.objects.push(Point(cqrs.get(&PointDetails { id })));
         }
+        if ui.button("Add Bezier C0").clicked() {
+            let id = cqrs.handle(&NewId {});
+            cqrs.execute(&AddBezierC0 { id });
+            self.objects.push(BeziersC0(cqrs.get(&BezierC0Details { id })));
+        }
     }
 
     fn build_object_selection_panel(&mut self, ui: &mut egui::Ui, cqrs: &mut CQRS) {
@@ -211,6 +218,7 @@ impl Ui {
                                 self.selected_objects.push(match object_type {
                                     ObjectTypeDTO::Torus => ObjectId::Torus(object_id),
                                     ObjectTypeDTO::Point => ObjectId::Point(object_id),
+                                    ObjectTypeDTO::BezierC0 => ObjectId::BeziersC0(object_id),
                                 });
                                 cqrs.execute(&SelectObjects {
                                     objects: self
@@ -296,6 +304,7 @@ impl Ui {
             Point(point) => {
                 Ui::build_point_transformation_panel(ui, cqrs, point);
             }
+            BeziersC0(_) => {},
         }
     }
 
@@ -465,6 +474,7 @@ impl Ui {
                         let point = self.objects.iter_mut().find(|t| t.get_id() == *id).unwrap();
                         *point = Point(cqrs.get(&PointDetails { id: *id }));
                     }
+                    _ => {}
                 }
             }
 
