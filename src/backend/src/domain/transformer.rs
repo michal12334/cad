@@ -47,6 +47,7 @@ impl Transformer {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct LittleTransformer {
     pub position: (f64, f64, f64),
 }

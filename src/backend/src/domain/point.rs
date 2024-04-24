@@ -1,5 +1,6 @@
 use crate::domain::transformer::LittleTransformer;
 
+#[derive(Debug, Clone)]
 pub struct Point {
     pub id: u64,
     pub name: String,

@@ -20,6 +20,7 @@ use backend::domain::point::Point;
 use backend::domain::transformer::LittleTransformer;
 use math::vector4::Vector4;
 use user_interface::ui::Ui;
+use crate::bezier_c0_drawer::BezierC0Drawer;
 
 use crate::infinite_grid_drawer::InfiniteGridDrawer;
 use crate::point_drawer::PointDrawer;
@@ -29,6 +30,7 @@ mod cursor_drawer;
 mod infinite_grid_drawer;
 mod point_drawer;
 mod torus_drawer;
+mod bezier_c0_drawer;
 
 fn main() {
     let mut width = 800;
@@ -48,6 +50,7 @@ fn main() {
     let point_drawer = PointDrawer::new(&display);
     let cursor_drawer = cursor_drawer::CursorDrawer::new(&display);
     let infinite_grid_drawer = InfiniteGridDrawer::new(&display);
+    let bezier_c0_drawer = BezierC0Drawer::new(&display);
 
     let ui = Rc::new(RefCell::new(Ui::new()));
 
@@ -108,6 +111,10 @@ fn main() {
                     let mut transformer = LittleTransformer::new();
                     transformer.position = center_point.position;
                     point_drawer.draw(&mut target, &display, &Point::new(0, transformer), &perspective, &view_matrix, Color32::BROWN.to_normalized_gamma_f32());
+                }
+
+                for bezier_points in app_state.storage.beziers_c0.values().map(|b| b.points.iter().map(|p| app_state.storage.points.get(&p.id).unwrap().clone()).collect::<Vec<Point>>()) {
+                    bezier_c0_drawer.draw(&mut target, &display, &bezier_points, &perspective, &view_matrix, color);
                 }
 
                 cursor_drawer.draw(&mut target, &display, &app_state.storage.cursor, &perspective, &view_matrix);
