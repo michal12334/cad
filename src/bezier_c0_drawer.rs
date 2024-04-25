@@ -11,7 +11,7 @@ pub struct BezierC0Drawer {
 impl BezierC0Drawer {
     pub fn new(display: &Display<WindowSurface>) -> Self {
         let vertex_shader_src = r#"
-            #version 140
+            #version 460 core
     
             in vec3 position;
             
@@ -22,9 +22,35 @@ impl BezierC0Drawer {
                 gl_Position = perspective * view * vec4(position, 1.0);
             }
         "#;
+        
+        let geometry_shader_src = r#"
+            #version 460 core
+            
+            layout(lines_adjacency) in;
+            layout(line_strip, max_vertices = 100) out;
+            
+            void main() {
+                for(float t = 0.0; t <= 1.0; t += 0.01) {
+                    float it = 1.0 - t;
+                    float b0 = it * it * it;
+                    float b1 = 3.0 * it * it * t;
+                    float b2 = 3.0 * it * t * t;
+                    float b3 = t * t * t;
+                    
+                    vec4 position = 
+                        gl_in[0].gl_Position * b0 
+                        + gl_in[1].gl_Position * b1 
+                        + gl_in[2].gl_Position * b2
+                        + gl_in[3].gl_Position * b3;
+                    gl_Position = position;
+                    EmitVertex();
+                }
+                EndPrimitive();
+            }
+        "#;
 
         let fragment_shader_src = r#"
-            #version 140
+            #version 460 core
     
             out vec4 color;
             
@@ -36,7 +62,7 @@ impl BezierC0Drawer {
         "#;
 
         let program =
-            Program::from_source(display, vertex_shader_src, fragment_shader_src, None).unwrap();
+            Program::from_source(display, vertex_shader_src, fragment_shader_src, Some(geometry_shader_src)).unwrap();
 
         let mut drawing_parameters = DrawParameters::default();
         drawing_parameters.polygon_mode = glium::draw_parameters::PolygonMode::Line;
@@ -68,7 +94,7 @@ impl BezierC0Drawer {
             .collect::<Vec<Vertex>>();
         let vertex_buffer = glium::VertexBuffer::new(display, &points).unwrap();
         let indices =
-            glium::IndexBuffer::new(display, glium::index::PrimitiveType::LinesList, &(0..(points.len() as u16 - 1)).flat_map(|f| [f, f + 1]).collect::<Vec<u16>>()).unwrap();
+            glium::IndexBuffer::new(display, glium::index::PrimitiveType::LineStripAdjacency, &(0..(points.len() as u16)).collect::<Vec<u16>>()).unwrap();
         target
             .draw(
                 &vertex_buffer,
