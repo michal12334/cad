@@ -27,10 +27,10 @@ impl BezierC0Drawer {
             #version 460 core
             
             layout(lines_adjacency) in;
-            layout(line_strip, max_vertices = 100) out;
+            layout(line_strip, max_vertices = 101) out;
             
             void main() {
-                for(float t = 0.0; t <= 1.0; t += 0.01) {
+                for(float t = 0.0; t <= 1.00; t += 0.01) {
                     float it = 1.0 - t;
                     float b0 = it * it * it;
                     float b1 = 3.0 * it * it * t;
@@ -94,7 +94,7 @@ impl BezierC0Drawer {
             .collect::<Vec<Vertex>>();
         let vertex_buffer = glium::VertexBuffer::new(display, &points).unwrap();
         let indices =
-            glium::IndexBuffer::new(display, glium::index::PrimitiveType::LineStripAdjacency, &(0..(points.len() as u16)).collect::<Vec<u16>>()).unwrap();
+            glium::IndexBuffer::new(display, glium::index::PrimitiveType::LinesListAdjacency, &(0..(points.len() as u16 - 3)).step_by(3).flat_map(|f| [f, f + 1, f + 2, f + 3]).collect::<Vec<u16>>()).unwrap();
         target
             .draw(
                 &vertex_buffer,
