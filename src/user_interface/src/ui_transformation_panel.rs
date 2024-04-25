@@ -1,6 +1,5 @@
-use crate::object::Object::{BeziersC0, Point, Torus};
-use crate::object_id::ObjectId;
-use crate::ui::Ui;
+use egui::{DragValue, Resize, ScrollArea, Slider, Widget};
+
 use backend::cqrs::common::transform_selected_objects::TransformSelectedObjects;
 use backend::cqrs::cqrs::CQRS;
 use backend::cqrs::cursors::transform_cursor::TransformCursor;
@@ -11,8 +10,11 @@ use backend::cqrs::toruses::rename_torus::RenameTorus;
 use backend::cqrs::toruses::torus_details::{TorusDTO, TorusDetails, TransformerDTO};
 use backend::cqrs::toruses::transform_torus::TransformTours;
 use backend::cqrs::toruses::update_torus::UpdateTorus;
-use egui::{DragValue, Resize, ScrollArea, Slider, Widget};
 use math::operations::multiply_quaternions;
+
+use crate::object::Object::{BeziersC0, Point, Torus};
+use crate::object_id::ObjectId;
+use crate::ui::Ui;
 
 impl Ui {
     pub fn build_selected_object_transformation_panel(

@@ -1,6 +1,7 @@
-use crate::consumer::AnyConsumer;
 use std::any::Any;
 use std::rc::Rc;
+
+use crate::consumer::AnyConsumer;
 
 pub struct EventBus {
     consumers: Vec<Box<dyn AnyConsumer>>,

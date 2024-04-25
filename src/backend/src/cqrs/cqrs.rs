@@ -1,6 +1,7 @@
-use crate::backend::Backend;
 use std::cell::RefCell;
 use std::rc::Rc;
+
+use crate::backend::Backend;
 
 pub struct CQRS {
     app_state: Rc<RefCell<Backend>>,

@@ -1,8 +1,9 @@
+use std::cell::RefCell;
+use std::rc::Rc;
+
 use crate::backend::Backend;
 use crate::cqrs::cqrs::Query;
 use crate::cqrs::points::point_details::LittleTransformerDTO;
-use std::cell::RefCell;
-use std::rc::Rc;
 
 pub struct SelectedObjectsCenter;
 

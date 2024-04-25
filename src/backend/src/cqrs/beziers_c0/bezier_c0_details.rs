@@ -1,7 +1,8 @@
-use crate::backend::Backend;
-use crate::cqrs::cqrs::Query;
 use std::cell::RefCell;
 use std::rc::Rc;
+
+use crate::backend::Backend;
+use crate::cqrs::cqrs::Query;
 
 pub struct BezierC0Details {
     pub id: u64,

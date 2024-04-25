@@ -1,30 +1,16 @@
-use backend::cqrs::beziers_c0::add_bezier_c0::AddBezierC0;
-use backend::cqrs::beziers_c0::bezier_c0_details::BezierC0Details;
-use egui::{DragValue, Resize, ScrollArea, Slider, Widget};
+use egui::ScrollArea;
 use itertools::Itertools;
 
-use backend::cqrs::common::new_id::NewId;
-use backend::cqrs::common::select_objects::{ObjectTypeDTO, SelectObjects, SelectionObjectDTO};
-use backend::cqrs::common::transform_selected_objects::TransformSelectedObjects;
+use backend::cqrs::common::select_objects::{SelectObjects, SelectionObjectDTO};
 use backend::cqrs::cqrs::CQRS;
 use backend::cqrs::cursors::cursor_details::CursorDTO;
 use backend::cqrs::cursors::cursor_details::CursorDetails;
-use backend::cqrs::cursors::transform_cursor::TransformCursor;
-use backend::cqrs::points::add_point::AddPoint;
 use backend::cqrs::points::all_points::AllPoints;
-use backend::cqrs::points::point_details::{LittleTransformerDTO, PointDTO, PointDetails};
-use backend::cqrs::points::rename_point::RenamePoint;
-use backend::cqrs::points::transform_point::TransformPoint;
-use backend::cqrs::toruses::add_torus::AddTorus;
 use backend::cqrs::toruses::all_toruses::AllToruses;
-use backend::cqrs::toruses::rename_torus::RenameTorus;
-use backend::cqrs::toruses::torus_details::{TorusDTO, TorusDetails, TransformerDTO};
-use backend::cqrs::toruses::transform_torus::TransformTours;
-use backend::cqrs::toruses::update_torus::UpdateTorus;
-use math::operations::multiply_quaternions;
+use backend::cqrs::toruses::torus_details::TransformerDTO;
 
 use crate::object::Object;
-use crate::object::Object::{BeziersC0, Point, Torus};
+use crate::object::Object::{Point, Torus};
 use crate::object_id::ObjectId;
 
 pub struct Ui {

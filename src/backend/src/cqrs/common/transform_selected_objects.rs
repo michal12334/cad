@@ -1,13 +1,15 @@
+use std::cell::RefCell;
+use std::ops::DerefMut;
+use std::rc::Rc;
+
+use math::matrix4::Matrix4;
+use math::operations::multiply_quaternions;
+use math::vector4::Vector4;
+
 use crate::backend::Backend;
 use crate::cqrs::common::selected_objects_center::SelectedObjectsCenter;
 use crate::cqrs::cqrs::{Command, CQRS};
 use crate::cqrs::toruses::torus_details::TransformerDTO;
-use math::matrix4::Matrix4;
-use math::operations::multiply_quaternions;
-use math::vector4::Vector4;
-use std::cell::RefCell;
-use std::ops::DerefMut;
-use std::rc::Rc;
 
 pub struct TransformSelectedObjects {
     pub transformer: TransformerDTO,

@@ -1,8 +1,9 @@
+use std::cell::RefCell;
+use std::rc::Rc;
+
 use crate::backend::Backend;
 use crate::cqrs::cqrs::Command;
 use crate::domain::bezier_c0::{BezierC0, BezierC0Point};
-use std::cell::RefCell;
-use std::rc::Rc;
 
 pub struct AddBezierC0 {
     pub id: u64,

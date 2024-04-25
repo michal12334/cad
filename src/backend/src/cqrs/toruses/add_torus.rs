@@ -1,9 +1,10 @@
+use std::cell::RefCell;
+use std::rc::Rc;
+
 use crate::backend::Backend;
 use crate::cqrs::cqrs::Command;
 use crate::domain::torus::Torus;
 use crate::domain::transformer::Transformer;
-use std::cell::RefCell;
-use std::rc::Rc;
 
 pub struct AddTorus {
     pub id: u64,

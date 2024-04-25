@@ -1,8 +1,9 @@
+use std::cell::RefCell;
+use std::rc::Rc;
+
 use crate::backend::Backend;
 use crate::cqrs::cqrs::Command;
 use crate::domain::selected_object::SelectedObject;
-use std::cell::RefCell;
-use std::rc::Rc;
 
 pub struct SelectObjects {
     pub objects: Vec<SelectionObjectDTO>,

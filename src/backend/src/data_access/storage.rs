@@ -1,6 +1,6 @@
-use crate::domain::bezier_c0::BezierC0;
 use std::collections::HashMap;
 
+use crate::domain::bezier_c0::BezierC0;
 use crate::domain::cursor::Cursor;
 use crate::domain::point::Point;
 use crate::domain::selected_object::SelectedObject;

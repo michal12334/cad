@@ -2,15 +2,15 @@
 extern crate glium;
 extern crate user_interface;
 
-use egui::Color32;
-use glium::Surface;
 use std::cell::RefCell;
 use std::rc::Rc;
+
+use egui::Color32;
+use glium::Surface;
 use winit::event::ElementState::Pressed;
 use winit::event::MouseButton;
 use winit::{event, event_loop};
 
-use crate::bezier_c0_drawer::BezierC0Drawer;
 use backend::backend::Backend;
 use backend::cqrs::common::selected_objects_center::SelectedObjectsCenter;
 use backend::cqrs::cqrs::CQRS;
@@ -22,6 +22,7 @@ use backend::domain::transformer::LittleTransformer;
 use math::vector4::Vector4;
 use user_interface::ui::Ui;
 
+use crate::bezier_c0_drawer::BezierC0Drawer;
 use crate::infinite_grid_drawer::InfiniteGridDrawer;
 use crate::point_drawer::PointDrawer;
 use crate::torus_drawer::TorusDrawer;

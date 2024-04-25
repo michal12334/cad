@@ -1,7 +1,8 @@
-use backend::domain::point::Point;
-use backend::domain::vertex::Vertex;
 use glium::glutin::surface::WindowSurface;
 use glium::{Display, DrawParameters, Frame, Program, Surface};
+
+use backend::domain::point::Point;
+use backend::domain::vertex::Vertex;
 
 pub struct BezierC0Drawer {
     program: Program,
