@@ -1,8 +1,8 @@
-use egui::{Resize, ScrollArea};
-use backend::cqrs::common::select_objects::{ObjectTypeDTO, SelectionObjectDTO, SelectObjects};
-use backend::cqrs::cqrs::CQRS;
 use crate::object_id::ObjectId;
 use crate::ui::Ui;
+use backend::cqrs::common::select_objects::{ObjectTypeDTO, SelectObjects, SelectionObjectDTO};
+use backend::cqrs::cqrs::CQRS;
+use egui::{Resize, ScrollArea};
 
 impl Ui {
     pub fn build_object_selection_panel(&mut self, ui: &mut egui::Ui, cqrs: &mut CQRS) {

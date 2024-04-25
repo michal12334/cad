@@ -10,6 +10,7 @@ use winit::event::ElementState::Pressed;
 use winit::event::MouseButton;
 use winit::{event, event_loop};
 
+use crate::bezier_c0_drawer::BezierC0Drawer;
 use backend::backend::Backend;
 use backend::cqrs::common::selected_objects_center::SelectedObjectsCenter;
 use backend::cqrs::cqrs::CQRS;
@@ -20,17 +21,16 @@ use backend::domain::point::Point;
 use backend::domain::transformer::LittleTransformer;
 use math::vector4::Vector4;
 use user_interface::ui::Ui;
-use crate::bezier_c0_drawer::BezierC0Drawer;
 
 use crate::infinite_grid_drawer::InfiniteGridDrawer;
 use crate::point_drawer::PointDrawer;
 use crate::torus_drawer::TorusDrawer;
 
+mod bezier_c0_drawer;
 mod cursor_drawer;
 mod infinite_grid_drawer;
 mod point_drawer;
 mod torus_drawer;
-mod bezier_c0_drawer;
 
 fn main() {
     let mut width = 800;

@@ -1,7 +1,7 @@
-use std::cell::RefCell;
-use std::rc::Rc;
 use crate::backend::Backend;
 use crate::cqrs::cqrs::Query;
+use std::cell::RefCell;
+use std::rc::Rc;
 
 pub struct BezierC0Details {
     pub id: u64,
@@ -24,7 +24,11 @@ impl Query<BezierC0Details, BezierC0DTO> for BezierC0Details {
         BezierC0DTO {
             id: bezier_c0.id,
             name: bezier_c0.name.clone(),
-            points: bezier_c0.points.iter().map(|point| BezierC0PointDTO { id: point.id }).collect(),
+            points: bezier_c0
+                .points
+                .iter()
+                .map(|point| BezierC0PointDTO { id: point.id })
+                .collect(),
         }
     }
 }

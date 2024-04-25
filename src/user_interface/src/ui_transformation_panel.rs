@@ -1,21 +1,25 @@
-use egui::{DragValue, Resize, ScrollArea, Slider, Widget};
-use backend::cqrs::common::transform_selected_objects::TransformSelectedObjects;
-use backend::cqrs::cqrs::CQRS;
-use backend::cqrs::cursors::transform_cursor::TransformCursor;
-use backend::cqrs::points::point_details::{LittleTransformerDTO, PointDetails, PointDTO};
-use backend::cqrs::points::rename_point::RenamePoint;
-use backend::cqrs::points::transform_point::TransformPoint;
-use backend::cqrs::toruses::rename_torus::RenameTorus;
-use backend::cqrs::toruses::torus_details::{TorusDetails, TorusDTO, TransformerDTO};
-use backend::cqrs::toruses::transform_torus::TransformTours;
-use backend::cqrs::toruses::update_torus::UpdateTorus;
-use math::operations::multiply_quaternions;
 use crate::object::Object::{BeziersC0, Point, Torus};
 use crate::object_id::ObjectId;
 use crate::ui::Ui;
+use backend::cqrs::common::transform_selected_objects::TransformSelectedObjects;
+use backend::cqrs::cqrs::CQRS;
+use backend::cqrs::cursors::transform_cursor::TransformCursor;
+use backend::cqrs::points::point_details::{LittleTransformerDTO, PointDTO, PointDetails};
+use backend::cqrs::points::rename_point::RenamePoint;
+use backend::cqrs::points::transform_point::TransformPoint;
+use backend::cqrs::toruses::rename_torus::RenameTorus;
+use backend::cqrs::toruses::torus_details::{TorusDTO, TorusDetails, TransformerDTO};
+use backend::cqrs::toruses::transform_torus::TransformTours;
+use backend::cqrs::toruses::update_torus::UpdateTorus;
+use egui::{DragValue, Resize, ScrollArea, Slider, Widget};
+use math::operations::multiply_quaternions;
 
 impl Ui {
-    pub fn build_selected_object_transformation_panel(&mut self, ui: &mut egui::Ui, cqrs: &mut CQRS) {
+    pub fn build_selected_object_transformation_panel(
+        &mut self,
+        ui: &mut egui::Ui,
+        cqrs: &mut CQRS,
+    ) {
         Resize::default().id_source("resize_2").show(ui, |ui| {
             ScrollArea::vertical().id_source("a2").show(ui, |ui| {
                 if self.cursor_selected {
@@ -81,7 +85,7 @@ impl Ui {
             Point(point) => {
                 Ui::build_point_transformation_panel(ui, cqrs, point);
             }
-            BeziersC0(_) => {},
+            BeziersC0(_) => {}
         }
     }
 
@@ -176,25 +180,25 @@ impl Ui {
                 position: (
                     group_transformer.position.0
                         - self
-                        .previous_group_transformation
-                        .as_ref()
-                        .unwrap()
-                        .position
-                        .0,
+                            .previous_group_transformation
+                            .as_ref()
+                            .unwrap()
+                            .position
+                            .0,
                     group_transformer.position.1
                         - self
-                        .previous_group_transformation
-                        .as_ref()
-                        .unwrap()
-                        .position
-                        .1,
+                            .previous_group_transformation
+                            .as_ref()
+                            .unwrap()
+                            .position
+                            .1,
                     group_transformer.position.2
                         - self
-                        .previous_group_transformation
-                        .as_ref()
-                        .unwrap()
-                        .position
-                        .2,
+                            .previous_group_transformation
+                            .as_ref()
+                            .unwrap()
+                            .position
+                            .2,
                 ),
                 rotation: multiply_quaternions(
                     (

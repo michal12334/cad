@@ -20,7 +20,7 @@ impl SelectedObject {
             bezier_c0_id: None,
         }
     }
-    
+
     pub fn new_bezier_c0(bezier_c0_id: u64) -> Self {
         Self {
             torus_id: None,

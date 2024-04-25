@@ -1,7 +1,7 @@
-use glium::{Display, DrawParameters, Frame, Program, Surface};
-use glium::glutin::surface::WindowSurface;
 use backend::domain::point::Point;
 use backend::domain::vertex::Vertex;
+use glium::glutin::surface::WindowSurface;
+use glium::{Display, DrawParameters, Frame, Program, Surface};
 
 pub struct BezierC0Drawer {
     program: Program,
@@ -22,7 +22,7 @@ impl BezierC0Drawer {
                 gl_Position = perspective * view * vec4(position, 1.0);
             }
         "#;
-        
+
         let geometry_shader_src = r#"
             #version 460 core
             
@@ -92,8 +92,13 @@ impl BezierC0Drawer {
             }
         "#;
 
-        let program =
-            Program::from_source(display, vertex_shader_src, fragment_shader_src, Some(geometry_shader_src)).unwrap();
+        let program = Program::from_source(
+            display,
+            vertex_shader_src,
+            fragment_shader_src,
+            Some(geometry_shader_src),
+        )
+        .unwrap();
 
         let mut drawing_parameters = DrawParameters::default();
         drawing_parameters.polygon_mode = glium::draw_parameters::PolygonMode::Line;
@@ -119,17 +124,32 @@ impl BezierC0Drawer {
         view_matrix: &math::matrix4::Matrix4,
         color: [f32; 4],
     ) {
-        let mut points = points.iter().map(|p| {
-            Vertex { position: [p.transformer.position.0 as f32, p.transformer.position.1 as f32, p.transformer.position.2 as f32] }
-        })
+        let mut points = points
+            .iter()
+            .map(|p| Vertex {
+                position: [
+                    p.transformer.position.0 as f32,
+                    p.transformer.position.1 as f32,
+                    p.transformer.position.2 as f32,
+                ],
+            })
             .collect::<Vec<Vertex>>();
         let len = points.len();
         while points.len() % 3 != 1 {
-            points.push(Vertex { position: [0.0, 0.0, 0.0] });
+            points.push(Vertex {
+                position: [0.0, 0.0, 0.0],
+            });
         }
         let vertex_buffer = glium::VertexBuffer::new(display, &points).unwrap();
-        let indices =
-            glium::IndexBuffer::new(display, glium::index::PrimitiveType::LinesListAdjacency, &(0..(points.len() as u16 - 3)).step_by(3).flat_map(|f| [f, f + 1, f + 2, f + 3]).collect::<Vec<u16>>()).unwrap();
+        let indices = glium::IndexBuffer::new(
+            display,
+            glium::index::PrimitiveType::LinesListAdjacency,
+            &(0..(points.len() as u16 - 3))
+                .step_by(3)
+                .flat_map(|f| [f, f + 1, f + 2, f + 3])
+                .collect::<Vec<u16>>(),
+        )
+        .unwrap();
         target
             .draw(
                 &vertex_buffer,

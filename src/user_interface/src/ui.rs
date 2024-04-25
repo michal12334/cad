@@ -1,7 +1,7 @@
-use egui::{DragValue, Resize, ScrollArea, Slider, Widget};
-use itertools::Itertools;
 use backend::cqrs::beziers_c0::add_bezier_c0::AddBezierC0;
 use backend::cqrs::beziers_c0::bezier_c0_details::BezierC0Details;
+use egui::{DragValue, Resize, ScrollArea, Slider, Widget};
+use itertools::Itertools;
 
 use backend::cqrs::common::new_id::NewId;
 use backend::cqrs::common::select_objects::{ObjectTypeDTO, SelectObjects, SelectionObjectDTO};
