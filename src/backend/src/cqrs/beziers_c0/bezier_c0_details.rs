@@ -16,6 +16,7 @@ pub struct BezierC0DTO {
 
 pub struct BezierC0PointDTO {
     pub id: u64,
+    pub name: String,
 }
 
 impl Query<BezierC0Details, BezierC0DTO> for BezierC0Details {
@@ -28,7 +29,13 @@ impl Query<BezierC0Details, BezierC0DTO> for BezierC0Details {
             points: bezier_c0
                 .points
                 .iter()
-                .map(|point| BezierC0PointDTO { id: point.id })
+                .map(|bp| {
+                    let p = app_state.storage.points.get(&bp.id).unwrap();
+                    BezierC0PointDTO {
+                        id: p.id,
+                        name: p.name.clone(),
+                    }
+                })
                 .collect(),
         }
     }

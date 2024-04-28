@@ -10,6 +10,8 @@ use backend::cqrs::toruses::torus_details::TorusDetails;
 use crate::object::Object::{BeziersC0, Point, Torus};
 use crate::ui::Ui;
 
+type DomainBezier = crate::domain::bezier_c0::BezierC0;
+
 impl Ui {
     pub fn build_object_addition_panel(&mut self, ui: &mut egui::Ui, cqrs: &mut CQRS) {
         if ui.button("Add Torus").clicked() {
@@ -31,8 +33,7 @@ impl Ui {
         if ui.button("Add Bezier C0").clicked() {
             let id = cqrs.handle(&NewId {});
             cqrs.execute(&AddBezierC0 { id });
-            self.objects
-                .push(BeziersC0(cqrs.get(&BezierC0Details { id })));
+            self.objects.push(BeziersC0(DomainBezier::from_dto(&cqrs.get(&BezierC0Details { id }))));
         }
     }
 }

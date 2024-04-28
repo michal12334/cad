@@ -1,12 +1,12 @@
-use backend::cqrs::beziers_c0::bezier_c0_details::BezierC0DTO;
 use backend::cqrs::common::select_objects::ObjectTypeDTO;
 use backend::cqrs::points::point_details::PointDTO;
 use backend::cqrs::toruses::torus_details::TorusDTO;
+use crate::domain::bezier_c0::BezierC0;
 
 pub enum Object {
     Torus(TorusDTO),
     Point(PointDTO),
-    BeziersC0(BezierC0DTO),
+    BeziersC0(BezierC0),
 }
 
 impl Object {
