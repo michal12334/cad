@@ -11,6 +11,7 @@ use backend::cqrs::toruses::torus_details::{TorusDTO, TorusDetails, TransformerD
 use backend::cqrs::toruses::transform_torus::TransformTours;
 use backend::cqrs::toruses::update_torus::UpdateTorus;
 use math::operations::multiply_quaternions;
+use crate::domain::bezier_c0::BezierC0;
 
 use crate::object::Object::{BeziersC0, Point, Torus};
 use crate::object_id::ObjectId;
@@ -87,7 +88,9 @@ impl Ui {
             Point(point) => {
                 Ui::build_point_transformation_panel(ui, cqrs, point);
             }
-            BeziersC0(_) => {}
+            BeziersC0(bezier) => {
+                Ui::build_bezier_transformation_panel(ui, cqrs, bezier);
+            }
         }
     }
 
@@ -422,5 +425,17 @@ impl Ui {
             });
             *point = cqrs.get(&PointDetails { id: point.id });
         }
+    }
+
+    fn build_bezier_transformation_panel(ui: &mut egui::Ui, cqrs: &mut CQRS, bezier: &mut BezierC0) {
+        Resize::default().id_source("resize_bezier_c0").show(ui, |ui| {
+            ScrollArea::vertical().id_source("scroll_bezier_c0").show(ui, |ui| {
+                for point in bezier.points.iter_mut() {
+                    if ui.selectable_label(point.is_selected, &point.name).clicked() { 
+                        point.is_selected = !point.is_selected;
+                    } 
+                }
+            })
+        });
     }
 }
