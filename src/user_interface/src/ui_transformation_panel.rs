@@ -1,4 +1,6 @@
 use egui::{DragValue, Resize, ScrollArea, Slider, Widget};
+use backend::cqrs::beziers_c0::bezier_c0_details::BezierC0Details;
+use backend::cqrs::beziers_c0::rename_bezier_c0::RenameBezierC0;
 
 use backend::cqrs::common::transform_selected_objects::TransformSelectedObjects;
 use backend::cqrs::cqrs::CQRS;
@@ -428,6 +430,14 @@ impl Ui {
     }
 
     fn build_bezier_transformation_panel(ui: &mut egui::Ui, cqrs: &mut CQRS, bezier: &mut BezierC0) {
+        if ui.text_edit_singleline(&mut bezier.name).lost_focus() {
+            cqrs.execute(&RenameBezierC0 {
+                id: bezier.id,
+                name: bezier.name.clone(),
+            });
+            *bezier = BezierC0::from_dto(&cqrs.get(&BezierC0Details { id: bezier.id }));
+        }
+        
         Resize::default().id_source("resize_bezier_c0").show(ui, |ui| {
             ScrollArea::vertical().id_source("scroll_bezier_c0").show(ui, |ui| {
                 for point in bezier.points.iter_mut() {

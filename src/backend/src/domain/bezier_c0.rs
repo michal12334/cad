@@ -20,4 +20,8 @@ impl BezierC0 {
     pub fn add_point(&mut self, point: BezierC0Point) {
         self.points.push(point);
     }
+    
+    pub fn rename(&mut self, name: &str) {
+        self.name = name.to_string();
+    }
 }
