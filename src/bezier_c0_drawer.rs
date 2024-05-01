@@ -125,6 +125,10 @@ impl BezierC0Drawer {
         view_matrix: &math::matrix4::Matrix4,
         color: [f32; 4],
     ) {
+        if points.len() < 2 {
+            return;
+        }
+        
         let mut points = points
             .iter()
             .map(|p| Vertex {
