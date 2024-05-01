@@ -19,10 +19,11 @@ use backend::cqrs::points::all_points::AllPoints;
 use backend::cqrs::points::point_details::LittleTransformerDTO;
 use backend::domain::point::Point;
 use backend::domain::transformer::LittleTransformer;
-use backend::processes::beziers_c0::publishers::{BezierC0PointsDeletedPublisher, BezierC0RenamedPublisher};
+use backend::processes::beziers_c0::add_point_to_selected_beziers_c0_on_point_created::AddPointToSelectedBeziersC0OnPointCreated;
+use backend::processes::beziers_c0::publishers::{BezierC0PointsDeletedPublisher, BezierC0RenamedPublisher, PointAddedToBezierC0Publisher};
 use infrastructure::event_bus::EventBus;
 use math::vector4::Vector4;
-use user_interface::processes::sync_bezier_c0_with_backend::{SyncBezierC0DeletedPointsWithBackend, SyncBezierC0NameWithBackend};
+use user_interface::processes::sync_bezier_c0_with_backend::{SyncBezierC0AddedPointsWithBackend, SyncBezierC0DeletedPointsWithBackend, SyncBezierC0NameWithBackend};
 use user_interface::ui::Ui;
 
 use crate::bezier_c0_drawer::BezierC0Drawer;
@@ -56,8 +57,12 @@ fn main() {
     
     event_bus.borrow_mut().add_consumer(BezierC0RenamedPublisher { backend: app_state.clone() });
     event_bus.borrow_mut().add_consumer(BezierC0PointsDeletedPublisher { backend: app_state.clone() });
+    event_bus.borrow_mut().add_consumer(PointAddedToBezierC0Publisher { backend: app_state.clone() });
+    event_bus.borrow_mut().add_consumer(AddPointToSelectedBeziersC0OnPointCreated { backend: app_state.clone() });
+    
     event_bus.borrow_mut().add_consumer(SyncBezierC0NameWithBackend { ui: ui.clone() });
     event_bus.borrow_mut().add_consumer(SyncBezierC0DeletedPointsWithBackend { ui: ui.clone() });
+    event_bus.borrow_mut().add_consumer(SyncBezierC0AddedPointsWithBackend { ui: ui.clone() });
 
     let torus_drawer = TorusDrawer::new(&display);
     let point_drawer = PointDrawer::new(&display);
