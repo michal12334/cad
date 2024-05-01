@@ -10,4 +10,6 @@ egui = "0.23.0"
 itertools = "0.12.1"
 
 backend = { path = "../backend" }
+backend_events = { path = "../backend_events" }
 math = { path = "../math" }
+infrastructure = { path = "../infrastructure" }

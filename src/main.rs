@@ -19,7 +19,10 @@ use backend::cqrs::points::all_points::AllPoints;
 use backend::cqrs::points::point_details::LittleTransformerDTO;
 use backend::domain::point::Point;
 use backend::domain::transformer::LittleTransformer;
+use backend::processes::beziers_c0::publishers::BezierC0RenamedPublisher;
+use infrastructure::event_bus::EventBus;
 use math::vector4::Vector4;
+use user_interface::processes::sync_bezier_c0_with_backend::SyncBezierC0WithBackend;
 use user_interface::ui::Ui;
 
 use crate::bezier_c0_drawer::BezierC0Drawer;
@@ -44,16 +47,21 @@ fn main() {
         .build(&event_loop);
 
     let mut egui_glium = egui_glium::EguiGlium::new(&display, &window, &event_loop);
+    
+    let event_bus = EventBus::new();
+    let event_bus = Rc::new(RefCell::new(event_bus));
 
-    let app_state = Rc::new(RefCell::new(Backend::new()));
+    let app_state = Rc::new(RefCell::new(Backend::new(event_bus.clone())));
+    let ui = Rc::new(RefCell::new(Ui::new()));
+    
+    event_bus.borrow_mut().add_consumer(BezierC0RenamedPublisher { backend: app_state.clone() });
+    event_bus.borrow_mut().add_consumer(SyncBezierC0WithBackend { ui: ui.clone() });
 
     let torus_drawer = TorusDrawer::new(&display);
     let point_drawer = PointDrawer::new(&display);
     let cursor_drawer = cursor_drawer::CursorDrawer::new(&display);
     let infinite_grid_drawer = InfiniteGridDrawer::new(&display);
     let bezier_c0_drawer = BezierC0Drawer::new(&display);
-
-    let ui = Rc::new(RefCell::new(Ui::new()));
 
     let mut mouse_position = (0.0, 0.0);
     let mut camera_direction = math::vector3::Vector3::new(0.0f32, 0.0, 1.0);
@@ -73,7 +81,11 @@ fn main() {
     event_loop.run(move |event, _window_target, control_flow| {
         let mut redraw = || {
             let mut cqrs = CQRS::new(app_state.clone());
-            let repaint_after = egui_glium.run(&window, ui.borrow_mut().build(&mut cqrs));
+            let repaint_after;
+            unsafe {
+                let ui = ui.as_ptr();
+                repaint_after = egui_glium.run(&window, (*ui).build(&mut cqrs));
+            }
 
             *control_flow = if repaint_after.is_zero() {
                 window.request_redraw();

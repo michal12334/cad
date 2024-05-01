@@ -1,4 +1,4 @@
-workspace = { members = [ "src/backend", "src/infrastructure", "src/math","src/user_interface"] }
+workspace = { members = [ "src/backend", "src/backend_events", "src/infrastructure", "src/math","src/user_interface"] }
 [package]
 name = "cad"
 version = "0.1.0"
@@ -17,5 +17,6 @@ winit = "0.28"
 
 user_interface = { path = "src/user_interface" }
 backend = { path = "src/backend" }
+backend_events = { path = "src/backend_events" }
 math = { path = "src/math" }
 infrastructure = { path = "src/infrastructure" }

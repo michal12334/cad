@@ -435,7 +435,6 @@ impl Ui {
                 id: bezier.id,
                 name: bezier.name.clone(),
             });
-            *bezier = BezierC0::from_dto(&cqrs.get(&BezierC0Details { id: bezier.id }));
         }
         
         Resize::default().id_source("resize_bezier_c0").show(ui, |ui| {
