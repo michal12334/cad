@@ -1,10 +1,12 @@
 use egui::{DragValue, Resize, ScrollArea, Slider, Widget};
 use backend::cqrs::beziers_c0::bezier_c0_details::BezierC0Details;
+use backend::cqrs::beziers_c0::delete_bezier_c0_points::DeleteBezierC0Points;
 use backend::cqrs::beziers_c0::rename_bezier_c0::RenameBezierC0;
 
 use backend::cqrs::common::transform_selected_objects::TransformSelectedObjects;
 use backend::cqrs::cqrs::CQRS;
 use backend::cqrs::cursors::transform_cursor::TransformCursor;
+use backend::cqrs::points::add_point::AddPoint;
 use backend::cqrs::points::point_details::{LittleTransformerDTO, PointDTO, PointDetails};
 use backend::cqrs::points::rename_point::RenamePoint;
 use backend::cqrs::points::transform_point::TransformPoint;
@@ -446,5 +448,12 @@ impl Ui {
                 }
             })
         });
+
+        if ui.button("Delete Points").clicked() {
+            cqrs.execute(&DeleteBezierC0Points {
+                id: bezier.id,
+                points: bezier.points.iter().filter(|p| p.is_selected).map(|p| p.id).collect(),
+            });
+        }
     }
 }

@@ -24,4 +24,8 @@ impl BezierC0 {
     pub fn rename(&mut self, name: &str) {
         self.name = name.to_string();
     }
+    
+    pub fn delete_points(&mut self, points: &[u64]) {
+        self.points.retain(|point| !points.contains(&point.id));
+    }
 }
