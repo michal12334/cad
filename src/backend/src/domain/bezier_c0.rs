@@ -1,6 +1,7 @@
 pub struct BezierC0 {
     pub id: u64,
     pub name: String,
+    pub draw_polygon: bool,
     pub points: Vec<BezierC0Point>,
 }
 
@@ -13,6 +14,7 @@ impl BezierC0 {
         Self {
             id,
             name: format!("BezierC0 {}", id),
+            draw_polygon: false,
             points,
         }
     }
@@ -27,5 +29,9 @@ impl BezierC0 {
     
     pub fn delete_points(&mut self, points: &[u64]) {
         self.points.retain(|point| !points.contains(&point.id));
+    }
+    
+    pub fn set_draw_polygon(&mut self, draw_polygon: bool) {
+        self.draw_polygon = draw_polygon;
     }
 }

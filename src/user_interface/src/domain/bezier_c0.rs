@@ -5,6 +5,7 @@ pub struct BezierC0 {
     pub name: String,
     pub points: Vec<BezierC0Point>,
     pub selected_point: Option<(u64, String)>,
+    pub draw_polygon: bool,
 }
 
 pub struct BezierC0Point {
@@ -19,6 +20,7 @@ impl BezierC0 {
             id: dto.id,
             name: dto.name.clone(),
             selected_point: None,
+            draw_polygon: false,
             points: dto
                 .points
                 .iter()

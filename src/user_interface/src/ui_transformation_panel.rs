@@ -2,6 +2,7 @@ use egui::{DragValue, Resize, ScrollArea, Slider, Widget, ComboBox};
 use backend::cqrs::beziers_c0::add_point_to_bezier_c0::AddPointToBezierC0;
 use backend::cqrs::beziers_c0::delete_bezier_c0_points::DeleteBezierC0Points;
 use backend::cqrs::beziers_c0::rename_bezier_c0::RenameBezierC0;
+use backend::cqrs::beziers_c0::set_bezier_c0_draw_polygon::SetBezierC0DrawPolygon;
 
 use backend::cqrs::common::transform_selected_objects::TransformSelectedObjects;
 use backend::cqrs::cqrs::CQRS;
@@ -473,6 +474,13 @@ impl Ui {
             cqrs.execute(&DeleteBezierC0Points {
                 id: bezier.id,
                 points: bezier.points.iter().filter(|p| p.is_selected).map(|p| p.id).collect(),
+            });
+        }
+        
+        if ui.checkbox(&mut bezier.draw_polygon, "Draw Polygon").changed() {
+            cqrs.execute(&SetBezierC0DrawPolygon {
+                id: bezier.id,
+                draw_polygon: bezier.draw_polygon,
             });
         }
     }
