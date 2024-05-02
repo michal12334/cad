@@ -29,6 +29,7 @@ use user_interface::ui::Ui;
 use crate::bezier_c0_drawer::BezierC0Drawer;
 use crate::infinite_grid_drawer::InfiniteGridDrawer;
 use crate::point_drawer::PointDrawer;
+use crate::polygon_drawer::PolygonDrawer;
 use crate::torus_drawer::TorusDrawer;
 
 mod bezier_c0_drawer;
@@ -36,6 +37,7 @@ mod cursor_drawer;
 mod infinite_grid_drawer;
 mod point_drawer;
 mod torus_drawer;
+mod polygon_drawer;
 
 fn main() {
     let mut width = 800;
@@ -69,6 +71,7 @@ fn main() {
     let cursor_drawer = cursor_drawer::CursorDrawer::new(&display);
     let infinite_grid_drawer = InfiniteGridDrawer::new(&display);
     let bezier_c0_drawer = BezierC0Drawer::new(&display);
+    let polygon_drawer = PolygonDrawer::new(&display);
 
     let mut mouse_position = (0.0, 0.0);
     let mut camera_direction = math::vector3::Vector3::new(0.0f32, 0.0, 1.0);
@@ -135,6 +138,10 @@ fn main() {
 
                 for bezier_points in app_state.storage.beziers_c0.values().map(|b| b.points.iter().map(|p| app_state.storage.points.get(&p.id).unwrap().clone()).collect::<Vec<Point>>()) {
                     bezier_c0_drawer.draw(&mut target, &display, &bezier_points, &perspective, &view_matrix, color);
+                }
+
+                for bezier_points in app_state.storage.beziers_c0.values().filter(|b| b.draw_polygon).map(|b| b.points.iter().map(|p| app_state.storage.points.get(&p.id).unwrap().clone()).collect::<Vec<Point>>()) {
+                    polygon_drawer.draw(&mut target, &display, &bezier_points, &perspective, &view_matrix, color);
                 }
 
                 cursor_drawer.draw(&mut target, &display, &app_state.storage.cursor, &perspective, &view_matrix);
