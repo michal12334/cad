@@ -32,10 +32,13 @@ impl BezierC0Drawer {
             
             uniform int mode;
             uniform int number_of_primitives;
+            uniform float t_min;
+            uniform float t_max;
             
             void main() {
                 if (mode == 0 && gl_PrimitiveIDIn == number_of_primitives - 1) {
-                    for (float t = 0.0; t <= 1.00; t += 0.01) {
+                    for (float i = 0.0; i <= 1.00; i += 0.01) {
+                        float t = t_min + i * (t_max - t_min);
                         float it = 1.0 - t;
                         float b0 = it * it;
                         float b1 = 2.0 * it * t;
@@ -49,7 +52,8 @@ impl BezierC0Drawer {
                         EmitVertex();
                     }
                 } else if (mode == 2 && gl_PrimitiveIDIn == number_of_primitives - 1) {
-                    for (float t = 0.0; t <= 1.00; t += 0.01) {
+                    for (float i = 0.0; i <= 1.00; i += 0.01) {
+                        float t = t_min + i * (t_max - t_min);
                         float it = 1.0 - t;
                         float b0 = it;
                         float b1 = t;
@@ -61,7 +65,8 @@ impl BezierC0Drawer {
                         EmitVertex();
                     }
                 } else {
-                    for (float t = 0.0; t <= 1.00; t += 0.01) {
+                    for (float i = 0.0; i <= 1.00; i += 0.01) {
+                        float t = t_min + i * (t_max - t_min);
                         float it = 1.0 - t;
                         float b0 = it * it * it;
                         float b1 = 3.0 * it * it * t;
@@ -166,6 +171,8 @@ impl BezierC0Drawer {
                     obj_color: color,
                     mode: len as i32 % 3,
                     number_of_primitives: (len as i32 - 1) / 3 + 1,
+                    t_min: 0.0f32,
+                    t_max: 1.0f32,
                 },
                 &self.drawing_parameters,
             )
