@@ -1,5 +1,6 @@
 use crate::vector3::Vector3;
 
+#[derive(Debug, Clone, Copy)]
 pub struct Vector4 {
     pub x: f32,
     pub y: f32,

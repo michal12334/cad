@@ -137,7 +137,7 @@ fn main() {
                 }
 
                 for bezier_points in app_state.storage.beziers_c0.values().map(|b| b.points.iter().map(|p| app_state.storage.points.get(&p.id).unwrap().clone()).collect::<Vec<Point>>()) {
-                    bezier_c0_drawer.draw(&mut target, &display, &bezier_points, &perspective, &view_matrix, color);
+                    bezier_c0_drawer.draw(&mut target, &display, &bezier_points, &perspective, &view_matrix, color, width, height);
                 }
 
                 for bezier_points in app_state.storage.beziers_c0.values().filter(|b| b.draw_polygon).map(|b| b.points.iter().map(|p| app_state.storage.points.get(&p.id).unwrap().clone()).collect::<Vec<Point>>()) {

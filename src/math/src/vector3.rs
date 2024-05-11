@@ -9,4 +9,8 @@ impl Vector3 {
     pub fn new(x: f32, y: f32, z: f32) -> Self {
         Self { x, y, z }
     }
+    
+    pub fn length(&self) -> f32 {
+        (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
+    }
 }
