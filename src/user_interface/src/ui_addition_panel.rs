@@ -33,7 +33,9 @@ impl Ui {
         if ui.button("Add Bezier C0").clicked() {
             let id = cqrs.handle(&NewId {});
             cqrs.execute(&AddBezierC0 { id });
-            self.objects.push(BeziersC0(DomainBezier::from_dto(&cqrs.get(&BezierC0Details { id }))));
+            self.objects.push(BeziersC0(DomainBezier::from_dto(
+                &cqrs.get(&BezierC0Details { id }),
+            )));
         }
     }
 }

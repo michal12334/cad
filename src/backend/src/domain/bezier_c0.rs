@@ -22,15 +22,15 @@ impl BezierC0 {
     pub fn add_point(&mut self, point: BezierC0Point) {
         self.points.push(point);
     }
-    
+
     pub fn rename(&mut self, name: &str) {
         self.name = name.to_string();
     }
-    
+
     pub fn delete_points(&mut self, points: &[u64]) {
         self.points.retain(|point| !points.contains(&point.id));
     }
-    
+
     pub fn set_draw_polygon(&mut self, draw_polygon: bool) {
         self.draw_polygon = draw_polygon;
     }

@@ -1,23 +1,23 @@
-use egui::{DragValue, Resize, ScrollArea, Slider, Widget, ComboBox};
+use egui::{ComboBox, DragValue, Resize, ScrollArea, Slider, Widget};
+
 use backend::cqrs::beziers_c0::add_point_to_bezier_c0::AddPointToBezierC0;
 use backend::cqrs::beziers_c0::delete_bezier_c0_points::DeleteBezierC0Points;
 use backend::cqrs::beziers_c0::rename_bezier_c0::RenameBezierC0;
 use backend::cqrs::beziers_c0::set_bezier_c0_draw_polygon::SetBezierC0DrawPolygon;
-
 use backend::cqrs::common::transform_selected_objects::TransformSelectedObjects;
 use backend::cqrs::cqrs::CQRS;
 use backend::cqrs::cursors::transform_cursor::TransformCursor;
+use backend::cqrs::points::all_points::AllPoints;
 use backend::cqrs::points::point_details::{LittleTransformerDTO, PointDTO, PointDetails};
 use backend::cqrs::points::rename_point::RenamePoint;
 use backend::cqrs::points::transform_point::TransformPoint;
-use backend::cqrs::points::all_points::AllPoints;
 use backend::cqrs::toruses::rename_torus::RenameTorus;
 use backend::cqrs::toruses::torus_details::{TorusDTO, TorusDetails, TransformerDTO};
 use backend::cqrs::toruses::transform_torus::TransformTours;
 use backend::cqrs::toruses::update_torus::UpdateTorus;
 use math::operations::multiply_quaternions;
-use crate::domain::bezier_c0::BezierC0;
 
+use crate::domain::bezier_c0::BezierC0;
 use crate::object::Object::{BeziersC0, Point, Torus};
 use crate::object_id::ObjectId;
 use crate::ui::Ui;
@@ -433,32 +433,53 @@ impl Ui {
         }
     }
 
-    fn build_bezier_transformation_panel(ui: &mut egui::Ui, cqrs: &mut CQRS, bezier: &mut BezierC0, points: &[PointDTO]) {
+    fn build_bezier_transformation_panel(
+        ui: &mut egui::Ui,
+        cqrs: &mut CQRS,
+        bezier: &mut BezierC0,
+        points: &[PointDTO],
+    ) {
         if ui.text_edit_singleline(&mut bezier.name).lost_focus() {
             cqrs.execute(&RenameBezierC0 {
                 id: bezier.id,
                 name: bezier.name.clone(),
             });
         }
-        
-        Resize::default().id_source("resize_bezier_c0").show(ui, |ui| {
-            ScrollArea::vertical().id_source("scroll_bezier_c0").show(ui, |ui| {
-                for point in bezier.points.iter_mut() {
-                    if ui.selectable_label(point.is_selected, &point.name).clicked() { 
-                        point.is_selected = !point.is_selected;
-                    } 
-                }
-            })
-        });
-        
-        ui.horizontal(|ui| {
-            ComboBox::from_id_source("Bezier c0 select point").selected_text(if let Some(p) = &bezier.selected_point { &p.1 } else { "" }).show_ui(ui, |ui| {
-                for point in points.iter().filter(|p| !bezier.points.iter().any(|bp| bp.id == p.id)) {
-                    if ui.selectable_label(false, &point.name).clicked() {
-                        bezier.selected_point = Some((point.id, point.name.clone()));
-                    }
-                }
+
+        Resize::default()
+            .id_source("resize_bezier_c0")
+            .show(ui, |ui| {
+                ScrollArea::vertical()
+                    .id_source("scroll_bezier_c0")
+                    .show(ui, |ui| {
+                        for point in bezier.points.iter_mut() {
+                            if ui
+                                .selectable_label(point.is_selected, &point.name)
+                                .clicked()
+                            {
+                                point.is_selected = !point.is_selected;
+                            }
+                        }
+                    })
             });
+
+        ui.horizontal(|ui| {
+            ComboBox::from_id_source("Bezier c0 select point")
+                .selected_text(if let Some(p) = &bezier.selected_point {
+                    &p.1
+                } else {
+                    ""
+                })
+                .show_ui(ui, |ui| {
+                    for point in points
+                        .iter()
+                        .filter(|p| !bezier.points.iter().any(|bp| bp.id == p.id))
+                    {
+                        if ui.selectable_label(false, &point.name).clicked() {
+                            bezier.selected_point = Some((point.id, point.name.clone()));
+                        }
+                    }
+                });
             if ui.button("Add Point").clicked() {
                 if let Some((id, _name)) = &bezier.selected_point {
                     cqrs.execute(&AddPointToBezierC0 {
@@ -473,11 +494,19 @@ impl Ui {
         if ui.button("Delete Points").clicked() {
             cqrs.execute(&DeleteBezierC0Points {
                 id: bezier.id,
-                points: bezier.points.iter().filter(|p| p.is_selected).map(|p| p.id).collect(),
+                points: bezier
+                    .points
+                    .iter()
+                    .filter(|p| p.is_selected)
+                    .map(|p| p.id)
+                    .collect(),
             });
         }
-        
-        if ui.checkbox(&mut bezier.draw_polygon, "Draw Polygon").changed() {
+
+        if ui
+            .checkbox(&mut bezier.draw_polygon, "Draw Polygon")
+            .changed()
+        {
             cqrs.execute(&SetBezierC0DrawPolygon {
                 id: bezier.id,
                 draw_polygon: bezier.draw_polygon,

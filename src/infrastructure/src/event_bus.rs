@@ -14,7 +14,10 @@ impl EventBus {
         }
     }
 
-    pub fn add_consumer<TMessage : 'static, T : Consumer<TMessage> + 'static>(&mut self, consumer: T) {
+    pub fn add_consumer<TMessage: 'static, T: Consumer<TMessage> + 'static>(
+        &mut self,
+        consumer: T,
+    ) {
         self.consumers.push(Box::new(consumer));
     }
 

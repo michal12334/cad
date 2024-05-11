@@ -54,7 +54,6 @@ impl Sub for Vector3 {
     }
 }
 
-
 impl Add for Matrix4 {
     type Output = Self;
 

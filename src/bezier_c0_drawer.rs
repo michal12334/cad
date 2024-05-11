@@ -136,7 +136,7 @@ impl BezierC0Drawer {
         if points.len() < 2 {
             return;
         }
-        
+
         let mut points = points
             .iter()
             .map(|p| Vertex {
@@ -148,10 +148,12 @@ impl BezierC0Drawer {
             })
             .collect::<Vec<Vertex>>();
 
-        let max_distance = points
-            .iter()
-            .fold((0f32, 0f32, Vector4::new(0.0, 0.0, 0.0, 0.0)), |(max_x, max_y, prev), p| {
-                let current = perspective.clone() * view_matrix.clone() * Vector4::new(p.position[0], p.position[1], p.position[2], 1.0);
+        let max_distance = points.iter().fold(
+            (0f32, 0f32, Vector4::new(0.0, 0.0, 0.0, 0.0)),
+            |(max_x, max_y, prev), p| {
+                let current = perspective.clone()
+                    * view_matrix.clone()
+                    * Vector4::new(p.position[0], p.position[1], p.position[2], 1.0);
                 if prev.w == 0.0 {
                     return (max_x, max_y, current);
                 }
@@ -159,7 +161,8 @@ impl BezierC0Drawer {
                 let distance_x = distance.x * width as f32 / 2.0;
                 let distance_y = distance.y * height as f32 / 2.0;
                 (max_x.max(distance_x), max_y.max(distance_y), current)
-            });
+            },
+        );
 
         let len = points.len();
         while points.len() % 3 != 1 {
@@ -177,8 +180,9 @@ impl BezierC0Drawer {
                 .collect::<Vec<u16>>(),
         )
         .unwrap();
-        
-        let number_of_draw_calls = (max_distance.0.max(max_distance.1) as u32).min(height.max(width));
+
+        let number_of_draw_calls =
+            (max_distance.0.max(max_distance.1) as u32).min(height.max(width));
 
         for i in 0..number_of_draw_calls {
             target
@@ -187,14 +191,14 @@ impl BezierC0Drawer {
                     &indices,
                     &self.program,
                     &uniform! {
-                    perspective: perspective.data,
-                    view: view_matrix.data,
-                    obj_color: color,
-                    mode: len as i32 % 3,
-                    number_of_primitives: (len as i32 - 1) / 3 + 1,
-                    t_min: i as f32 / number_of_draw_calls as f32,
-                    t_max: (i + 1) as f32 / number_of_draw_calls as f32,
-                },
+                        perspective: perspective.data,
+                        view: view_matrix.data,
+                        obj_color: color,
+                        mode: len as i32 % 3,
+                        number_of_primitives: (len as i32 - 1) / 3 + 1,
+                        t_min: i as f32 / number_of_draw_calls as f32,
+                        t_max: (i + 1) as f32 / number_of_draw_calls as f32,
+                    },
                     &self.drawing_parameters,
                 )
                 .unwrap();

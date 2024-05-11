@@ -1,5 +1,6 @@
 use std::cell::RefCell;
 use std::rc::Rc;
+
 use crate::backend::Backend;
 use crate::cqrs::cqrs::Command;
 use crate::domain::events::bezier_c0_points_deleted::BezierC0PointsDeleted;
@@ -16,7 +17,10 @@ impl Command<DeleteBezierC0Points> for DeleteBezierC0Points {
         bezier_c0.delete_points(&command.points);
         drop(backend);
         let backend = app_state.borrow();
-        let points_deleted = Rc::new(BezierC0PointsDeleted::new(command.id, command.points.clone()));
+        let points_deleted = Rc::new(BezierC0PointsDeleted::new(
+            command.id,
+            command.points.clone(),
+        ));
         backend.services.event_publisher.publish(points_deleted);
     }
 }

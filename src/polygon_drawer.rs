@@ -1,5 +1,6 @@
-use glium::{Display, DrawParameters, Frame, Program, Surface};
 use glium::glutin::surface::WindowSurface;
+use glium::{Display, DrawParameters, Frame, Program, Surface};
+
 use backend::domain::point::Point;
 use backend::domain::vertex::Vertex;
 
@@ -35,13 +36,8 @@ impl PolygonDrawer {
             }
         "#;
 
-        let program = Program::from_source(
-            display,
-            vertex_shader_src,
-            fragment_shader_src,
-            None,
-        )
-            .unwrap();
+        let program =
+            Program::from_source(display, vertex_shader_src, fragment_shader_src, None).unwrap();
 
         let mut drawing_parameters = DrawParameters::default();
         drawing_parameters.polygon_mode = glium::draw_parameters::PolygonMode::Line;
@@ -87,7 +83,7 @@ impl PolygonDrawer {
             glium::index::PrimitiveType::LineStrip,
             &(0..(points.len() as u16)).collect::<Vec<u16>>(),
         )
-            .unwrap();
+        .unwrap();
         target
             .draw(
                 &vertex_buffer,

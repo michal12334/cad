@@ -2,7 +2,7 @@ use std::any::Any;
 use std::rc::Rc;
 
 pub trait AnyConsumer {
-    fn consume_any(&self, message: Rc<dyn Any>);    
+    fn consume_any(&self, message: Rc<dyn Any>);
 }
 
 pub trait Consumer<T: 'static>: AnyConsumer {
@@ -11,6 +11,6 @@ pub trait Consumer<T: 'static>: AnyConsumer {
             self.consume(message);
         }
     }
-    
+
     fn consume(&self, message: &T);
 }

@@ -7,6 +7,9 @@ pub struct BezierC0Renamed {
 
 impl BezierC0Renamed {
     pub fn new(bezier: &BezierC0) -> Self {
-        Self { id: bezier.id, name: bezier.name.clone() }
+        Self {
+            id: bezier.id,
+            name: bezier.name.clone(),
+        }
     }
 }
