@@ -1,3 +1,4 @@
+use chrono::{DateTime, Local};
 use egui::ScrollArea;
 use itertools::Itertools;
 
@@ -22,6 +23,7 @@ pub struct Ui {
     pub control_pressed: bool,
     pub group_transformation: Option<TransformerDTO>,
     pub previous_group_transformation: Option<TransformerDTO>,
+    pub previous_time: DateTime<Local>,
 }
 
 impl Ui {
@@ -35,6 +37,7 @@ impl Ui {
             control_pressed: false,
             group_transformation: None,
             previous_group_transformation: None,
+            previous_time: Local::now(),
         }
     }
 
@@ -120,8 +123,17 @@ impl Ui {
                     self.build_object_addition_panel(ui, cqrs);
                     self.build_object_selection_panel(ui, cqrs);
                     self.build_selected_object_transformation_panel(ui, cqrs);
+                    self.build_fps_counter(ui);
                 });
             });
         }
+    }
+
+    fn build_fps_counter(&mut self, ui: &mut egui::Ui) {
+        let current_time = Local::now();
+        let duration = current_time - self.previous_time;
+        let fps = 1000.0 / duration.num_milliseconds() as f64;
+        self.previous_time = current_time;
+        ui.label(format!("FPS: {:.1}", fps,));
     }
 }
