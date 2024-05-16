@@ -1,7 +1,7 @@
+use backend::cqrs::beziers_c0::all_beziers_c0::AllBeziersC0;
 use chrono::{DateTime, Local};
 use egui::ScrollArea;
 use itertools::Itertools;
-use backend::cqrs::beziers_c0::all_beziers_c0::AllBeziersC0;
 
 use backend::cqrs::common::select_objects::{SelectObjects, SelectionObjectDTO};
 use backend::cqrs::cqrs::CQRS;

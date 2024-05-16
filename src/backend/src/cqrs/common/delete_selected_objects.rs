@@ -31,7 +31,11 @@ impl Command<DeleteSelectedObjects> for DeleteSelectedObjects {
                 .selected_objects
                 .iter()
                 .any(|object| object.point_id == Some(point.id))
-            || app_state.storage.beziers_c0.values().any(|b| b.points.iter().any(|p| p.id == point.id))
+                || app_state
+                    .storage
+                    .beziers_c0
+                    .values()
+                    .any(|b| b.points.iter().any(|p| p.id == point.id))
         });
         app_state.storage.selected_objects.clear();
     }

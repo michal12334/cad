@@ -1,8 +1,8 @@
-use std::cell::RefCell;
-use std::rc::Rc;
 use crate::backend::Backend;
 use crate::cqrs::beziers_c0::bezier_c0_details::{BezierC0DTO, BezierC0PointDTO};
 use crate::cqrs::cqrs::Query;
+use std::cell::RefCell;
+use std::rc::Rc;
 
 pub struct AllBeziersC0;
 
@@ -16,7 +16,9 @@ impl Query<AllBeziersC0, Vec<BezierC0DTO>> for AllBeziersC0 {
             .map(|bezier| BezierC0DTO {
                 id: bezier.id,
                 name: bezier.name.clone(),
-                points: bezier.points.iter()
+                points: bezier
+                    .points
+                    .iter()
                     .map(|bp| {
                         let p = app_state.storage.points.get(&bp.id).unwrap();
                         BezierC0PointDTO {
