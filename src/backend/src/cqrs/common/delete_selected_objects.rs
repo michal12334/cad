@@ -18,6 +18,13 @@ impl Command<DeleteSelectedObjects> for DeleteSelectedObjects {
                 .iter()
                 .any(|object| object.torus_id == Some(torus.id))
         });
+        app_state.storage.beziers_c0.retain(|_, bezier| {
+            !app_state
+                .storage
+                .selected_objects
+                .iter()
+                .any(|object| object.bezier_c0_id == Some(bezier.id))
+        });
         app_state.storage.points.retain(|_, point| {
             !app_state
                 .storage
