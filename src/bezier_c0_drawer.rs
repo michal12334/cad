@@ -182,7 +182,7 @@ impl BezierC0Drawer {
         .unwrap();
 
         let number_of_draw_calls =
-            (max_distance.0.max(max_distance.1) as u32).min(height.max(width));
+            (max_distance.0.max(max_distance.1) as u32).min(height.max(width)) / 50;
 
         for i in 0..number_of_draw_calls {
             target
