@@ -46,6 +46,21 @@ impl BezierC0 {
         (self.vertex_buffer, self.index_buffer) = Self::get_buffers(&self.points, &display);
     }
     
+    pub fn update_points(&mut self, points: &[PointDTO], display: &Display<WindowSurface>) {
+        self.points = points
+            .iter()
+            .map(|p| Vertex {
+                position: [
+                    p.transformer.position.0 as f32,
+                    p.transformer.position.1 as f32,
+                    p.transformer.position.2 as f32,
+                ],
+            })
+            .collect::<Vec<Vertex>>();
+        
+        (self.vertex_buffer, self.index_buffer) = Self::get_buffers(&self.points, &display);
+    }
+    
     fn get_buffers(points: &Vec<Vertex>, display: &Display<WindowSurface>) -> (Option<VertexBuffer<Vertex>>, Option<IndexBuffer<u16>>) {
         if points.len() < 2 {
             return (None, None);
