@@ -1,8 +1,6 @@
 use glium::glutin::surface::WindowSurface;
 use glium::{Display, DrawParameters, Frame, Program, Surface};
 
-use backend::domain::point::Point;
-use backend::domain::vertex::Vertex;
 use math::vector4::Vector4;
 use crate::drawing::domain::bezier_c0::BezierC0;
 
@@ -126,7 +124,6 @@ impl BezierC0Drawer {
     pub fn draw(
         &self,
         target: &mut Frame,
-        display: &Display<WindowSurface>,
         bezier: &BezierC0,
         perspective: &math::matrix4::Matrix4,
         view_matrix: &math::matrix4::Matrix4,

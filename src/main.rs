@@ -175,7 +175,7 @@ fn main() {
                 }
 
                 for bezier in drawing_storage.borrow().beziers_c0.values() {
-                    bezier_c0_drawer.draw(&mut target, &display, &bezier, &perspective, &view_matrix, color, width, height);
+                    bezier_c0_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, color, width, height);
                 }
 
                 for bezier_points in app_state.storage.beziers_c0.values().filter(|b| b.draw_polygon).map(|b| b.points.iter().map(|p| app_state.storage.points.get(&p.id).unwrap().clone()).collect::<Vec<Point>>()) {
