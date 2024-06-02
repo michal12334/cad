@@ -12,7 +12,7 @@ pub struct BezierC0 {
 }
 
 impl BezierC0 {
-    pub fn from_dto(id: u64, points: &[PointDTO], display: &Display<WindowSurface>) -> Self {
+    pub fn new(id: u64, points: &[PointDTO], display: &Display<WindowSurface>) -> Self {
         let points = points
             .iter()
             .map(|p| Vertex {

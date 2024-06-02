@@ -20,9 +20,7 @@ use backend::cqrs::points::point_details::LittleTransformerDTO;
 use backend::domain::point::Point;
 use backend::domain::transformer::LittleTransformer;
 use backend::processes::beziers_c0::add_point_to_selected_beziers_c0_on_point_created::AddPointToSelectedBeziersC0OnPointCreated;
-use backend::processes::beziers_c0::publishers::{
-    BezierC0PointsDeletedPublisher, BezierC0RenamedPublisher, PointAddedToBezierC0Publisher,
-};
+use backend::processes::beziers_c0::publishers::{BezierC0CreatedPublisher, BezierC0PointsDeletedPublisher, BezierC0RenamedPublisher, PointAddedToBezierC0Publisher};
 use infrastructure::event_bus::EventBus;
 use math::vector4::Vector4;
 use user_interface::processes::sync_bezier_c0_with_backend::{
@@ -37,6 +35,7 @@ use crate::drawing::drawers::point_drawer::PointDrawer;
 use crate::drawing::drawers::polygon_drawer::PolygonDrawer;
 use crate::drawing::drawers::torus_drawer::TorusDrawer;
 use crate::drawing::drawing_storage::DrawingStorage;
+use crate::drawing::processes::beziers_c0::add_bezier_c0_on_bezier_c0_created::AddBezierC0OnBezierC0Created;
 
 mod drawing;
 
@@ -49,6 +48,8 @@ fn main() {
         .with_title("CAD")
         .with_inner_size(width, height)
         .build(&event_loop);
+    
+    let display = Rc::new(display);
 
     let mut egui_glium = egui_glium::EguiGlium::new(&display, &window, &event_loop);
 
@@ -76,6 +77,11 @@ fn main() {
         });
     event_bus
         .borrow_mut()
+        .add_consumer(BezierC0CreatedPublisher {
+            backend: app_state.clone(),
+        });
+    event_bus
+        .borrow_mut()
         .add_consumer(AddPointToSelectedBeziersC0OnPointCreated {
             backend: app_state.clone(),
         });
@@ -89,6 +95,14 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(SyncBezierC0AddedPointsWithBackend { ui: ui.clone() });
+
+    event_bus
+        .borrow_mut()
+        .add_consumer(AddBezierC0OnBezierC0Created { 
+            drawing_storage: drawing_storage.clone(),
+            cqrs: CQRS::new(app_state.clone()),
+            display: display.clone(),
+        });
 
     let torus_drawer = TorusDrawer::new(&display);
     let point_drawer = PointDrawer::new(&display);
