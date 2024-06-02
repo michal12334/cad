@@ -36,6 +36,7 @@ use crate::drawing::drawers::infinite_grid_drawer::InfiniteGridDrawer;
 use crate::drawing::drawers::point_drawer::PointDrawer;
 use crate::drawing::drawers::polygon_drawer::PolygonDrawer;
 use crate::drawing::drawers::torus_drawer::TorusDrawer;
+use crate::drawing::drawing_storage::DrawingStorage;
 
 mod drawing;
 
@@ -56,6 +57,7 @@ fn main() {
 
     let app_state = Rc::new(RefCell::new(Backend::new(event_bus.clone())));
     let ui = Rc::new(RefCell::new(Ui::new()));
+    let drawing_storage = Rc::new(RefCell::new(DrawingStorage::new()));
 
     event_bus
         .borrow_mut()
@@ -158,8 +160,8 @@ fn main() {
                     point_drawer.draw(&mut target, &display, &Point::new(0, transformer), &perspective, &view_matrix, Color32::BROWN.to_normalized_gamma_f32());
                 }
 
-                for bezier_points in app_state.storage.beziers_c0.values().map(|b| b.points.iter().map(|p| app_state.storage.points.get(&p.id).unwrap().clone()).collect::<Vec<Point>>()) {
-                    bezier_c0_drawer.draw(&mut target, &display, &bezier_points, &perspective, &view_matrix, color, width, height);
+                for bezier in drawing_storage.borrow().beziers_c0.values() {
+                    bezier_c0_drawer.draw(&mut target, &display, &bezier, &perspective, &view_matrix, color, width, height);
                 }
 
                 for bezier_points in app_state.storage.beziers_c0.values().filter(|b| b.draw_polygon).map(|b| b.points.iter().map(|p| app_state.storage.points.get(&p.id).unwrap().clone()).collect::<Vec<Point>>()) {

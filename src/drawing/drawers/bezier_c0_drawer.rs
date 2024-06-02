@@ -4,6 +4,7 @@ use glium::{Display, DrawParameters, Frame, Program, Surface};
 use backend::domain::point::Point;
 use backend::domain::vertex::Vertex;
 use math::vector4::Vector4;
+use crate::drawing::domain::bezier_c0::BezierC0;
 
 pub struct BezierC0Drawer {
     program: Program,
@@ -126,29 +127,18 @@ impl BezierC0Drawer {
         &self,
         target: &mut Frame,
         display: &Display<WindowSurface>,
-        points: &[Point],
+        bezier: &BezierC0,
         perspective: &math::matrix4::Matrix4,
         view_matrix: &math::matrix4::Matrix4,
         color: [f32; 4],
         width: u32,
         height: u32,
     ) {
-        if points.len() < 2 {
+        if bezier.points.len() < 2 {
             return;
         }
 
-        let mut points = points
-            .iter()
-            .map(|p| Vertex {
-                position: [
-                    p.transformer.position.0 as f32,
-                    p.transformer.position.1 as f32,
-                    p.transformer.position.2 as f32,
-                ],
-            })
-            .collect::<Vec<Vertex>>();
-
-        let max_distance = points.iter().fold(
+        let max_distance = bezier.points.iter().fold(
             (0f32, 0f32, Vector4::new(0.0, 0.0, 0.0, 0.0)),
             |(max_x, max_y, prev), p| {
                 let current = perspective.clone()
@@ -163,32 +153,17 @@ impl BezierC0Drawer {
                 (max_x.max(distance_x), max_y.max(distance_y), current)
             },
         );
-
-        let len = points.len();
-        while points.len() % 3 != 1 {
-            points.push(Vertex {
-                position: [0.0, 0.0, 0.0],
-            });
-        }
-        let vertex_buffer = glium::VertexBuffer::new(display, &points).unwrap();
-        let indices = glium::IndexBuffer::new(
-            display,
-            glium::index::PrimitiveType::LinesListAdjacency,
-            &(0..(points.len() as u16 - 3))
-                .step_by(3)
-                .flat_map(|f| [f, f + 1, f + 2, f + 3])
-                .collect::<Vec<u16>>(),
-        )
-        .unwrap();
-
+        
+        let len = bezier.points.len();
+        
         let number_of_draw_calls =
             (max_distance.0.max(max_distance.1) as u32).min(height.max(width)) / 50;
 
         for i in 0..number_of_draw_calls {
             target
                 .draw(
-                    &vertex_buffer,
-                    &indices,
+                    &bezier.vertex_buffer,
+                    &bezier.index_buffer,
                     &self.program,
                     &uniform! {
                         perspective: perspective.data,
