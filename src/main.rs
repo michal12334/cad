@@ -36,6 +36,7 @@ use crate::drawing::drawers::polygon_drawer::PolygonDrawer;
 use crate::drawing::drawers::torus_drawer::TorusDrawer;
 use crate::drawing::drawing_storage::DrawingStorage;
 use crate::drawing::processes::beziers_c0::add_bezier_c0_on_bezier_c0_created::AddBezierC0OnBezierC0Created;
+use crate::drawing::processes::beziers_c0::add_point_to_bezier_c0_on_point_added_to_bezier_c0::AddPointToBezierC0OnPointAddedToBezierC0;
 
 mod drawing;
 
@@ -99,6 +100,13 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(AddBezierC0OnBezierC0Created { 
+            drawing_storage: drawing_storage.clone(),
+            cqrs: CQRS::new(app_state.clone()),
+            display: display.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(AddPointToBezierC0OnPointAddedToBezierC0 {
             drawing_storage: drawing_storage.clone(),
             cqrs: CQRS::new(app_state.clone()),
             display: display.clone(),

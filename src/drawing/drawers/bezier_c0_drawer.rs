@@ -155,12 +155,12 @@ impl BezierC0Drawer {
         
         let number_of_draw_calls =
             (max_distance.0.max(max_distance.1) as u32).min(height.max(width)) / 50;
-
+        
         for i in 0..number_of_draw_calls {
             target
                 .draw(
-                    &bezier.vertex_buffer,
-                    &bezier.index_buffer,
+                    bezier.vertex_buffer.as_ref().unwrap(),
+                    bezier.index_buffer.as_ref().unwrap(),
                     &self.program,
                     &uniform! {
                         perspective: perspective.data,

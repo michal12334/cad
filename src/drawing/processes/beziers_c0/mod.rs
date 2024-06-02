@@ -1,1 +1,2 @@
 pub mod add_bezier_c0_on_bezier_c0_created;
+pub mod add_point_to_bezier_c0_on_point_added_to_bezier_c0;
