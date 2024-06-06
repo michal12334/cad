@@ -5,3 +5,4 @@ pub mod point_created;
 pub mod bezier_c0_created;
 pub mod point_moved;
 pub mod bezier_c0_point_moved;
+pub mod bezier_c0_deleted;

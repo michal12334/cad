@@ -21,7 +21,7 @@ use backend::domain::point::Point;
 use backend::domain::transformer::LittleTransformer;
 use backend::processes::beziers_c0::add_point_to_selected_beziers_c0_on_point_created::AddPointToSelectedBeziersC0OnPointCreated;
 use backend::processes::beziers_c0::move_bezier_c0_points_on_point_moved::MoveBezierC0PointsOnPointMoved;
-use backend::processes::beziers_c0::publishers::{BezierC0CreatedPublisher, BezierC0PointMovedPublisher, BezierC0PointsDeletedPublisher, BezierC0RenamedPublisher, PointAddedToBezierC0Publisher};
+use backend::processes::beziers_c0::publishers::{BezierC0CreatedPublisher, BezierC0DeletedPublisher, BezierC0PointMovedPublisher, BezierC0PointsDeletedPublisher, BezierC0RenamedPublisher, PointAddedToBezierC0Publisher};
 use infrastructure::event_bus::EventBus;
 use math::vector4::Vector4;
 use user_interface::processes::sync_bezier_c0_with_backend::{
@@ -38,6 +38,7 @@ use crate::drawing::drawers::torus_drawer::TorusDrawer;
 use crate::drawing::drawing_storage::DrawingStorage;
 use crate::drawing::processes::beziers_c0::add_bezier_c0_on_bezier_c0_created::AddBezierC0OnBezierC0Created;
 use crate::drawing::processes::beziers_c0::add_point_to_bezier_c0_on_point_added_to_bezier_c0::AddPointToBezierC0OnPointAddedToBezierC0;
+use crate::drawing::processes::beziers_c0::delete_bezier_c0_on_bezier_c0_deleted::DeleteBezierC0OnBezierC0Deleted;
 use crate::drawing::processes::beziers_c0::delete_bezier_c0_point_on_bezier_c0_points_deleted::DeleteBezierC0PointOnBezierC0PointsDeleted;
 use crate::drawing::processes::beziers_c0::update_bezier_c0_points_on_bezier_c0_point_moved::UpdateBezierC0PointsOnBezierC0PointMoved;
 
@@ -91,6 +92,11 @@ fn main() {
         });
     event_bus
         .borrow_mut()
+        .add_consumer(BezierC0DeletedPublisher {
+            backend: app_state.clone(),
+        });
+    event_bus
+        .borrow_mut()
         .add_consumer(AddPointToSelectedBeziersC0OnPointCreated {
             backend: app_state.clone(),
         });
@@ -137,6 +143,11 @@ fn main() {
             drawing_storage: drawing_storage.clone(),
             cqrs: CQRS::new(app_state.clone()),
             display: display.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(DeleteBezierC0OnBezierC0Deleted {
+            drawing_storage: drawing_storage.clone(),
         });
 
     let torus_drawer = TorusDrawer::new(&display);
