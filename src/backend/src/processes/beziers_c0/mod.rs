@@ -1,2 +1,3 @@
 pub mod add_point_to_selected_beziers_c0_on_point_created;
 pub mod publishers;
+pub mod move_bezier_c0_points_on_point_moved;

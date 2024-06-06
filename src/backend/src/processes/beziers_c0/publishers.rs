@@ -6,6 +6,7 @@ use infrastructure::consumer::{AnyConsumer, Consumer};
 
 use crate::backend::Backend;
 use crate::domain::events::bezier_c0_created::BezierC0Created;
+use crate::domain::events::bezier_c0_point_moved::BezierC0PointMoved;
 use crate::domain::events::bezier_c0_points_deleted::BezierC0PointsDeleted;
 use crate::domain::events::bezier_c0_renamed::BezierC0Renamed;
 use crate::domain::events::point_added_to_bezier_c0::PointAddedToBezierC0;
@@ -76,6 +77,24 @@ impl Consumer<BezierC0Created> for BezierC0CreatedPublisher {
     }
 }
 
+pub struct BezierC0PointMovedPublisher {
+    pub backend: Rc<RefCell<Backend>>,
+}
+
+impl Consumer<BezierC0PointMoved> for BezierC0PointMovedPublisher {
+    fn consume(&self, event: &BezierC0PointMoved) {
+        let backend = self.backend.borrow();
+        let event = Rc::new(
+            backend_events::bezier_c0_point_moved::BezierC0PointMoved::new(
+                event.bezier_id,
+                event.point_id,
+                event.position
+            ),
+        );
+        backend.services.event_publisher.publish(event);
+    }
+}
+
 impl AnyConsumer for BezierC0RenamedPublisher {
     fn consume_any(&self, message: Rc<dyn Any>) {
         self.consume_any_impl(message);
@@ -100,3 +119,8 @@ impl AnyConsumer for BezierC0CreatedPublisher {
     }
 }
 
+impl AnyConsumer for BezierC0PointMovedPublisher {
+    fn consume_any(&self, message: Rc<dyn Any>) {
+        self.consume_any_impl(message);
+    }
+}
