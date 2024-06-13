@@ -10,6 +10,7 @@ use crate::backend::Backend;
 use crate::cqrs::common::selected_objects_center::SelectedObjectsCenter;
 use crate::cqrs::cqrs::{Command, CQRS};
 use crate::cqrs::toruses::torus_details::TransformerDTO;
+use crate::domain::events::point_moved::PointMoved;
 
 pub struct TransformSelectedObjects {
     pub transformer: TransformerDTO,
@@ -20,10 +21,11 @@ impl Command<TransformSelectedObjects> for TransformSelectedObjects {
         let cqrs = CQRS::new(app_state.clone());
         let center_point = cqrs.get(&SelectedObjectsCenter).unwrap();
         let mut binding = app_state.borrow_mut();
-        let app_state = binding.deref_mut();
-        for object in app_state.storage.selected_objects.iter() {
+        let backend = binding.deref_mut();
+        let mut events = vec![];
+        for object in backend.storage.selected_objects.iter() {
             if let Some(torus_id) = object.torus_id {
-                let torus = app_state.storage.toruses.get_mut(&torus_id).unwrap();
+                let torus = backend.storage.toruses.get_mut(&torus_id).unwrap();
                 let position = (
                     torus.transformer.position.0 + command.transformer.position.0,
                     torus.transformer.position.1 + command.transformer.position.1,
@@ -67,7 +69,7 @@ impl Command<TransformSelectedObjects> for TransformSelectedObjects {
                 torus.transform(position, rotation, scale);
             }
             if let Some(point_id) = object.point_id {
-                let point = app_state.storage.points.get_mut(&point_id).unwrap();
+                let point = backend.storage.points.get_mut(&point_id).unwrap();
                 let position = (
                     point.transformer.position.0 + command.transformer.position.0,
                     point.transformer.position.1 + command.transformer.position.1,
@@ -102,7 +104,13 @@ impl Command<TransformSelectedObjects> for TransformSelectedObjects {
                     center_point.position.2 + delta_position.2 * command.transformer.scale.2,
                 );
                 point.transform(position);
+                events.push(Rc::new(PointMoved::new(point.id, point.transformer.position)));
             }
+        }
+        drop(binding);
+        let backend = app_state.borrow();
+        for e in events {
+            backend.services.event_publisher.publish(e);
         }
     }
 }
