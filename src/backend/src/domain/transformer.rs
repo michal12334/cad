@@ -1,4 +1,5 @@
 use math::matrix4::Matrix4;
+use math::vector3::Vector3;
 use math::vector4::Vector4;
 
 use crate::domain::cursor::Cursor;
@@ -71,5 +72,19 @@ impl LittleTransformer {
             self.position.1 as f32,
             self.position.2 as f32,
         )
+    }
+
+    pub fn to_vec3(&self) -> Vector3 {
+        Vector3::new(
+            self.position.0 as f32,
+            self.position.1 as f32,
+            self.position.2 as f32,
+        )
+    }
+
+    pub fn from_vec3(vec: Vector3) -> Self {
+        Self {
+            position: (vec.x as f64, vec.y as f64, vec.z as f64),
+        }
     }
 }
