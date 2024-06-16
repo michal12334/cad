@@ -2,6 +2,7 @@ pub struct SelectedObject {
     pub torus_id: Option<u64>,
     pub point_id: Option<u64>,
     pub bezier_c0_id: Option<u64>,
+    pub bezier_c2_id: Option<u64>,
 }
 
 impl SelectedObject {
@@ -10,6 +11,7 @@ impl SelectedObject {
             torus_id: Some(torus_id),
             point_id: None,
             bezier_c0_id: None,
+            bezier_c2_id: None,
         }
     }
 
@@ -18,6 +20,7 @@ impl SelectedObject {
             torus_id: None,
             point_id: Some(point_id),
             bezier_c0_id: None,
+            bezier_c2_id: None,
         }
     }
 
@@ -26,6 +29,16 @@ impl SelectedObject {
             torus_id: None,
             point_id: None,
             bezier_c0_id: Some(bezier_c0_id),
+            bezier_c2_id: None,
+        }
+    }
+    
+    pub fn new_bezier_c2(bezier_c2_id: u64) -> Self {
+        Self {
+            torus_id: None,
+            point_id: None,
+            bezier_c0_id: None,
+            bezier_c2_id: Some(bezier_c2_id),
         }
     }
 }

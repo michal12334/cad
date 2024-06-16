@@ -1,0 +1,51 @@
+use backend::cqrs::beziers_c2::bezier_c2_details::BezierC2DTO;
+
+pub struct BezierC2 {
+    pub id: u64,
+    pub name: String,
+    pub b_spline_points: Vec<BezierC2BSplinePoint>,
+    pub bernstein_points: Vec<BezierC2BernsteinPoint>,
+    pub selected_point: Option<(u64, String)>,
+    pub draw_polygon: bool,
+}
+
+pub struct BezierC2BSplinePoint {
+    pub id: u64,
+    pub name: String,
+    pub is_selected: bool,
+}
+
+pub struct BezierC2BernsteinPoint {
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
+}
+
+impl BezierC2 {
+    pub fn from_dto(dto: &BezierC2DTO) -> Self {
+        BezierC2 {
+            id: dto.id,
+            name: dto.name.clone(),
+            selected_point: None,
+            draw_polygon: false,
+            b_spline_points: dto
+                .b_spline_points
+                .iter()
+                .map(|bp| BezierC2BSplinePoint {
+                    id: bp.id,
+                    name: bp.name.clone(),
+                    is_selected: false,
+                })
+                .collect(),
+            bernstein_points: dto
+                .bernstein_points
+                .iter()
+                .map(|bp| BezierC2BernsteinPoint {
+                    x: bp.transformer.position.0,
+                    y: bp.transformer.position.1,
+                    z: bp.transformer.position.2,
+                })
+                .collect(),
+        }
+    }
+}

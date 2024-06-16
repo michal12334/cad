@@ -3,11 +3,13 @@ use backend::cqrs::points::point_details::PointDTO;
 use backend::cqrs::toruses::torus_details::TorusDTO;
 
 use crate::domain::bezier_c0::BezierC0;
+use crate::domain::bezier_c2::BezierC2;
 
 pub enum Object {
     Torus(TorusDTO),
     Point(PointDTO),
     BeziersC0(BezierC0),
+    BezierC2(BezierC2),
 }
 
 impl Object {
@@ -16,6 +18,7 @@ impl Object {
             Object::Torus(torus) => torus.id,
             Object::Point(point) => point.id,
             Object::BeziersC0(bezier_c0) => bezier_c0.id,
+            Object::BezierC2(bezier_c2) => bezier_c2.id,
         }
     }
 
@@ -24,6 +27,7 @@ impl Object {
             Object::Torus(torus) => torus.name.clone(),
             Object::Point(point) => point.name.clone(),
             Object::BeziersC0(bezier_c0) => bezier_c0.name.clone(),
+            Object::BezierC2(bezier_c2) => bezier_c2.name.clone(),
         }
     }
 
@@ -32,6 +36,7 @@ impl Object {
             Object::Torus(_) => ObjectTypeDTO::Torus,
             Object::Point(_) => ObjectTypeDTO::Point,
             Object::BeziersC0(_) => ObjectTypeDTO::BezierC0,
+            Object::BezierC2(_) => ObjectTypeDTO::BezierC2,
         }
     }
 }

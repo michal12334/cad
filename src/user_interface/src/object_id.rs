@@ -4,6 +4,7 @@ pub enum ObjectId {
     Torus(u64),
     Point(u64),
     BeziersC0(u64),
+    BezierC2(u64),
 }
 
 impl ObjectId {
@@ -12,6 +13,7 @@ impl ObjectId {
             ObjectId::Torus(id) => *id,
             ObjectId::Point(id) => *id,
             ObjectId::BeziersC0(id) => *id,
+            ObjectId::BezierC2(id) => *id,
         }
     }
 
@@ -20,6 +22,7 @@ impl ObjectId {
             ObjectId::Torus(_) => ObjectTypeDTO::Torus,
             ObjectId::Point(_) => ObjectTypeDTO::Point,
             ObjectId::BeziersC0(_) => ObjectTypeDTO::BezierC0,
+            ObjectId::BezierC2(_) => ObjectTypeDTO::BezierC2,
         }
     }
 }

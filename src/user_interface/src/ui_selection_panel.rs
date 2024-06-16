@@ -63,6 +63,7 @@ impl Ui {
                                     ObjectTypeDTO::Torus => ObjectId::Torus(object_id),
                                     ObjectTypeDTO::Point => ObjectId::Point(object_id),
                                     ObjectTypeDTO::BezierC0 => ObjectId::BeziersC0(object_id),
+                                    ObjectTypeDTO::BezierC2 => ObjectId::BezierC2(object_id),
                                 });
                                 cqrs.execute(&SelectObjects {
                                     objects: self
