@@ -8,7 +8,7 @@ use backend_events::point_added_to_bezier_c0::PointAddedToBezierC0;
 use infrastructure::consumer::{AnyConsumer, Consumer};
 
 use crate::domain::bezier_c0::BezierC0Point;
-use crate::object::Object::BeziersC0;
+use crate::object::Object::BezierC0;
 use crate::ui::Ui;
 
 pub struct SyncBezierC0NameWithBackend {
@@ -22,7 +22,7 @@ impl Consumer<BezierC0Renamed> for SyncBezierC0NameWithBackend {
             .iter_mut()
             .filter(|object| object.get_id() == event.id)
             .for_each(|object| match object {
-                BeziersC0(bezier_c0) => {
+                BezierC0(bezier_c0) => {
                     bezier_c0.name = event.name.clone();
                 }
                 _ => {}
@@ -41,7 +41,7 @@ impl Consumer<BezierC0PointsDeleted> for SyncBezierC0DeletedPointsWithBackend {
             .iter_mut()
             .filter(|object| object.get_id() == event.id)
             .for_each(|object| match object {
-                BeziersC0(bezier_c0) => {
+                BezierC0(bezier_c0) => {
                     bezier_c0
                         .points
                         .retain(|point| !event.deleted_points.contains(&point.id));
@@ -62,7 +62,7 @@ impl Consumer<PointAddedToBezierC0> for SyncBezierC0AddedPointsWithBackend {
             .iter_mut()
             .filter(|object| object.get_id() == event.bezier_id)
             .for_each(|object| match object {
-                BeziersC0(bezier_c0) => {
+                BezierC0(bezier_c0) => {
                     bezier_c0.points.push(BezierC0Point {
                         id: event.point_id,
                         is_selected: false,

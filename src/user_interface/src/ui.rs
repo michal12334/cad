@@ -14,7 +14,7 @@ use backend::cqrs::toruses::torus_details::TransformerDTO;
 type DomainBezier = crate::domain::bezier_c0::BezierC0;
 
 use crate::object::Object;
-use crate::object::Object::{BeziersC0, Point, Torus};
+use crate::object::Object::{BezierC0, Point, Torus};
 use crate::object_id::ObjectId;
 
 pub struct Ui {
@@ -65,7 +65,7 @@ impl Ui {
             .chain(
                 cqrs.get(&AllBeziersC0)
                     .iter()
-                    .map(|bezier| BeziersC0(DomainBezier::from_dto(bezier))),
+                    .map(|bezier| BezierC0(DomainBezier::from_dto(bezier))),
             )
             .sorted_by_key(|object| object.get_id())
             .collect();

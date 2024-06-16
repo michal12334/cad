@@ -8,7 +8,7 @@ use crate::domain::bezier_c2::BezierC2;
 pub enum Object {
     Torus(TorusDTO),
     Point(PointDTO),
-    BeziersC0(BezierC0),
+    BezierC0(BezierC0),
     BezierC2(BezierC2),
 }
 
@@ -17,7 +17,7 @@ impl Object {
         match self {
             Object::Torus(torus) => torus.id,
             Object::Point(point) => point.id,
-            Object::BeziersC0(bezier_c0) => bezier_c0.id,
+            Object::BezierC0(bezier_c0) => bezier_c0.id,
             Object::BezierC2(bezier_c2) => bezier_c2.id,
         }
     }
@@ -26,7 +26,7 @@ impl Object {
         match self {
             Object::Torus(torus) => torus.name.clone(),
             Object::Point(point) => point.name.clone(),
-            Object::BeziersC0(bezier_c0) => bezier_c0.name.clone(),
+            Object::BezierC0(bezier_c0) => bezier_c0.name.clone(),
             Object::BezierC2(bezier_c2) => bezier_c2.name.clone(),
         }
     }
@@ -35,7 +35,7 @@ impl Object {
         match self {
             Object::Torus(_) => ObjectTypeDTO::Torus,
             Object::Point(_) => ObjectTypeDTO::Point,
-            Object::BeziersC0(_) => ObjectTypeDTO::BezierC0,
+            Object::BezierC0(_) => ObjectTypeDTO::BezierC0,
             Object::BezierC2(_) => ObjectTypeDTO::BezierC2,
         }
     }

@@ -18,7 +18,7 @@ use backend::cqrs::toruses::update_torus::UpdateTorus;
 use math::operations::multiply_quaternions;
 
 use crate::domain::bezier_c0::BezierC0;
-use crate::object::Object::{BeziersC0, Point, Torus};
+use crate::object::Object;
 use crate::object_id::ObjectId;
 use crate::ui::Ui;
 
@@ -87,13 +87,13 @@ impl Ui {
             .find(|t| t.get_id() == self.selected_objects[0].get_id())
             .unwrap();
         match object {
-            Torus(torus) => {
+            Object::Torus(torus) => {
                 Ui::build_torus_transformation_panel(ui, cqrs, torus);
             }
-            Point(point) => {
+            Object::Point(point) => {
                 Ui::build_point_transformation_panel(ui, cqrs, point);
             }
-            BeziersC0(bezier) => {
+            Object::BezierC0(bezier) => {
                 let points = cqrs.get(&AllPoints {});
                 Ui::build_bezier_transformation_panel(ui, cqrs, bezier, &points);
             }
@@ -261,11 +261,11 @@ impl Ui {
                 match so {
                     ObjectId::Torus(id) => {
                         let torus = self.objects.iter_mut().find(|t| t.get_id() == *id).unwrap();
-                        *torus = Torus(cqrs.get(&TorusDetails { id: *id }));
+                        *torus = Object::Torus(cqrs.get(&TorusDetails { id: *id }));
                     }
                     ObjectId::Point(id) => {
                         let point = self.objects.iter_mut().find(|t| t.get_id() == *id).unwrap();
-                        *point = Point(cqrs.get(&PointDetails { id: *id }));
+                        *point = Object::Point(cqrs.get(&PointDetails { id: *id }));
                     }
                     _ => {}
                 }
