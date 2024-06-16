@@ -28,7 +28,7 @@ impl Ui {
         ui: &mut egui::Ui,
         cqrs: &mut CQRS,
     ) {
-        Resize::default().id_source("resize_2").show(ui, |ui| {
+        Resize::default().id_source("resize_2").default_height(450.0).show(ui, |ui| {
             ScrollArea::vertical().id_source("a2").show(ui, |ui| {
                 if self.cursor_selected {
                     self.build_cursor_transformation_panel(ui, cqrs);
@@ -448,6 +448,7 @@ impl Ui {
 
         Resize::default()
             .id_source("resize_bezier_c0")
+            .default_height(320.0)
             .show(ui, |ui| {
                 ScrollArea::vertical()
                     .id_source("scroll_bezier_c0")

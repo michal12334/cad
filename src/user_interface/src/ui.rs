@@ -120,7 +120,7 @@ impl Ui {
     pub fn build<'a>(&'a mut self, cqrs: &'a mut CQRS) -> impl FnMut(&egui::Context) + '_ {
         self.cursor = Some(cqrs.get(&CursorDetails {}));
         move |egui_ctx| {
-            egui::Window::new("panel").show(egui_ctx, |ui| {
+            egui::Window::new("panel").default_height(850.0).show(egui_ctx, |ui| {
                 if egui_ctx.is_pointer_over_area() {
                     self.pointer_is_over_area = true;
                 } else {

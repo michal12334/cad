@@ -8,7 +8,7 @@ use crate::ui::Ui;
 
 impl Ui {
     pub fn build_object_selection_panel(&mut self, ui: &mut egui::Ui, cqrs: &mut CQRS) {
-        Resize::default().id_source("resize_1").show(ui, |ui| {
+        Resize::default().id_source("resize_1").default_height(250.0).show(ui, |ui| {
             ScrollArea::vertical().id_source("a").show(ui, |ui| {
                 let cursor = self.cursor.as_ref().unwrap();
                 if ui

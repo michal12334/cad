@@ -48,8 +48,8 @@ use crate::drawing::processes::beziers_c2::add_bezier_c2_on_bezier_c2_created::A
 mod drawing;
 
 fn main() {
-    let mut width = 800;
-    let mut height = 600;
+    let mut width = 1200;
+    let mut height = 900;
 
     let event_loop = winit::event_loop::EventLoopBuilder::new().build();
     let (window, display) = glium::backend::glutin::SimpleWindowBuilder::new()
