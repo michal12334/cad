@@ -31,6 +31,7 @@ use user_interface::processes::sync_bezier_c0_with_backend::{
 };
 use user_interface::ui::Ui;
 use crate::drawing::drawers::bezier_c0_drawer::BezierC0Drawer;
+use crate::drawing::drawers::bezier_c2_drawer::BezierC2Drawer;
 use crate::drawing::drawers::cursor_drawer::CursorDrawer;
 use crate::drawing::drawers::infinite_grid_drawer::InfiniteGridDrawer;
 use crate::drawing::drawers::point_drawer::PointDrawer;
@@ -169,6 +170,7 @@ fn main() {
     let cursor_drawer = CursorDrawer::new(&display);
     let infinite_grid_drawer = InfiniteGridDrawer::new(&display);
     let bezier_c0_drawer = BezierC0Drawer::new(&display);
+    let bezier_c2_drawer = BezierC2Drawer::new(&display);
     let polygon_drawer = PolygonDrawer::new(&display);
 
     let mut mouse_position = (0.0, 0.0);
@@ -236,6 +238,10 @@ fn main() {
 
                 for bezier in drawing_storage.borrow().beziers_c0.values() {
                     bezier_c0_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, color, width, height);
+                }
+
+                for bezier in drawing_storage.borrow().beziers_c2.values() {
+                    bezier_c2_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, color, width, height);
                 }
 
                 for bezier_points in app_state.storage.beziers_c0.values().filter(|b| b.draw_polygon).map(|b| b.points.iter().map(|p| app_state.storage.points.get(&p.id).unwrap().clone()).collect::<Vec<Point>>()) {

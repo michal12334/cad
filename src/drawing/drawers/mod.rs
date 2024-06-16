@@ -4,3 +4,4 @@ pub mod infinite_grid_drawer;
 pub mod point_drawer;
 pub mod polygon_drawer;
 pub mod torus_drawer;
+pub mod bezier_c2_drawer;
