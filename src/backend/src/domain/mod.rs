@@ -7,4 +7,4 @@ pub mod selected_object;
 pub mod torus;
 pub mod transformer;
 pub mod vertex;
-mod bezier_c2;
+pub mod bezier_c2;

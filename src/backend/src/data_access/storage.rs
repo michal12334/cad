@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use crate::domain::bezier_c0::BezierC0;
+use crate::domain::bezier_c2::BezierC2;
 use crate::domain::cursor::Cursor;
 use crate::domain::point::Point;
 use crate::domain::selected_object::SelectedObject;
@@ -10,6 +11,7 @@ pub struct Storage {
     pub toruses: HashMap<u64, Torus>,
     pub points: HashMap<u64, Point>,
     pub beziers_c0: HashMap<u64, BezierC0>,
+    pub beziers_c2: HashMap<u64, BezierC2>,
     pub selected_objects: Vec<SelectedObject>,
     pub cursor: Cursor,
 }
@@ -20,6 +22,7 @@ impl Storage {
             toruses: HashMap::new(),
             points: HashMap::new(),
             beziers_c0: HashMap::new(),
+            beziers_c2: HashMap::new(),
             selected_objects: Vec::new(),
             cursor: Cursor::new(),
         }

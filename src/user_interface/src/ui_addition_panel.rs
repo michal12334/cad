@@ -1,5 +1,6 @@
 use backend::cqrs::beziers_c0::add_bezier_c0::AddBezierC0;
 use backend::cqrs::beziers_c0::bezier_c0_details::BezierC0Details;
+use backend::cqrs::beziers_c2::add_bezier_c2::AddBezierC2;
 use backend::cqrs::common::new_id::NewId;
 use backend::cqrs::cqrs::CQRS;
 use backend::cqrs::points::add_point::AddPoint;
@@ -36,6 +37,10 @@ impl Ui {
             self.objects.push(BeziersC0(DomainBezier::from_dto(
                 &cqrs.get(&BezierC0Details { id }),
             )));
+        }
+        if ui.button("Add Bezier C2").clicked() {
+            let id = cqrs.handle(&NewId {});
+            cqrs.execute(&AddBezierC2 { id });
         }
     }
 }
