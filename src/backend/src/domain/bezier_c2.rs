@@ -38,7 +38,7 @@ impl BezierC2 {
                     points.push(BezierC2BernsteinPoint { transformer: LittleTransformer::from_vec3(f) });
                     points.push(BezierC2BernsteinPoint { transformer: LittleTransformer::from_vec3(g) });
                 }
-                f = 2.0/3.0 * b_spline_points[points.len() - 2].transformer.to_vec3() + 1.0/3.0 * b_spline_points[points.len() - 1].transformer.to_vec3();
+                f = 2.0/3.0 * b_spline_points[b_spline_points.len() - 2].transformer.to_vec3() + 1.0/3.0 * b_spline_points[b_spline_points.len() - 1].transformer.to_vec3();
                 let e = (f + g) * 0.5;
                 points.push(BezierC2BernsteinPoint { transformer: LittleTransformer::from_vec3(e) });
                 points
