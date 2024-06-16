@@ -30,7 +30,7 @@ impl BezierC2 {
                 let mut g = 1.0/3.0 * b_spline_points[0].transformer.to_vec3() + 2.0/3.0 * b_spline_points[1].transformer.to_vec3();
                 let mut f;
                 let mut points = vec![];
-                for i in 1..(b_spline_points.len() - 1) {
+                for i in 1..(b_spline_points.len() - 2) {
                     f = 2.0/3.0 * b_spline_points[i].transformer.to_vec3() + 1.0/3.0 * b_spline_points[i+1].transformer.to_vec3();
                     let e = (f + g) * 0.5;
                     g = 1.0/3.0 * b_spline_points[i].transformer.to_vec3() + 2.0/3.0 * b_spline_points[i+1].transformer.to_vec3();
