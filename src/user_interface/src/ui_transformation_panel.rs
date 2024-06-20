@@ -4,6 +4,11 @@ use backend::cqrs::beziers_c0::add_point_to_bezier_c0::AddPointToBezierC0;
 use backend::cqrs::beziers_c0::delete_bezier_c0_points::DeleteBezierC0Points;
 use backend::cqrs::beziers_c0::rename_bezier_c0::RenameBezierC0;
 use backend::cqrs::beziers_c0::set_bezier_c0_draw_polygon::SetBezierC0DrawPolygon;
+use backend::cqrs::beziers_c2::add_point_to_bezier_c2::AddPointToBezierC2;
+use backend::cqrs::beziers_c2::delete_bezier_c2_points::DeleteBezierC2Points;
+use backend::cqrs::beziers_c2::rename_bezier_c2::RenameBezierC2;
+use backend::cqrs::beziers_c2::set_bezier_c2_draw_b_spline_polygon::SetBezierC2DrawBSplinePolygon;
+use backend::cqrs::beziers_c2::set_bezier_c2_draw_bernstein_polygon::SetBezierC2DrawBernsteinPolygon;
 use backend::cqrs::common::transform_selected_objects::TransformSelectedObjects;
 use backend::cqrs::cqrs::CQRS;
 use backend::cqrs::cursors::transform_cursor::TransformCursor;
@@ -18,6 +23,7 @@ use backend::cqrs::toruses::update_torus::UpdateTorus;
 use math::operations::multiply_quaternions;
 
 use crate::domain::bezier_c0::BezierC0;
+use crate::domain::bezier_c2::BezierC2;
 use crate::object::Object;
 use crate::object_id::ObjectId;
 use crate::ui::Ui;
@@ -95,9 +101,12 @@ impl Ui {
             }
             Object::BezierC0(bezier) => {
                 let points = cqrs.get(&AllPoints {});
-                Ui::build_bezier_transformation_panel(ui, cqrs, bezier, &points);
+                Ui::build_bezier_c0_transformation_panel(ui, cqrs, bezier, &points);
             }
-            _ => {}
+            Object::BezierC2(bezier) => {
+                let points = cqrs.get(&AllPoints {});
+                Ui::build_bezier_c2_transformation_panel(ui, cqrs, bezier, &points);
+            }
         }
     }
 
@@ -434,7 +443,99 @@ impl Ui {
         }
     }
 
-    fn build_bezier_transformation_panel(
+    fn build_bezier_c2_transformation_panel(
+        ui: &mut egui::Ui,
+        cqrs: &mut CQRS,
+        bezier: &mut BezierC2,
+        points: &[PointDTO],
+    ) {
+        if ui.text_edit_singleline(&mut bezier.name).lost_focus() {
+            cqrs.execute(&RenameBezierC2 {
+                id: bezier.id,
+                name: bezier.name.clone(),
+            });
+        }
+
+        Resize::default()
+            .id_source("resize_bezier_c2")
+            .default_height(320.0)
+            .show(ui, |ui| {
+                ScrollArea::vertical()
+                    .id_source("scroll_bezier_c2")
+                    .show(ui, |ui| {
+                        for point in bezier.b_spline_points.iter_mut() {
+                            if ui
+                                .selectable_label(point.is_selected, &point.name)
+                                .clicked()
+                            {
+                                point.is_selected = !point.is_selected;
+                            }
+                        }
+                    })
+            });
+
+        ui.horizontal(|ui| {
+            ComboBox::from_id_source("Bezier c2 select point")
+                .selected_text(if let Some(p) = &bezier.selected_point {
+                    &p.1
+                } else {
+                    ""
+                })
+                .show_ui(ui, |ui| {
+                    for point in points
+                        .iter()
+                        .filter(|p| !bezier.b_spline_points.iter().any(|bp| bp.id == p.id))
+                    {
+                        if ui.selectable_label(false, &point.name).clicked() {
+                            bezier.selected_point = Some((point.id, point.name.clone()));
+                        }
+                    }
+                });
+            if ui.button("Add Point").clicked() {
+                if let Some((id, _name)) = &bezier.selected_point {
+                    cqrs.execute(&AddPointToBezierC2 {
+                        id: bezier.id,
+                        point_id: *id,
+                    });
+                }
+                bezier.selected_point = None;
+            }
+        });
+
+        if ui.button("Delete Points").clicked() {
+            cqrs.execute(&DeleteBezierC2Points {
+                id: bezier.id,
+                points: bezier
+                    .b_spline_points
+                    .iter()
+                    .filter(|p| p.is_selected)
+                    .map(|p| p.id)
+                    .collect(),
+            });
+        }
+        
+        if ui
+            .checkbox(&mut bezier.draw_b_spline_polygon, "Draw B-Spline Polygon")
+            .changed()
+        {
+            cqrs.execute(&SetBezierC2DrawBSplinePolygon {
+                id: bezier.id,
+                draw_b_spline_polygon: bezier.draw_b_spline_polygon,
+            });
+        }
+
+        if ui
+            .checkbox(&mut bezier.draw_bernstein_polygon, "Draw Bernstein Polygon")
+            .changed()
+        {
+            cqrs.execute(&SetBezierC2DrawBernsteinPolygon {
+                id: bezier.id,
+                draw_bernstein_polygon: bezier.draw_bernstein_polygon,
+            });
+        }
+    }
+
+    fn build_bezier_c0_transformation_panel(
         ui: &mut egui::Ui,
         cqrs: &mut CQRS,
         bezier: &mut BezierC0,

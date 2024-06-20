@@ -7,3 +7,6 @@ pub mod point_moved;
 pub mod bezier_c0_point_moved;
 pub mod bezier_c0_deleted;
 pub mod bezier_c2_created;
+pub mod bezier_c2_renamed;
+pub mod point_added_to_bezier_c2;
+pub mod bezier_c2_points_deleted;
