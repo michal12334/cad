@@ -8,6 +8,7 @@ pub struct BezierC2 {
     pub selected_point: Option<(u64, String)>,
     pub draw_b_spline_polygon: bool,
     pub draw_bernstein_polygon: bool,
+    pub draw_bernstein_points: bool,
 }
 
 pub struct BezierC2BSplinePoint {
@@ -30,6 +31,7 @@ impl BezierC2 {
             selected_point: None,
             draw_b_spline_polygon: false,
             draw_bernstein_polygon: false,
+            draw_bernstein_points: false,
             b_spline_points: dto
                 .b_spline_points
                 .iter()

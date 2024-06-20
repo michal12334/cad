@@ -8,6 +8,7 @@ use backend::cqrs::beziers_c2::add_point_to_bezier_c2::AddPointToBezierC2;
 use backend::cqrs::beziers_c2::delete_bezier_c2_points::DeleteBezierC2Points;
 use backend::cqrs::beziers_c2::rename_bezier_c2::RenameBezierC2;
 use backend::cqrs::beziers_c2::set_bezier_c2_draw_b_spline_polygon::SetBezierC2DrawBSplinePolygon;
+use backend::cqrs::beziers_c2::set_bezier_c2_draw_bernstein_points::SetBezierC2DrawBernsteinPoints;
 use backend::cqrs::beziers_c2::set_bezier_c2_draw_bernstein_polygon::SetBezierC2DrawBernsteinPolygon;
 use backend::cqrs::common::transform_selected_objects::TransformSelectedObjects;
 use backend::cqrs::cqrs::CQRS;
@@ -531,6 +532,16 @@ impl Ui {
             cqrs.execute(&SetBezierC2DrawBernsteinPolygon {
                 id: bezier.id,
                 draw_bernstein_polygon: bezier.draw_bernstein_polygon,
+            });
+        }
+
+        if ui
+            .checkbox(&mut bezier.draw_bernstein_points, "Draw Bernstein Points")
+            .changed()
+        {
+            cqrs.execute(&SetBezierC2DrawBernsteinPoints {
+                id: bezier.id,
+                draw_bernstein_points: bezier.draw_bernstein_points,
             });
         }
     }

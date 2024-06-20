@@ -7,6 +7,7 @@ pub struct BezierC2 {
     pub name: String,
     pub draw_b_spline_polygon: bool,
     pub draw_bernstein_polygon: bool,
+    pub draw_bernstein_points: bool,
     pub b_spline_points: Vec<BezierC2BSplinePoint>,
     pub bernstein_points: Vec<BezierC2BernsteinPoint>,
 }
@@ -36,6 +37,7 @@ impl BezierC2 {
             name: format!("BezierC2 {}", id),
             draw_b_spline_polygon: false,
             draw_bernstein_polygon: false,
+            draw_bernstein_points: false,
             b_spline_points,
             bernstein_points,
         }
@@ -81,5 +83,9 @@ impl BezierC2 {
     
     pub fn set_draw_bernstein_polygon(&mut self, draw_bernstein_polygon: bool) {
         self.draw_bernstein_polygon = draw_bernstein_polygon;
+    }
+    
+    pub fn set_draw_bernstein_points(&mut self, draw_bernstein_points: bool) {
+        self.draw_bernstein_points = draw_bernstein_points;
     }
 }
