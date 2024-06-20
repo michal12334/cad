@@ -33,19 +33,7 @@ impl BezierC2 {
             index_buffer,
         }
     }
-    
-    pub fn add_point(&mut self, point: BezierC2BernsteinPointDTO, display: &Display<WindowSurface>) {
-        self.points.push(Vertex {
-            position: [
-                point.transformer.position.0 as f32,
-                point.transformer.position.1 as f32,
-                point.transformer.position.2 as f32,
-            ],
-        });
 
-        (self.vertex_buffer, self.index_buffer) = Self::get_buffers(&self.points, &display);
-    }
-    
     pub fn update_points(&mut self, points: &[BezierC2BernsteinPointDTO], display: &Display<WindowSurface>) {
         self.points = points
             .iter()

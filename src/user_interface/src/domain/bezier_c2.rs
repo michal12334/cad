@@ -1,3 +1,4 @@
+use backend::cqrs::beziers_c2::bezier_c2_bernstein_points::BezierC2BernsteinPointDTO;
 use backend::cqrs::beziers_c2::bezier_c2_details::BezierC2DTO;
 
 pub struct BezierC2 {
@@ -41,15 +42,32 @@ impl BezierC2 {
                     is_selected: false,
                 })
                 .collect(),
-            bernstein_points: dto
-                .bernstein_points
-                .iter()
-                .map(|bp| BezierC2BernsteinPoint {
-                    x: bp.transformer.position.0,
-                    y: bp.transformer.position.1,
-                    z: bp.transformer.position.2,
-                })
-                .collect(),
+            bernstein_points: Self::bernstein_points_from_dto(&dto.bernstein_points),
+        }
+    }
+    
+    pub fn set_bernstein_points(&mut self, bernstein_points: &[BezierC2BernsteinPointDTO]) {
+        self.bernstein_points = Self::bernstein_points_from_dto(bernstein_points);
+    }
+    
+    fn bernstein_points_from_dto(bernstein_points: &[BezierC2BernsteinPointDTO]) -> Vec<BezierC2BernsteinPoint> {
+        bernstein_points
+            .iter()
+            .map(|bp| BezierC2BernsteinPoint {
+                x: bp.transformer.position.0,
+                y: bp.transformer.position.1,
+                z: bp.transformer.position.2,
+            })
+            .collect()
+    }
+}
+
+impl BezierC2BSplinePoint {
+    pub fn new(id: u64, name: String) -> Self {
+        BezierC2BSplinePoint {
+            id,
+            name,
+            is_selected: false,
         }
     }
 }

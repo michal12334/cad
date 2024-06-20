@@ -22,13 +22,14 @@ use backend::domain::transformer::LittleTransformer;
 use backend::processes::beziers_c0::add_point_to_selected_beziers_c0_on_point_created::AddPointToSelectedBeziersC0OnPointCreated;
 use backend::processes::beziers_c0::move_bezier_c0_points_on_point_moved::MoveBezierC0PointsOnPointMoved;
 use backend::processes::beziers_c0::publishers::{BezierC0CreatedPublisher, BezierC0DeletedPublisher, BezierC0PointMovedPublisher, BezierC0PointsDeletedPublisher, BezierC0RenamedPublisher, PointAddedToBezierC0Publisher};
-use backend::processes::beziers_c2::publishers::BezierC2CreatedPublisher;
+use backend::processes::beziers_c2::publishers::{BezierC2CreatedPublisher, PointAddedToBezierC2Publisher};
 use infrastructure::event_bus::EventBus;
 use math::vector4::Vector4;
 use user_interface::processes::sync_bezier_c0_with_backend::{
     SyncBezierC0AddedPointsWithBackend, SyncBezierC0DeletedPointsWithBackend,
     SyncBezierC0NameWithBackend,
 };
+use user_interface::processes::sync_bezier_c2_with_backend::SyncBezierC2AddedPointsWithBackend;
 use user_interface::ui::Ui;
 use crate::drawing::drawers::bezier_c0_drawer::BezierC0Drawer;
 use crate::drawing::drawers::bezier_c2_drawer::BezierC2Drawer;
@@ -44,6 +45,7 @@ use crate::drawing::processes::beziers_c0::delete_bezier_c0_on_bezier_c0_deleted
 use crate::drawing::processes::beziers_c0::delete_bezier_c0_point_on_bezier_c0_points_deleted::DeleteBezierC0PointOnBezierC0PointsDeleted;
 use crate::drawing::processes::beziers_c0::update_bezier_c0_points_on_bezier_c0_point_moved::UpdateBezierC0PointsOnBezierC0PointMoved;
 use crate::drawing::processes::beziers_c2::add_bezier_c2_on_bezier_c2_created::AddBezierC2OnBezierC2Created;
+use crate::drawing::processes::beziers_c2::add_point_to_bezier_c2_on_point_added_to_bezier_c2::AddPointToBezierC2OnPointAddedToBezierC2;
 
 mod drawing;
 
@@ -105,6 +107,11 @@ fn main() {
         });
     event_bus
         .borrow_mut()
+        .add_consumer(PointAddedToBezierC2Publisher {
+            backend: app_state.clone(),
+        });
+    event_bus
+        .borrow_mut()
         .add_consumer(AddPointToSelectedBeziersC0OnPointCreated {
             backend: app_state.clone(),
         });
@@ -123,6 +130,9 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(SyncBezierC0AddedPointsWithBackend { ui: ui.clone() });
+    event_bus
+        .borrow_mut()
+        .add_consumer(SyncBezierC2AddedPointsWithBackend { ui: ui.clone(), cqrs: CQRS::new(app_state.clone()), });
 
     event_bus
         .borrow_mut()
@@ -160,6 +170,13 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(AddBezierC2OnBezierC2Created {
+            drawing_storage: drawing_storage.clone(),
+            cqrs: CQRS::new(app_state.clone()),
+            display: display.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(AddPointToBezierC2OnPointAddedToBezierC2 {
             drawing_storage: drawing_storage.clone(),
             cqrs: CQRS::new(app_state.clone()),
             display: display.clone(),
