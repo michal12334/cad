@@ -19,12 +19,13 @@ impl Consumer<PointMoved> for MoveBezierC0PointsOnPointMoved {
             .beziers_c0
             .values()
             .for_each(|bezier_c0| {
+                if 
                 bezier_c0.points
                     .iter()
-                    .filter(|point| point.id == event.id)
-                    .for_each(|point| {
-                        publisher.publish(Rc::new(BezierC0PointMoved::new(bezier_c0.id, point.id, event.position)));
-                    });
+                    .any(|point| point.id == event.id)
+                {
+                    publisher.publish(Rc::new(BezierC0PointMoved::new(bezier_c0.id)));
+                }
             });
     }
 }

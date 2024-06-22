@@ -87,10 +87,7 @@ impl Consumer<BezierC0PointMoved> for BezierC0PointMovedPublisher {
         let backend = self.backend.borrow();
         let event = Rc::new(
             backend_events::bezier_c0_point_moved::BezierC0PointMoved::new(
-                event.bezier_id,
-                event.point_id,
-                event.position
-            ),
+                event.bezier_id),
         );
         backend.services.event_publisher.publish(event);
     }
