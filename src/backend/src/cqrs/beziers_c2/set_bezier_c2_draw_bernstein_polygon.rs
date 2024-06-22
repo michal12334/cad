@@ -14,6 +14,9 @@ impl Command<SetBezierC2DrawBernsteinPolygon> for SetBezierC2DrawBernsteinPolygo
         let mut backend = app_state.borrow_mut();
         let bezier = backend.storage.beziers_c2.get_mut(&command.id).unwrap();
         bezier.set_draw_bernstein_polygon(command.draw_bernstein_polygon);
-        backend.services.event_publisher.publish(Rc::new(BezierC2DrawBernsteinPolygonSet::new(bezier.id, bezier.draw_bernstein_polygon)));
+        let event = Rc::new(BezierC2DrawBernsteinPolygonSet::new(bezier.id, bezier.draw_bernstein_polygon));
+        drop(backend);
+        let backend = app_state.borrow();
+        backend.services.event_publisher.publish(event);
     }
 }
