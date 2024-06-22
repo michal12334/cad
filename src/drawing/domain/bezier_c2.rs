@@ -34,7 +34,7 @@ impl BezierC2 {
             vertex_buffer,
             curve_index_buffer,
             points_index_buffer,
-            draw_bernstein_points: true,
+            draw_bernstein_points: false,
         }
     }
 

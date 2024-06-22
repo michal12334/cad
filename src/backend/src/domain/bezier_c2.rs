@@ -1,4 +1,3 @@
-use math::vector3::Vector3;
 use crate::domain::point::Point;
 use crate::domain::transformer::LittleTransformer;
 
