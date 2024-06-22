@@ -162,7 +162,7 @@ impl BezierC2Drawer {
             target
                 .draw(
                     bezier.vertex_buffer.as_ref().unwrap(),
-                    bezier.index_buffer.as_ref().unwrap(),
+                    bezier.curve_index_buffer.as_ref().unwrap(),
                     &self.program,
                     &uniform! {
                         perspective: perspective.data,

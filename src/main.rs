@@ -3,6 +3,7 @@ extern crate glium;
 extern crate user_interface;
 
 use std::cell::RefCell;
+use std::ops::Deref;
 use std::rc::Rc;
 
 use egui::Color32;
@@ -37,6 +38,7 @@ use crate::drawing::drawers::bezier_c2_drawer::BezierC2Drawer;
 use crate::drawing::drawers::cursor_drawer::CursorDrawer;
 use crate::drawing::drawers::infinite_grid_drawer::InfiniteGridDrawer;
 use crate::drawing::drawers::point_drawer::PointDrawer;
+use crate::drawing::drawers::points_drawer::PointsDrawer;
 use crate::drawing::drawers::polygon_drawer::PolygonDrawer;
 use crate::drawing::drawers::torus_drawer::TorusDrawer;
 use crate::drawing::drawing_storage::DrawingStorage;
@@ -195,6 +197,7 @@ fn main() {
     let bezier_c0_drawer = BezierC0Drawer::new(&display);
     let bezier_c2_drawer = BezierC2Drawer::new(&display);
     let polygon_drawer = PolygonDrawer::new(&display);
+    let points_drawer = PointsDrawer::new(&display);
 
     let mut mouse_position = (0.0, 0.0);
     let mut camera_direction = math::vector3::Vector3::new(0.0f32, 0.0, 1.0);
@@ -210,6 +213,7 @@ fn main() {
 
     let color = Color32::WHITE.to_normalized_gamma_f32();
     let selected_color = Color32::YELLOW.to_normalized_gamma_f32();
+    let bernstein_color = Color32::DARK_RED.to_normalized_gamma_f32();
 
     event_loop.run(move |event, _window_target, control_flow| {
         let mut redraw = || {
@@ -273,6 +277,10 @@ fn main() {
 
                 for bezier_points in app_state.storage.beziers_c2.values().filter(|b| b.draw_b_spline_polygon).map(|b| b.b_spline_points.iter().map(|p| app_state.storage.points.get(&p.id).unwrap().clone()).collect::<Vec<Point>>()) {
                     polygon_drawer.draw(&mut target, &display, &bezier_points, &perspective, &view_matrix, color);
+                }
+
+                for bezier in drawing_storage.borrow().beziers_c2.values().filter(|b| b.draw_bernstein_points && b.points_index_buffer.is_some()) {
+                    points_drawer.draw(&mut target, &bezier.vertex_buffer.as_ref().unwrap(), &bezier.points_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, bernstein_color);
                 }
 
                 cursor_drawer.draw(&mut target, &display, &app_state.storage.cursor, &perspective, &view_matrix);

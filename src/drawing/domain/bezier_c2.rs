@@ -8,7 +8,9 @@ pub struct BezierC2 {
     pub id: u64,
     pub points: Vec<Vertex>,
     pub vertex_buffer: Option<VertexBuffer<Vertex>>,
-    pub index_buffer: Option<IndexBuffer<u16>>,
+    pub curve_index_buffer: Option<IndexBuffer<u16>>,
+    pub points_index_buffer: Option<IndexBuffer<u16>>,
+    pub draw_bernstein_points: bool,
 }
 
 impl BezierC2 {
@@ -24,13 +26,15 @@ impl BezierC2 {
             })
             .collect::<Vec<Vertex>>();
         
-        let (vertex_buffer, index_buffer) = Self::get_buffers(&points, &display);
+        let (vertex_buffer, curve_index_buffer, points_index_buffer) = Self::get_buffers(&points, &display);
         
         Self {
             id,
             points,
             vertex_buffer,
-            index_buffer,
+            curve_index_buffer,
+            points_index_buffer,
+            draw_bernstein_points: true,
         }
     }
 
@@ -46,12 +50,12 @@ impl BezierC2 {
             })
             .collect::<Vec<Vertex>>();
         
-        (self.vertex_buffer, self.index_buffer) = Self::get_buffers(&self.points, &display);
+        (self.vertex_buffer, self.curve_index_buffer, self.points_index_buffer) = Self::get_buffers(&self.points, &display);
     }
     
-    fn get_buffers(points: &Vec<Vertex>, display: &Display<WindowSurface>) -> (Option<VertexBuffer<Vertex>>, Option<IndexBuffer<u16>>) {
+    fn get_buffers(points: &Vec<Vertex>, display: &Display<WindowSurface>) -> (Option<VertexBuffer<Vertex>>, Option<IndexBuffer<u16>>, Option<IndexBuffer<u16>>) {
         if points.len() < 2 {
-            return (None, None);
+            return (None, None, None);
         }
         
         let mut points = points.clone();
@@ -70,7 +74,14 @@ impl BezierC2 {
                     .flat_map(|f| [f, f + 1, f + 2, f + 3])
                     .collect::<Vec<u16>>(),
             )
-                .unwrap())
+            .unwrap()),
+            Some(IndexBuffer::new(
+                display,
+                PrimitiveType::Points,
+                &(0..points.len() as u16)
+                    .collect::<Vec<u16>>(),
+            )
+            .unwrap()),
         )
     }
 }
