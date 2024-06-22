@@ -271,6 +271,10 @@ fn main() {
                     polygon_drawer.draw(&mut target, &display, &bezier_points, &perspective, &view_matrix, color);
                 }
 
+                for bezier_points in app_state.storage.beziers_c2.values().filter(|b| b.draw_b_spline_polygon).map(|b| b.b_spline_points.iter().map(|p| app_state.storage.points.get(&p.id).unwrap().clone()).collect::<Vec<Point>>()) {
+                    polygon_drawer.draw(&mut target, &display, &bezier_points, &perspective, &view_matrix, color);
+                }
+
                 cursor_drawer.draw(&mut target, &display, &app_state.storage.cursor, &perspective, &view_matrix);
 
                 infinite_grid_drawer.draw(&mut target, &perspective.data, &view_matrix.data);
