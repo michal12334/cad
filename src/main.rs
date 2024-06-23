@@ -22,7 +22,7 @@ use backend::domain::point::Point;
 use backend::domain::transformer::LittleTransformer;
 use backend::processes::beziers_c0::add_point_to_selected_beziers_c0_on_point_created::AddPointToSelectedBeziersC0OnPointCreated;
 use backend::processes::beziers_c0::move_bezier_c0_points_on_point_moved::MoveBezierC0PointsOnPointMoved;
-use backend::processes::beziers_c0::publishers::{BezierC0CreatedPublisher, BezierC0DeletedPublisher, BezierC0PointMovedPublisher, BezierC0PointsDeletedPublisher, BezierC0RenamedPublisher, PointAddedToBezierC0Publisher};
+use backend::processes::beziers_c0::publishers::{BezierC0CreatedPublisher, BezierC0DeletedPublisher, BezierC0DrawPolygonSetPublisher, BezierC0PointMovedPublisher, BezierC0PointsDeletedPublisher, BezierC0RenamedPublisher, PointAddedToBezierC0Publisher};
 use backend::processes::beziers_c2::add_point_to_selected_beziers_c2_on_point_created::AddPointToSelectedBeziersC2OnPointCreated;
 use backend::processes::beziers_c2::publishers::{BezierC2CreatedPublisher, BezierC2DrawBernsteinPointsSetPublisher, BezierC2DrawBernsteinPolygonSetPublisher, BezierC2DrawBSplinePolygonSetPublisher, PointAddedToBezierC2Publisher};
 use infrastructure::event_bus::EventBus;
@@ -46,10 +46,13 @@ use crate::drawing::processes::beziers_c0::add_bezier_c0_on_bezier_c0_created::A
 use crate::drawing::processes::beziers_c0::add_point_to_bezier_c0_on_point_added_to_bezier_c0::AddPointToBezierC0OnPointAddedToBezierC0;
 use crate::drawing::processes::beziers_c0::delete_bezier_c0_on_bezier_c0_deleted::DeleteBezierC0OnBezierC0Deleted;
 use crate::drawing::processes::beziers_c0::delete_bezier_c0_point_on_bezier_c0_points_deleted::DeleteBezierC0PointOnBezierC0PointsDeleted;
+use crate::drawing::processes::beziers_c0::set_draw_polygon_on_bezier_c0_draw_polygon_set::SetDrawPolygonOnBezierC0DrawPolygonSet;
 use crate::drawing::processes::beziers_c0::update_bezier_c0_points_on_bezier_c0_point_moved::UpdateBezierC0PointsOnBezierC0PointMoved;
 use crate::drawing::processes::beziers_c2::add_bezier_c2_on_bezier_c2_created::AddBezierC2OnBezierC2Created;
 use crate::drawing::processes::beziers_c2::add_point_to_bezier_c2_on_point_added_to_bezier_c2::AddPointToBezierC2OnPointAddedToBezierC2;
+use crate::drawing::processes::beziers_c2::set_draw_b_spline_polygon_on_bezier_c2_draw_b_spline_polygon_set::SetDrawBSplinePolygonOnBezierC2DrawBSplinePolygonSet;
 use crate::drawing::processes::beziers_c2::set_draw_bernstein_points_on_bezier_c2_draw_bernstein_points_set::SetDrawBernsteinPointsOnBezierC2DrawBernsteinPointsSet;
+use crate::drawing::processes::beziers_c2::set_draw_bernstein_polygon_on_bezier_c2_draw_bernstein_polygon_set::SetDrawBernsteinPolygonOnBezierC2DrawBernsteinPolygonSet;
 
 mod drawing;
 
@@ -102,6 +105,11 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(BezierC0DeletedPublisher {
+            backend: app_state.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(BezierC0DrawPolygonSetPublisher {
             backend: app_state.clone(),
         });
     event_bus
@@ -193,6 +201,11 @@ fn main() {
         });
     event_bus
         .borrow_mut()
+        .add_consumer(SetDrawPolygonOnBezierC0DrawPolygonSet {
+            drawing_storage: drawing_storage.clone(),
+        });
+    event_bus
+        .borrow_mut()
         .add_consumer(AddBezierC2OnBezierC2Created {
             drawing_storage: drawing_storage.clone(),
             cqrs: CQRS::new(app_state.clone()),
@@ -208,6 +221,16 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(SetDrawBernsteinPointsOnBezierC2DrawBernsteinPointsSet {
+            drawing_storage: drawing_storage.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(SetDrawBernsteinPolygonOnBezierC2DrawBernsteinPolygonSet {
+            drawing_storage: drawing_storage.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(SetDrawBSplinePolygonOnBezierC2DrawBSplinePolygonSet {
             drawing_storage: drawing_storage.clone(),
         });
 

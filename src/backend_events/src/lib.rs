@@ -9,3 +9,4 @@ pub mod point_added_to_bezier_c2;
 pub mod bezier_c2_draw_bernstein_polygon_set;
 pub mod bezier_c2_draw_bernstein_points_set;
 pub mod bezier_c2_draw_b_spline_polygon_set;
+pub mod bezier_c0_draw_polygon_set;
