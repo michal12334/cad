@@ -62,8 +62,19 @@ impl BezierC2 {
         }
     }
 
-    pub fn update_points(&mut self, points: &[BezierC2BernsteinPointDTO], display: &Display<WindowSurface>) {
+    pub fn update_points(&mut self, points: &[BezierC2BernsteinPointDTO], b_spline_points: &[PointDTO], display: &Display<WindowSurface>) {
         self.bernstein_points = points
+            .iter()
+            .map(|p| Vertex {
+                position: [
+                    p.transformer.position.0 as f32,
+                    p.transformer.position.1 as f32,
+                    p.transformer.position.2 as f32,
+                ],
+            })
+            .collect::<Vec<Vertex>>();
+        
+        self.b_spline_points = b_spline_points
             .iter()
             .map(|p| Vertex {
                 position: [
