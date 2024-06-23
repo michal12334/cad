@@ -7,3 +7,4 @@ pub mod delete_bezier_c2_points;
 pub mod set_bezier_c2_draw_b_spline_polygon;
 pub mod set_bezier_c2_draw_bernstein_polygon;
 pub mod set_bezier_c2_draw_bernstein_points;
+pub mod bezier_c2_b_spline_points;

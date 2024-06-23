@@ -8,7 +8,9 @@ pub struct BezierC0 {
     pub id: u64,
     pub points: Vec<Vertex>,
     pub vertex_buffer: Option<VertexBuffer<Vertex>>,
-    pub index_buffer: Option<IndexBuffer<u16>>,
+    pub curve_index_buffer: Option<IndexBuffer<u16>>,
+    pub polygon_index_buffer: Option<IndexBuffer<u16>>,
+    pub draw_polygon: bool,
 }
 
 impl BezierC0 {
@@ -24,13 +26,15 @@ impl BezierC0 {
             })
             .collect::<Vec<Vertex>>();
         
-        let (vertex_buffer, index_buffer) = Self::get_buffers(&points, &display);
+        let (vertex_buffer, curve_index_buffer, polygon_index_buffer) = Self::get_buffers(&points, &display);
         
         Self {
             id,
             points,
             vertex_buffer,
-            index_buffer,
+            curve_index_buffer,
+            polygon_index_buffer,
+            draw_polygon: false,
         }
     }
     
@@ -43,7 +47,7 @@ impl BezierC0 {
             ],
         });
 
-        (self.vertex_buffer, self.index_buffer) = Self::get_buffers(&self.points, &display);
+        (self.vertex_buffer, self.curve_index_buffer, self.polygon_index_buffer) = Self::get_buffers(&self.points, &display);
     }
     
     pub fn update_points(&mut self, points: &[PointDTO], display: &Display<WindowSurface>) {
@@ -58,12 +62,12 @@ impl BezierC0 {
             })
             .collect::<Vec<Vertex>>();
         
-        (self.vertex_buffer, self.index_buffer) = Self::get_buffers(&self.points, &display);
+        (self.vertex_buffer, self.curve_index_buffer, self.polygon_index_buffer) = Self::get_buffers(&self.points, &display);
     }
     
-    fn get_buffers(points: &Vec<Vertex>, display: &Display<WindowSurface>) -> (Option<VertexBuffer<Vertex>>, Option<IndexBuffer<u16>>) {
+    fn get_buffers(points: &Vec<Vertex>, display: &Display<WindowSurface>) -> (Option<VertexBuffer<Vertex>>, Option<IndexBuffer<u16>>, Option<IndexBuffer<u16>>) {
         if points.len() < 2 {
-            return (None, None);
+            return (None, None, None);
         }
         
         let mut points = points.clone();
@@ -82,7 +86,14 @@ impl BezierC0 {
                     .flat_map(|f| [f, f + 1, f + 2, f + 3])
                     .collect::<Vec<u16>>(),
             )
-                .unwrap())
+                .unwrap()),
+            Some(IndexBuffer::new(
+                display,
+                PrimitiveType::LinesListAdjacency,
+                &(0..points.len() as u16)
+                    .collect::<Vec<u16>>(),
+            )
+                .unwrap()),
         )
     }
 }

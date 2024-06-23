@@ -131,11 +131,11 @@ impl BezierC2Drawer {
         width: u32,
         height: u32,
     ) {
-        if bezier.points.len() < 2 {
+        if bezier.bernstein_points.len() < 2 {
             return;
         }
 
-        let max_distance = bezier.points.iter().fold(
+        let max_distance = bezier.bernstein_points.iter().fold(
             (0f32, 0f32, Vector4::new(0.0, 0.0, 0.0, 0.0)),
             |(max_x, max_y, prev), p| {
                 let current = perspective.clone()
@@ -151,7 +151,7 @@ impl BezierC2Drawer {
             },
         );
         
-        let len = bezier.points.len();
+        let len = bezier.bernstein_points.len();
         
         let number_of_draw_calls =
             (max_distance.0.max(max_distance.1) as u32).min(height.max(width)) / 50;
@@ -161,7 +161,7 @@ impl BezierC2Drawer {
         for i in 0..number_of_draw_calls {
             target
                 .draw(
-                    bezier.vertex_buffer.as_ref().unwrap(),
+                    bezier.bernstein_vertex_buffer.as_ref().unwrap(),
                     bezier.curve_index_buffer.as_ref().unwrap(),
                     &self.program,
                     &uniform! {

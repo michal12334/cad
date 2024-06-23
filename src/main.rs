@@ -300,8 +300,8 @@ fn main() {
                     polygon_drawer.draw(&mut target, &display, &bezier_points, &perspective, &view_matrix, color);
                 }
 
-                for bezier in drawing_storage.borrow().beziers_c2.values().filter(|b| b.draw_bernstein_points && b.points_index_buffer.is_some()) {
-                    points_drawer.draw(&mut target, &bezier.vertex_buffer.as_ref().unwrap(), &bezier.points_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, bernstein_color);
+                for bezier in drawing_storage.borrow().beziers_c2.values().filter(|b| b.draw_bernstein_points && b.bernstein_points_index_buffer.is_some()) {
+                    points_drawer.draw(&mut target, &bezier.bernstein_vertex_buffer.as_ref().unwrap(), &bezier.bernstein_points_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, bernstein_color);
                 }
 
                 cursor_drawer.draw(&mut target, &display, &app_state.storage.cursor, &perspective, &view_matrix);
