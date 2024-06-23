@@ -24,14 +24,14 @@ use backend::processes::beziers_c0::add_point_to_selected_beziers_c0_on_point_cr
 use backend::processes::beziers_c0::move_bezier_c0_points_on_point_moved::MoveBezierC0PointsOnPointMoved;
 use backend::processes::beziers_c0::publishers::{BezierC0CreatedPublisher, BezierC0DeletedPublisher, BezierC0DrawPolygonSetPublisher, BezierC0PointMovedPublisher, BezierC0PointsDeletedPublisher, BezierC0RenamedPublisher, PointAddedToBezierC0Publisher};
 use backend::processes::beziers_c2::add_point_to_selected_beziers_c2_on_point_created::AddPointToSelectedBeziersC2OnPointCreated;
-use backend::processes::beziers_c2::publishers::{BezierC2CreatedPublisher, BezierC2DrawBernsteinPointsSetPublisher, BezierC2DrawBernsteinPolygonSetPublisher, BezierC2DrawBSplinePolygonSetPublisher, PointAddedToBezierC2Publisher};
+use backend::processes::beziers_c2::publishers::{BezierC2CreatedPublisher, BezierC2DrawBernsteinPointsSetPublisher, BezierC2DrawBernsteinPolygonSetPublisher, BezierC2DrawBSplinePolygonSetPublisher, BezierC2PointsDeletedPublisher, PointAddedToBezierC2Publisher};
 use infrastructure::event_bus::EventBus;
 use math::vector4::Vector4;
 use user_interface::processes::sync_bezier_c0_with_backend::{
     SyncBezierC0AddedPointsWithBackend, SyncBezierC0DeletedPointsWithBackend,
     SyncBezierC0NameWithBackend,
 };
-use user_interface::processes::sync_bezier_c2_with_backend::SyncBezierC2AddedPointsWithBackend;
+use user_interface::processes::sync_bezier_c2_with_backend::{SyncBezierC2AddedPointsWithBackend, SyncBezierC2DeletedPointsWithBackend};
 use user_interface::ui::Ui;
 use crate::drawing::drawers::bezier_c0_drawer::BezierC0Drawer;
 use crate::drawing::drawers::bezier_c2_drawer::BezierC2Drawer;
@@ -45,11 +45,12 @@ use crate::drawing::drawing_storage::DrawingStorage;
 use crate::drawing::processes::beziers_c0::add_bezier_c0_on_bezier_c0_created::AddBezierC0OnBezierC0Created;
 use crate::drawing::processes::beziers_c0::add_point_to_bezier_c0_on_point_added_to_bezier_c0::AddPointToBezierC0OnPointAddedToBezierC0;
 use crate::drawing::processes::beziers_c0::delete_bezier_c0_on_bezier_c0_deleted::DeleteBezierC0OnBezierC0Deleted;
-use crate::drawing::processes::beziers_c0::delete_bezier_c0_point_on_bezier_c0_points_deleted::DeleteBezierC0PointOnBezierC0PointsDeleted;
+use crate::drawing::processes::beziers_c0::delete_bezier_c0_points_on_bezier_c0_points_deleted::DeleteBezierC0PointsOnBezierC0PointsDeleted;
 use crate::drawing::processes::beziers_c0::set_draw_polygon_on_bezier_c0_draw_polygon_set::SetDrawPolygonOnBezierC0DrawPolygonSet;
 use crate::drawing::processes::beziers_c0::update_bezier_c0_points_on_bezier_c0_point_moved::UpdateBezierC0PointsOnBezierC0PointMoved;
 use crate::drawing::processes::beziers_c2::add_bezier_c2_on_bezier_c2_created::AddBezierC2OnBezierC2Created;
 use crate::drawing::processes::beziers_c2::add_point_to_bezier_c2_on_point_added_to_bezier_c2::AddPointToBezierC2OnPointAddedToBezierC2;
+use crate::drawing::processes::beziers_c2::delete_bezier_c2_points_on_bezier_c2_points_deleted::DeleteBezierC2PointsOnBezierC2PointsDeleted;
 use crate::drawing::processes::beziers_c2::set_draw_b_spline_polygon_on_bezier_c2_draw_b_spline_polygon_set::SetDrawBSplinePolygonOnBezierC2DrawBSplinePolygonSet;
 use crate::drawing::processes::beziers_c2::set_draw_bernstein_points_on_bezier_c2_draw_bernstein_points_set::SetDrawBernsteinPointsOnBezierC2DrawBernsteinPointsSet;
 use crate::drawing::processes::beziers_c2::set_draw_bernstein_polygon_on_bezier_c2_draw_bernstein_polygon_set::SetDrawBernsteinPolygonOnBezierC2DrawBernsteinPolygonSet;
@@ -139,6 +140,11 @@ fn main() {
         });
     event_bus
         .borrow_mut()
+        .add_consumer(BezierC2PointsDeletedPublisher {
+            backend: app_state.clone(),
+        });
+    event_bus
+        .borrow_mut()
         .add_consumer(AddPointToSelectedBeziersC0OnPointCreated {
             backend: app_state.clone(),
         });
@@ -165,6 +171,9 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(SyncBezierC2AddedPointsWithBackend { ui: ui.clone(), cqrs: CQRS::new(app_state.clone()), });
+    event_bus
+        .borrow_mut()
+        .add_consumer(SyncBezierC2DeletedPointsWithBackend { ui: ui.clone(), cqrs: CQRS::new(app_state.clone()), });
 
     event_bus
         .borrow_mut()
@@ -182,7 +191,7 @@ fn main() {
         });
     event_bus
         .borrow_mut()
-        .add_consumer(DeleteBezierC0PointOnBezierC0PointsDeleted {
+        .add_consumer(DeleteBezierC0PointsOnBezierC0PointsDeleted {
             drawing_storage: drawing_storage.clone(),
             cqrs: CQRS::new(app_state.clone()),
             display: display.clone(),
@@ -232,6 +241,13 @@ fn main() {
         .borrow_mut()
         .add_consumer(SetDrawBSplinePolygonOnBezierC2DrawBSplinePolygonSet {
             drawing_storage: drawing_storage.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(DeleteBezierC2PointsOnBezierC2PointsDeleted {
+            drawing_storage: drawing_storage.clone(),
+            cqrs: CQRS::new(app_state.clone()),
+            display: display.clone(),
         });
 
     let torus_drawer = TorusDrawer::new(&display);

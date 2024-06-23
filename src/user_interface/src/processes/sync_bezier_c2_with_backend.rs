@@ -3,6 +3,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use backend::cqrs::beziers_c2::bezier_c2_bernstein_points::BezierC2BernsteinPoints;
 use backend::cqrs::cqrs::CQRS;
+use backend_events::bezier_c2_points_deleted::BezierC2PointsDeleted;
 use backend_events::point_added_to_bezier_c2::PointAddedToBezierC2;
 use infrastructure::consumer::{AnyConsumer, Consumer};
 use crate::domain::bezier_c2::BezierC2BSplinePoint;
@@ -34,7 +35,35 @@ impl Consumer<PointAddedToBezierC2> for SyncBezierC2AddedPointsWithBackend {
     }
 }
 
+pub struct SyncBezierC2DeletedPointsWithBackend {
+    pub ui: Rc<RefCell<Ui>>,
+    pub cqrs: CQRS,
+}
+
+impl Consumer<BezierC2PointsDeleted> for SyncBezierC2DeletedPointsWithBackend {
+    fn consume(&self, event: &BezierC2PointsDeleted) {
+        let mut ui = self.ui.borrow_mut();
+        ui.objects
+            .iter_mut()
+            .filter(|object| object.get_id() == event.id)
+            .for_each(|object| match object {
+                Object::BezierC2(bezier) => {
+                    bezier.b_spline_points
+                        .retain(|point| !event.deleted_points.contains(&point.id));
+                    bezier.set_bernstein_points(&self.cqrs.get(&BezierC2BernsteinPoints { id: event.id }));
+                }
+                _ => {}
+            });
+    }
+}
+
 impl AnyConsumer for SyncBezierC2AddedPointsWithBackend {
+    fn consume_any(&self, message: Rc<dyn Any>) {
+        self.consume_any_impl(message);
+    }
+}
+
+impl AnyConsumer for SyncBezierC2DeletedPointsWithBackend {
     fn consume_any(&self, message: Rc<dyn Any>) {
         self.consume_any_impl(message);
     }
