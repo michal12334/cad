@@ -13,7 +13,8 @@ pub struct BezierC2 {
     pub b_spline_vertex_buffer: Option<VertexBuffer<Vertex>>,
     pub curve_index_buffer: Option<IndexBuffer<u16>>,
     pub bernstein_points_index_buffer: Option<IndexBuffer<u16>>,
-    pub b_spline_points_index_buffer: Option<IndexBuffer<u16>>,
+    pub bernstein_polygon_index_buffer: Option<IndexBuffer<u16>>,
+    pub b_spline_polygon_index_buffer: Option<IndexBuffer<u16>>,
     pub draw_bernstein_points: bool,
     pub draw_bernstein_polygon: bool,
     pub draw_b_spline_polygon: bool,
@@ -43,7 +44,7 @@ impl BezierC2 {
             })
             .collect::<Vec<Vertex>>();
         
-        let (bernstein_vertex_buffer, b_spline_vertex_buffer, curve_index_buffer, bernstein_points_index_buffer, b_spline_points_index_buffer) = Self::get_buffers(&bernstein_points, &b_spline_points, &display);
+        let (bernstein_vertex_buffer, b_spline_vertex_buffer, curve_index_buffer, bernstein_points_index_buffer, bernstein_polygon_index_buffer, b_spline_polygon_index_buffer) = Self::get_buffers(&bernstein_points, &b_spline_points, &display);
         
         Self {
             id,
@@ -53,7 +54,8 @@ impl BezierC2 {
             b_spline_vertex_buffer,
             curve_index_buffer,
             bernstein_points_index_buffer,
-            b_spline_points_index_buffer,
+            bernstein_polygon_index_buffer,
+            b_spline_polygon_index_buffer,
             draw_bernstein_points: false,
             draw_bernstein_polygon: false,
             draw_b_spline_polygon: false,
@@ -72,13 +74,13 @@ impl BezierC2 {
             })
             .collect::<Vec<Vertex>>();
         
-        (self.bernstein_vertex_buffer, self.b_spline_vertex_buffer, self.curve_index_buffer, self.bernstein_points_index_buffer, self.b_spline_points_index_buffer) = Self::get_buffers(&self.bernstein_points, &self.b_spline_points, &display);
+        (self.bernstein_vertex_buffer, self.b_spline_vertex_buffer, self.curve_index_buffer, self.bernstein_points_index_buffer, self.bernstein_polygon_index_buffer, self.b_spline_polygon_index_buffer) = Self::get_buffers(&self.bernstein_points, &self.b_spline_points, &display);
     }
     
-    fn get_buffers(bernstein_points: &Vec<Vertex>, b_spline_points: &Vec<Vertex>, display: &Display<WindowSurface>) -> (Option<VertexBuffer<Vertex>>, Option<VertexBuffer<Vertex>>, Option<IndexBuffer<u16>>, Option<IndexBuffer<u16>>, Option<IndexBuffer<u16>>) {
-        let (bernstein_vertex_buffer, curve_index_buffer, bernstein_points_index_buffer) =
+    fn get_buffers(bernstein_points: &Vec<Vertex>, b_spline_points: &Vec<Vertex>, display: &Display<WindowSurface>) -> (Option<VertexBuffer<Vertex>>, Option<VertexBuffer<Vertex>>, Option<IndexBuffer<u16>>, Option<IndexBuffer<u16>>, Option<IndexBuffer<u16>>, Option<IndexBuffer<u16>>) {
+        let (bernstein_vertex_buffer, curve_index_buffer, bernstein_points_index_buffer, bernstein_polygon_index_buffer) =
             if bernstein_points.len() < 4 {
-                (None, None, None)
+                (None, None, None, None)
             } else {
                 (
                     Some(VertexBuffer::new(display, &bernstein_points).unwrap()),
@@ -98,6 +100,13 @@ impl BezierC2 {
                             .collect::<Vec<u16>>(),
                     )
                         .unwrap()),
+                    Some(IndexBuffer::new(
+                        display,
+                        PrimitiveType::LineStrip,
+                        &(0..bernstein_points.len() as u16)
+                            .collect::<Vec<u16>>(),
+                    )
+                        .unwrap()),
                 )
             };
         
@@ -108,7 +117,7 @@ impl BezierC2 {
                 Some(VertexBuffer::new(display, &b_spline_points).unwrap()),
                 Some(IndexBuffer::new(
                     display,
-                    PrimitiveType::Points,
+                    PrimitiveType::LineStrip,
                     &(0..b_spline_points.len() as u16)
                         .collect::<Vec<u16>>(),
                 )
@@ -116,6 +125,6 @@ impl BezierC2 {
             )
         };
         
-        (bernstein_vertex_buffer, b_spline_vertex_buffer, curve_index_buffer, bernstein_points_index_buffer, b_spline_points_index_buffer)
+        (bernstein_vertex_buffer, b_spline_vertex_buffer, curve_index_buffer, bernstein_points_index_buffer, bernstein_polygon_index_buffer, b_spline_points_index_buffer)
     }
 }

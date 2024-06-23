@@ -292,12 +292,16 @@ fn main() {
                     bezier_c2_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, color, width, height);
                 }
 
-                for bezier_points in app_state.storage.beziers_c0.values().filter(|b| b.draw_polygon).map(|b| b.points.iter().map(|p| app_state.storage.points.get(&p.id).unwrap().clone()).collect::<Vec<Point>>()) {
-                    polygon_drawer.draw(&mut target, &display, &bezier_points, &perspective, &view_matrix, color);
+                for bezier in drawing_storage.borrow().beziers_c0.values().filter(|b| b.draw_polygon && b.polygon_index_buffer.is_some()) {
+                    polygon_drawer.draw(&mut target, &bezier.vertex_buffer.as_ref().unwrap(), &bezier.polygon_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, color);
                 }
 
-                for bezier_points in app_state.storage.beziers_c2.values().filter(|b| b.draw_b_spline_polygon).map(|b| b.b_spline_points.iter().map(|p| app_state.storage.points.get(&p.id).unwrap().clone()).collect::<Vec<Point>>()) {
-                    polygon_drawer.draw(&mut target, &display, &bezier_points, &perspective, &view_matrix, color);
+                for bezier in drawing_storage.borrow().beziers_c2.values().filter(|b| b.draw_b_spline_polygon && b.b_spline_polygon_index_buffer.is_some()) {
+                    polygon_drawer.draw(&mut target, &bezier.b_spline_vertex_buffer.as_ref().unwrap(), &bezier.b_spline_polygon_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, color);
+                }
+
+                for bezier in drawing_storage.borrow().beziers_c2.values().filter(|b| b.draw_bernstein_polygon && b.bernstein_polygon_index_buffer.is_some()) {
+                    polygon_drawer.draw(&mut target, &bezier.bernstein_vertex_buffer.as_ref().unwrap(), &bezier.bernstein_polygon_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, color);
                 }
 
                 for bezier in drawing_storage.borrow().beziers_c2.values().filter(|b| b.draw_bernstein_points && b.bernstein_points_index_buffer.is_some()) {

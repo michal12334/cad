@@ -89,7 +89,7 @@ impl BezierC0 {
                 .unwrap()),
             Some(IndexBuffer::new(
                 display,
-                PrimitiveType::LinesListAdjacency,
+                PrimitiveType::LineStrip,
                 &(0..points.len() as u16)
                     .collect::<Vec<u16>>(),
             )

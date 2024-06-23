@@ -1,5 +1,5 @@
 use glium::glutin::surface::WindowSurface;
-use glium::{Display, DrawParameters, Frame, Program, Surface};
+use glium::{Display, DrawParameters, Frame, IndexBuffer, Program, Surface, VertexBuffer};
 
 use backend::domain::point::Point;
 use backend::domain::vertex::Vertex;
@@ -57,37 +57,16 @@ impl PolygonDrawer {
     pub fn draw(
         &self,
         target: &mut Frame,
-        display: &Display<WindowSurface>,
-        points: &[Point],
+        vertex_buffer: &VertexBuffer<Vertex>,
+        index_buffer: &IndexBuffer<u16>,
         perspective: &math::matrix4::Matrix4,
         view_matrix: &math::matrix4::Matrix4,
         color: [f32; 4],
     ) {
-        if points.len() < 2 {
-            return;
-        }
-
-        let points = points
-            .iter()
-            .map(|p| Vertex {
-                position: [
-                    p.transformer.position.0 as f32,
-                    p.transformer.position.1 as f32,
-                    p.transformer.position.2 as f32,
-                ],
-            })
-            .collect::<Vec<Vertex>>();
-        let vertex_buffer = glium::VertexBuffer::new(display, &points).unwrap();
-        let indices = glium::IndexBuffer::new(
-            display,
-            glium::index::PrimitiveType::LineStrip,
-            &(0..(points.len() as u16)).collect::<Vec<u16>>(),
-        )
-        .unwrap();
         target
             .draw(
-                &vertex_buffer,
-                &indices,
+                vertex_buffer,
+                index_buffer,
                 &self.program,
                 &uniform! {
                     perspective: perspective.data,
