@@ -1,5 +1,5 @@
 use backend::cqrs::beziers_c2::bezier_c2_bernstein_points::BezierC2BernsteinPointDTO;
-use backend::cqrs::beziers_c2::bezier_c2_details::BezierC2DTO;
+use backend::cqrs::beziers_c2::bezier_c2_details::{BezierC2BSplinePointDTO, BezierC2DTO};
 
 pub struct BezierC2 {
     pub id: u64,
@@ -34,15 +34,7 @@ impl BezierC2 {
             draw_b_spline_polygon: false,
             draw_bernstein_polygon: false,
             draw_bernstein_points: false,
-            b_spline_points: dto
-                .b_spline_points
-                .iter()
-                .map(|bp| BezierC2BSplinePoint {
-                    id: bp.id,
-                    name: bp.name.clone(),
-                    is_selected: false,
-                })
-                .collect(),
+            b_spline_points: Self::b_spline_points_from_dto(&dto.b_spline_points),
             bernstein_points: Self::bernstein_points_from_dto(&dto.bernstein_points),
             selected_bernstein_point: None,
         }
@@ -59,6 +51,21 @@ impl BezierC2 {
                 x: bp.transformer.position.0,
                 y: bp.transformer.position.1,
                 z: bp.transformer.position.2,
+            })
+            .collect()
+    }
+    
+    pub fn set_b_spline_points(&mut self, b_spline_points: &[BezierC2BSplinePointDTO]) {
+        self.b_spline_points = Self::b_spline_points_from_dto(b_spline_points);
+    }
+    
+    fn b_spline_points_from_dto(b_spline_points: &[BezierC2BSplinePointDTO]) -> Vec<BezierC2BSplinePoint> {
+        b_spline_points
+            .iter()
+            .map(|bp| BezierC2BSplinePoint {
+                id: bp.id,
+                name: bp.name.clone(),
+                is_selected: false,
             })
             .collect()
     }

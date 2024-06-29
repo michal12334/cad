@@ -32,7 +32,7 @@ use user_interface::processes::sync_bezier_c0_with_backend::{
     SyncBezierC0AddedPointsWithBackend, SyncBezierC0DeletedPointsWithBackend,
     SyncBezierC0NameWithBackend,
 };
-use user_interface::processes::sync_bezier_c2_with_backend::{SyncBezierC2AddedPointsWithBackend, SyncBezierC2DeletedPointsWithBackend};
+use user_interface::processes::sync_bezier_c2_with_backend::{SyncBezierC2AddedPointsWithBackend, SyncBezierC2DeletedPointsWithBackend, SyncBezierC2PointPositionsWithBackend};
 use user_interface::ui::Ui;
 use crate::drawing::drawers::bezier_c0_drawer::BezierC0Drawer;
 use crate::drawing::drawers::bezier_c2_drawer::BezierC2Drawer;
@@ -192,6 +192,9 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(SyncBezierC2DeletedPointsWithBackend { ui: ui.clone(), cqrs: CQRS::new(app_state.clone()), });
+    event_bus
+        .borrow_mut()
+        .add_consumer(SyncBezierC2PointPositionsWithBackend { ui: ui.clone(), cqrs: CQRS::new(app_state.clone()), });
 
     event_bus
         .borrow_mut()
