@@ -9,6 +9,7 @@ use crate::domain::events::bezier_c2_draw_bernstein_points_set::BezierC2DrawBern
 use crate::domain::events::bezier_c2_draw_bernstein_polygon_set::BezierC2DrawBernsteinPolygonSet;
 use crate::domain::events::bezier_c2_point_moved::BezierC2PointMoved;
 use crate::domain::events::bezier_c2_points_deleted::BezierC2PointsDeleted;
+use crate::domain::events::bezier_c2_selected_bernstein_point_set::BezierC2SelectedBernsteinPointSet;
 use crate::domain::events::point_added_to_bezier_c2::PointAddedToBezierC2;
 
 pub struct BezierC2CreatedPublisher {
@@ -127,6 +128,23 @@ impl Consumer<BezierC2PointMoved> for BezierC2PointMovedPublisher {
     }
 }
 
+pub struct BezierC2SelectedBernsteinPointSetPublisher {
+    pub backend: Rc<RefCell<Backend>>,
+}
+
+impl Consumer<BezierC2SelectedBernsteinPointSet> for BezierC2SelectedBernsteinPointSetPublisher {
+    fn consume(&self, event: &BezierC2SelectedBernsteinPointSet) {
+        let backend = self.backend.borrow();
+        let event = Rc::new(
+            backend_events::bezier_c2_selected_bernstein_point_set::BezierC2SelectedBernsteinPointSet::new(
+                event.bezier_id,
+                event.selected_bernstein_point,
+            ),
+        );
+        backend.services.event_publisher.publish(event);
+    }
+}
+
 impl AnyConsumer for BezierC2CreatedPublisher {
     fn consume_any(&self, message: Rc<dyn Any>) {
         self.consume_any_impl(message);
@@ -164,6 +182,12 @@ impl AnyConsumer for BezierC2PointsDeletedPublisher {
 }
 
 impl AnyConsumer for BezierC2PointMovedPublisher {
+    fn consume_any(&self, message: Rc<dyn Any>) {
+        self.consume_any_impl(message);
+    }
+}
+
+impl AnyConsumer for BezierC2SelectedBernsteinPointSetPublisher {
     fn consume_any(&self, message: Rc<dyn Any>) {
         self.consume_any_impl(message);
     }

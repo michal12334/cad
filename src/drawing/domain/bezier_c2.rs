@@ -18,6 +18,7 @@ pub struct BezierC2 {
     pub draw_bernstein_points: bool,
     pub draw_bernstein_polygon: bool,
     pub draw_b_spline_polygon: bool,
+    pub selected_bernstein_point: Option<usize>,
 }
 
 impl BezierC2 {
@@ -59,6 +60,7 @@ impl BezierC2 {
             draw_bernstein_points: false,
             draw_bernstein_polygon: false,
             draw_b_spline_polygon: false,
+            selected_bernstein_point: None,
         }
     }
 

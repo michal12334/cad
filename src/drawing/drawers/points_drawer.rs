@@ -29,9 +29,15 @@ impl PointsDrawer {
             out vec4 color;
             
             uniform vec4 obj_color;
+            uniform int selected_index;
+            uniform vec4 selected_color;
     
             void main() {
-                color = obj_color;
+                if (gl_PrimitiveID == selected_index) {
+                    color = selected_color;
+                } else {
+                    color = obj_color;
+                }
             }
         "#;
 
@@ -61,6 +67,8 @@ impl PointsDrawer {
         perspective: &math::matrix4::Matrix4,
         view_matrix: &math::matrix4::Matrix4,
         color: [f32; 4],
+        selected_color: [f32; 4],
+        selected_index: Option<usize>,
     ) {
         target
             .draw(
@@ -71,6 +79,8 @@ impl PointsDrawer {
                     perspective: perspective.data,
                     view: view_matrix.data,
                     obj_color: color,
+                    selected_index: if let Some(x) = selected_index { x as i32 } else { -1 },
+                    selected_color: selected_color,
                 },
                 &self.drawing_parameters,
             )

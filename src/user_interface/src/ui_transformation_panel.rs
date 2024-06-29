@@ -10,6 +10,7 @@ use backend::cqrs::beziers_c2::rename_bezier_c2::RenameBezierC2;
 use backend::cqrs::beziers_c2::set_bezier_c2_draw_b_spline_polygon::SetBezierC2DrawBSplinePolygon;
 use backend::cqrs::beziers_c2::set_bezier_c2_draw_bernstein_points::SetBezierC2DrawBernsteinPoints;
 use backend::cqrs::beziers_c2::set_bezier_c2_draw_bernstein_polygon::SetBezierC2DrawBernsteinPolygon;
+use backend::cqrs::beziers_c2::set_bezier_c2_selected_bernstein_point::SetBezierC2SelectedBernsteinPoint;
 use backend::cqrs::common::transform_selected_objects::TransformSelectedObjects;
 use backend::cqrs::cqrs::CQRS;
 use backend::cqrs::cursors::transform_cursor::TransformCursor;
@@ -560,6 +561,10 @@ impl Ui {
                                     } else {
                                         Some(i)
                                     };
+                                cqrs.execute(&SetBezierC2SelectedBernsteinPoint {
+                                    id: bezier.id,
+                                    selected_bernstein_point: bezier.selected_bernstein_point,
+                                });
                             }
                         }
                     })

@@ -25,7 +25,7 @@ use backend::processes::beziers_c0::move_bezier_c0_points_on_point_moved::MoveBe
 use backend::processes::beziers_c0::publishers::{BezierC0CreatedPublisher, BezierC0DeletedPublisher, BezierC0DrawPolygonSetPublisher, BezierC0PointMovedPublisher, BezierC0PointsDeletedPublisher, BezierC0RenamedPublisher, PointAddedToBezierC0Publisher};
 use backend::processes::beziers_c2::add_point_to_selected_beziers_c2_on_point_created::AddPointToSelectedBeziersC2OnPointCreated;
 use backend::processes::beziers_c2::move_bezier_c2_points_on_point_moved::MoveBezierC2PointsOnPointMoved;
-use backend::processes::beziers_c2::publishers::{BezierC2CreatedPublisher, BezierC2DrawBernsteinPointsSetPublisher, BezierC2DrawBernsteinPolygonSetPublisher, BezierC2DrawBSplinePolygonSetPublisher, BezierC2PointMovedPublisher, BezierC2PointsDeletedPublisher, PointAddedToBezierC2Publisher};
+use backend::processes::beziers_c2::publishers::{BezierC2CreatedPublisher, BezierC2DrawBernsteinPointsSetPublisher, BezierC2DrawBernsteinPolygonSetPublisher, BezierC2DrawBSplinePolygonSetPublisher, BezierC2PointMovedPublisher, BezierC2PointsDeletedPublisher, BezierC2SelectedBernsteinPointSetPublisher, PointAddedToBezierC2Publisher};
 use infrastructure::event_bus::EventBus;
 use math::vector4::Vector4;
 use user_interface::processes::sync_bezier_c0_with_backend::{
@@ -55,6 +55,7 @@ use crate::drawing::processes::beziers_c2::delete_bezier_c2_points_on_bezier_c2_
 use crate::drawing::processes::beziers_c2::set_draw_b_spline_polygon_on_bezier_c2_draw_b_spline_polygon_set::SetDrawBSplinePolygonOnBezierC2DrawBSplinePolygonSet;
 use crate::drawing::processes::beziers_c2::set_draw_bernstein_points_on_bezier_c2_draw_bernstein_points_set::SetDrawBernsteinPointsOnBezierC2DrawBernsteinPointsSet;
 use crate::drawing::processes::beziers_c2::set_draw_bernstein_polygon_on_bezier_c2_draw_bernstein_polygon_set::SetDrawBernsteinPolygonOnBezierC2DrawBernsteinPolygonSet;
+use crate::drawing::processes::beziers_c2::set_selected_bernstein_point_on_bezier_c2_selected_bernstein_point_set::SetSelectedBernsteinPointOnBezierC2SelectedBernsteinPointSet;
 use crate::drawing::processes::beziers_c2::update_bezier_c2_points_on_bezier_c2_point_moved::UpdateBezierC2PointsOnBezierC2PointMoved;
 
 mod drawing;
@@ -148,6 +149,11 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(BezierC2PointMovedPublisher {
+            backend: app_state.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(BezierC2SelectedBernsteinPointSetPublisher {
             backend: app_state.clone(),
         });
     event_bus
@@ -268,6 +274,11 @@ fn main() {
             cqrs: CQRS::new(app_state.clone()),
             display: display.clone(),
         });
+    event_bus
+        .borrow_mut()
+        .add_consumer(SetSelectedBernsteinPointOnBezierC2SelectedBernsteinPointSet {
+            drawing_storage: drawing_storage.clone(),
+        });
 
     let torus_drawer = TorusDrawer::new(&display);
     let point_drawer = PointDrawer::new(&display);
@@ -293,6 +304,7 @@ fn main() {
     let color = Color32::WHITE.to_normalized_gamma_f32();
     let selected_color = Color32::YELLOW.to_normalized_gamma_f32();
     let bernstein_color = Color32::DARK_RED.to_normalized_gamma_f32();
+    let selected_bernstein_color = Color32::LIGHT_GREEN.to_normalized_gamma_f32();
 
     event_loop.run(move |event, _window_target, control_flow| {
         let mut redraw = || {
@@ -363,7 +375,7 @@ fn main() {
                 }
 
                 for bezier in drawing_storage.borrow().beziers_c2.values().filter(|b| b.draw_bernstein_points && b.bernstein_points_index_buffer.is_some()) {
-                    points_drawer.draw(&mut target, &bezier.bernstein_vertex_buffer.as_ref().unwrap(), &bezier.bernstein_points_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, bernstein_color);
+                    points_drawer.draw(&mut target, &bezier.bernstein_vertex_buffer.as_ref().unwrap(), &bezier.bernstein_points_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, bernstein_color, selected_bernstein_color, bezier.selected_bernstein_point);
                 }
 
                 cursor_drawer.draw(&mut target, &display, &app_state.storage.cursor, &perspective, &view_matrix);

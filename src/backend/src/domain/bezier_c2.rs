@@ -9,6 +9,7 @@ pub struct BezierC2 {
     pub draw_bernstein_points: bool,
     pub b_spline_points: Vec<BezierC2BSplinePoint>,
     pub bernstein_points: Vec<BezierC2BernsteinPoint>,
+    pub selected_bernstein_point: Option<usize>,
 }
 
 pub struct BezierC2BSplinePoint {
@@ -39,6 +40,7 @@ impl BezierC2 {
             draw_bernstein_points: false,
             b_spline_points,
             bernstein_points,
+            selected_bernstein_point: None,
         }
     }
     
@@ -86,5 +88,9 @@ impl BezierC2 {
     
     pub fn set_draw_bernstein_points(&mut self, draw_bernstein_points: bool) {
         self.draw_bernstein_points = draw_bernstein_points;
+    }
+    
+    pub fn set_selected_bernstein_point(&mut self, selected_bernstein_point: Option<usize>) {
+        self.selected_bernstein_point = selected_bernstein_point;
     }
 }

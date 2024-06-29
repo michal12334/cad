@@ -12,3 +12,4 @@ pub mod bezier_c2_draw_b_spline_polygon_set;
 pub mod bezier_c0_draw_polygon_set;
 pub mod bezier_c2_points_deleted;
 pub mod bezier_c2_point_moved;
+pub mod bezier_c2_selected_bernstein_point_set;
