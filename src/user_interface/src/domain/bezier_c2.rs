@@ -7,6 +7,7 @@ pub struct BezierC2 {
     pub b_spline_points: Vec<BezierC2BSplinePoint>,
     pub bernstein_points: Vec<BezierC2BernsteinPoint>,
     pub selected_point: Option<(u64, String)>,
+    pub selected_bernstein_point: Option<usize>,
     pub draw_b_spline_polygon: bool,
     pub draw_bernstein_polygon: bool,
     pub draw_bernstein_points: bool,
@@ -43,6 +44,7 @@ impl BezierC2 {
                 })
                 .collect(),
             bernstein_points: Self::bernstein_points_from_dto(&dto.bernstein_points),
+            selected_bernstein_point: None,
         }
     }
     

@@ -459,7 +459,7 @@ impl Ui {
 
         Resize::default()
             .id_source("resize_bezier_c2")
-            .default_height(320.0)
+            .default_height(160.0)
             .show(ui, |ui| {
                 ScrollArea::vertical()
                     .id_source("scroll_bezier_c2")
@@ -544,6 +544,26 @@ impl Ui {
                 draw_bernstein_points: bezier.draw_bernstein_points,
             });
         }
+
+        Resize::default()
+            .id_source("resize_bezier_c2_bernstein")
+            .default_height(160.0)
+            .show(ui, |ui| {
+                ScrollArea::vertical()
+                    .id_source("scroll_bezier_c2_bernstein")
+                    .show(ui, |ui| {
+                        for i in 0..bezier.bernstein_points.len() {
+                            let selected = bezier.selected_bernstein_point == Some(i);
+                            if ui.selectable_label(selected, &format!("Bernstein Point {}", i)).clicked() {
+                                bezier.selected_bernstein_point = if selected {
+                                        None
+                                    } else {
+                                        Some(i)
+                                    };
+                            }
+                        }
+                    })
+            });
     }
 
     fn build_bezier_c0_transformation_panel(
