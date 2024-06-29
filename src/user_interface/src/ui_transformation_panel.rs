@@ -460,7 +460,7 @@ impl Ui {
 
         Resize::default()
             .id_source("resize_bezier_c2")
-            .default_height(160.0)
+            .default_height(140.0)
             .show(ui, |ui| {
                 ScrollArea::vertical()
                     .id_source("scroll_bezier_c2")
@@ -548,7 +548,7 @@ impl Ui {
 
         Resize::default()
             .id_source("resize_bezier_c2_bernstein")
-            .default_height(160.0)
+            .default_height(140.0)
             .show(ui, |ui| {
                 ScrollArea::vertical()
                     .id_source("scroll_bezier_c2_bernstein")
@@ -569,6 +569,23 @@ impl Ui {
                         }
                     })
             });
+        
+        if let Some(i) = bezier.selected_bernstein_point {
+            ui.horizontal(|ui| {
+                ui.label("X");
+                DragValue::new(&mut bezier.bernstein_points[i].x)
+                    .speed(0.01)
+                    .ui(ui);
+                ui.label("Y");
+                DragValue::new(&mut bezier.bernstein_points[i].y)
+                    .speed(0.01)
+                    .ui(ui);
+                ui.label("Z");
+                DragValue::new(&mut bezier.bernstein_points[i].z)
+                    .speed(0.01)
+                    .ui(ui);
+            });
+        }
     }
 
     fn build_bezier_c0_transformation_panel(
