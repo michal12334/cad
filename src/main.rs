@@ -26,6 +26,7 @@ use backend::processes::beziers_c0::publishers::{BezierC0CreatedPublisher, Bezie
 use backend::processes::beziers_c2::add_point_to_selected_beziers_c2_on_point_created::AddPointToSelectedBeziersC2OnPointCreated;
 use backend::processes::beziers_c2::move_bezier_c2_points_on_point_moved::MoveBezierC2PointsOnPointMoved;
 use backend::processes::beziers_c2::publishers::{BezierC2CreatedPublisher, BezierC2DrawBernsteinPointsSetPublisher, BezierC2DrawBernsteinPolygonSetPublisher, BezierC2DrawBSplinePolygonSetPublisher, BezierC2PointMovedPublisher, BezierC2PointsDeletedPublisher, BezierC2SelectedBernsteinPointSetPublisher, PointAddedToBezierC2Publisher};
+use backend::processes::points::publishers::PointMovedPublisher;
 use infrastructure::event_bus::EventBus;
 use math::vector4::Vector4;
 use user_interface::processes::sync_bezier_c0_with_backend::{
@@ -33,6 +34,7 @@ use user_interface::processes::sync_bezier_c0_with_backend::{
     SyncBezierC0NameWithBackend,
 };
 use user_interface::processes::sync_bezier_c2_with_backend::{SyncBezierC2AddedPointsWithBackend, SyncBezierC2DeletedPointsWithBackend, SyncBezierC2PointPositionsWithBackend};
+use user_interface::processes::sync_point_with_backend::SyncPointPositionWithBackend;
 use user_interface::ui::Ui;
 use crate::drawing::drawers::bezier_c0_drawer::BezierC0Drawer;
 use crate::drawing::drawers::bezier_c2_drawer::BezierC2Drawer;
@@ -153,6 +155,11 @@ fn main() {
         });
     event_bus
         .borrow_mut()
+        .add_consumer(PointMovedPublisher {
+            backend: app_state.clone(),
+        });
+    event_bus
+        .borrow_mut()
         .add_consumer(BezierC2SelectedBernsteinPointSetPublisher {
             backend: app_state.clone(),
         });
@@ -195,6 +202,9 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(SyncBezierC2PointPositionsWithBackend { ui: ui.clone(), cqrs: CQRS::new(app_state.clone()), });
+    event_bus
+        .borrow_mut()
+        .add_consumer(SyncPointPositionWithBackend { ui: ui.clone(), });
 
     event_bus
         .borrow_mut()
