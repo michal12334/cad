@@ -93,4 +93,19 @@ impl BezierC2 {
     pub fn set_selected_bernstein_point(&mut self, selected_bernstein_point: Option<usize>) {
         self.selected_bernstein_point = selected_bernstein_point;
     }
+    
+    pub fn get_point_movement_to_move_selected_bernstein_point(&self, transformer: LittleTransformer) -> Option<(u64, LittleTransformer)> {
+        if let Some(selected_bernstein_point) = self.selected_bernstein_point {
+            let delta = LittleTransformer {
+                position: (
+                    (transformer.position.0 - self.bernstein_points[selected_bernstein_point].transformer.position.0) * 1.5,
+                    (transformer.position.1 - self.bernstein_points[selected_bernstein_point].transformer.position.1) * 1.5,
+                    (transformer.position.2 - self.bernstein_points[selected_bernstein_point].transformer.position.2) * 1.5,
+                ),
+            };
+            return Some((self.b_spline_points[(selected_bernstein_point + 1) / 3 + 1].id, delta));
+        }
+
+        return None;
+    }
 }

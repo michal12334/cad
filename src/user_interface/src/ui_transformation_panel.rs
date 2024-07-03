@@ -6,6 +6,7 @@ use backend::cqrs::beziers_c0::rename_bezier_c0::RenameBezierC0;
 use backend::cqrs::beziers_c0::set_bezier_c0_draw_polygon::SetBezierC0DrawPolygon;
 use backend::cqrs::beziers_c2::add_point_to_bezier_c2::AddPointToBezierC2;
 use backend::cqrs::beziers_c2::delete_bezier_c2_points::DeleteBezierC2Points;
+use backend::cqrs::beziers_c2::move_bezier_c2_selected_bernstein_point::MoveBezierC2SelectedBernsteinPoint;
 use backend::cqrs::beziers_c2::rename_bezier_c2::RenameBezierC2;
 use backend::cqrs::beziers_c2::set_bezier_c2_draw_b_spline_polygon::SetBezierC2DrawBSplinePolygon;
 use backend::cqrs::beziers_c2::set_bezier_c2_draw_bernstein_points::SetBezierC2DrawBernsteinPoints;
@@ -571,20 +572,35 @@ impl Ui {
             });
         
         if let Some(i) = bezier.selected_bernstein_point {
+            let mut transformer_drags = vec![];
+            
             ui.horizontal(|ui| {
                 ui.label("X");
-                DragValue::new(&mut bezier.bernstein_points[i].x)
+                transformer_drags.push(DragValue::new(&mut bezier.bernstein_points[i].x)
                     .speed(0.01)
-                    .ui(ui);
+                    .ui(ui));
                 ui.label("Y");
-                DragValue::new(&mut bezier.bernstein_points[i].y)
+                transformer_drags.push(DragValue::new(&mut bezier.bernstein_points[i].y)
                     .speed(0.01)
-                    .ui(ui);
+                    .ui(ui));
                 ui.label("Z");
-                DragValue::new(&mut bezier.bernstein_points[i].z)
+                transformer_drags.push(DragValue::new(&mut bezier.bernstein_points[i].z)
                     .speed(0.01)
-                    .ui(ui);
+                    .ui(ui));
             });
+
+            if transformer_drags.iter().any(|f| f.changed()) {
+                cqrs.execute(&MoveBezierC2SelectedBernsteinPoint {
+                    bezier_id: bezier.id,
+                    transformer: LittleTransformerDTO {
+                        position: (
+                            bezier.bernstein_points[i].x,
+                            bezier.bernstein_points[i].y,
+                            bezier.bernstein_points[i].z,
+                        ),
+                    },
+                });
+            }
         }
     }
 
