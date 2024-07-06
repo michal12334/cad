@@ -2,6 +2,8 @@ use backend::cqrs::beziers_c0::add_bezier_c0::AddBezierC0;
 use backend::cqrs::beziers_c0::bezier_c0_details::BezierC0Details;
 use backend::cqrs::beziers_c2::add_bezier_c2::AddBezierC2;
 use backend::cqrs::beziers_c2::bezier_c2_details::BezierC2Details;
+use backend::cqrs::beziers_int::add_bezier_int::AddBezierInt;
+use backend::cqrs::beziers_int::bezier_int_details::BezierIntDetails;
 use backend::cqrs::common::new_id::NewId;
 use backend::cqrs::cqrs::CQRS;
 use backend::cqrs::points::add_point::AddPoint;
@@ -15,6 +17,7 @@ use crate::ui::Ui;
 
 type DomainBezierC0 = crate::domain::bezier_c0::BezierC0;
 type DomainBezierC2 = crate::domain::bezier_c2::BezierC2;
+type DomainBezierInt = crate::domain::bezier_int::BezierInt;
 
 impl Ui {
     pub fn build_object_addition_panel(&mut self, ui: &mut egui::Ui, cqrs: &mut CQRS) {
@@ -49,6 +52,13 @@ impl Ui {
                 cqrs.execute(&AddBezierC2 { id });
                 self.objects.push(Object::BezierC2(DomainBezierC2::from_dto(
                     &cqrs.get(&BezierC2Details { id }),
+                )));
+            }
+            if ui.button("Add Bezier Int").clicked() {
+                let id = cqrs.handle(&NewId {});
+                cqrs.execute(&AddBezierInt { id });
+                self.objects.push(Object::BezierInt(DomainBezierInt::from_dto(
+                    &cqrs.get(&BezierIntDetails { id }),
                 )));
             }
         });

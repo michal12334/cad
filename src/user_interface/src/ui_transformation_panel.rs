@@ -110,6 +110,7 @@ impl Ui {
                 let points = cqrs.get(&AllPoints {});
                 Ui::build_bezier_c2_transformation_panel(ui, cqrs, bezier, &points);
             }
+            Object::BezierInt(_) => {}
         }
     }
 

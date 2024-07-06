@@ -64,6 +64,7 @@ impl Ui {
                                     ObjectTypeDTO::Point => ObjectId::Point(object_id),
                                     ObjectTypeDTO::BezierC0 => ObjectId::BezierC0(object_id),
                                     ObjectTypeDTO::BezierC2 => ObjectId::BezierC2(object_id),
+                                    ObjectTypeDTO::BezierInt => ObjectId::BezierInt(object_id),
                                 });
                                 cqrs.execute(&SelectObjects {
                                     objects: self

@@ -35,7 +35,7 @@ impl BezierInt {
 
         Self {
             id,
-            name: format!("BezierC2 {}", id),
+            name: format!("Bezier Int {}", id),
             draw_polygon: false,
             draw_bernstein_polygon: false,
             draw_bernstein_points: false,

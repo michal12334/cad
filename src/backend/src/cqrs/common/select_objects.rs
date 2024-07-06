@@ -21,6 +21,7 @@ pub enum ObjectTypeDTO {
     Point,
     BezierC0,
     BezierC2,
+    BezierInt,
 }
 
 impl Command<SelectObjects> for SelectObjects {
@@ -34,6 +35,7 @@ impl Command<SelectObjects> for SelectObjects {
                 ObjectTypeDTO::Point => SelectedObject::new_point(obj.id),
                 ObjectTypeDTO::BezierC0 => SelectedObject::new_bezier_c0(obj.id),
                 ObjectTypeDTO::BezierC2 => SelectedObject::new_bezier_c2(obj.id),
+                ObjectTypeDTO::BezierInt => SelectedObject::new_bezier_int(obj.id),
             })
             .collect();
     }
