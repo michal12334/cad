@@ -26,6 +26,7 @@ use backend::processes::beziers_c0::publishers::{BezierC0CreatedPublisher, Bezie
 use backend::processes::beziers_c2::add_point_to_selected_beziers_c2_on_point_created::AddPointToSelectedBeziersC2OnPointCreated;
 use backend::processes::beziers_c2::move_bezier_c2_points_on_point_moved::MoveBezierC2PointsOnPointMoved;
 use backend::processes::beziers_c2::publishers::{BezierC2CreatedPublisher, BezierC2DrawBernsteinPointsSetPublisher, BezierC2DrawBernsteinPolygonSetPublisher, BezierC2DrawBSplinePolygonSetPublisher, BezierC2PointMovedPublisher, BezierC2PointsDeletedPublisher, BezierC2SelectedBernsteinPointSetPublisher, PointAddedToBezierC2Publisher};
+use backend::processes::beziers_int::publishers::BezierIntCreatedPublisher;
 use backend::processes::points::publishers::PointMovedPublisher;
 use infrastructure::event_bus::EventBus;
 use math::vector4::Vector4;
@@ -38,6 +39,7 @@ use user_interface::processes::sync_point_with_backend::SyncPointPositionWithBac
 use user_interface::ui::Ui;
 use crate::drawing::drawers::bezier_c0_drawer::BezierC0Drawer;
 use crate::drawing::drawers::bezier_c2_drawer::BezierC2Drawer;
+use crate::drawing::drawers::bezier_int_drawer::BezierIntDrawer;
 use crate::drawing::drawers::cursor_drawer::CursorDrawer;
 use crate::drawing::drawers::infinite_grid_drawer::InfiniteGridDrawer;
 use crate::drawing::drawers::point_drawer::PointDrawer;
@@ -59,6 +61,7 @@ use crate::drawing::processes::beziers_c2::set_draw_bernstein_points_on_bezier_c
 use crate::drawing::processes::beziers_c2::set_draw_bernstein_polygon_on_bezier_c2_draw_bernstein_polygon_set::SetDrawBernsteinPolygonOnBezierC2DrawBernsteinPolygonSet;
 use crate::drawing::processes::beziers_c2::set_selected_bernstein_point_on_bezier_c2_selected_bernstein_point_set::SetSelectedBernsteinPointOnBezierC2SelectedBernsteinPointSet;
 use crate::drawing::processes::beziers_c2::update_bezier_c2_points_on_bezier_c2_point_moved::UpdateBezierC2PointsOnBezierC2PointMoved;
+use crate::drawing::processes::beziers_int::add_bezier_int_on_bezier_int_created::AddBezierIntOnBezierIntCreated;
 
 mod drawing;
 
@@ -183,6 +186,11 @@ fn main() {
         .add_consumer(MoveBezierC2PointsOnPointMoved {
             backend: app_state.clone(),
         });
+    event_bus
+        .borrow_mut()
+        .add_consumer(BezierIntCreatedPublisher {
+            backend: app_state.clone(),
+        });
 
     event_bus
         .borrow_mut()
@@ -292,6 +300,13 @@ fn main() {
         .add_consumer(SetSelectedBernsteinPointOnBezierC2SelectedBernsteinPointSet {
             drawing_storage: drawing_storage.clone(),
         });
+    event_bus
+        .borrow_mut()
+        .add_consumer(AddBezierIntOnBezierIntCreated {
+            drawing_storage: drawing_storage.clone(),
+            cqrs: CQRS::new(app_state.clone()),
+            display: display.clone(),
+        });
 
     let torus_drawer = TorusDrawer::new(&display);
     let point_drawer = PointDrawer::new(&display);
@@ -299,6 +314,7 @@ fn main() {
     let infinite_grid_drawer = InfiniteGridDrawer::new(&display);
     let bezier_c0_drawer = BezierC0Drawer::new(&display);
     let bezier_c2_drawer = BezierC2Drawer::new(&display);
+    let bezier_int_drawer = BezierIntDrawer::new(&display);
     let polygon_drawer = PolygonDrawer::new(&display);
     let points_drawer = PointsDrawer::new(&display);
 
@@ -373,6 +389,10 @@ fn main() {
 
                 for bezier in drawing_storage.borrow().beziers_c2.values() {
                     bezier_c2_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, color, width, height);
+                }
+
+                for bezier in drawing_storage.borrow().beziers_int.values() {
+                    bezier_int_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, color, width, height);
                 }
 
                 for bezier in drawing_storage.borrow().beziers_c0.values().filter(|b| b.draw_polygon && b.polygon_index_buffer.is_some()) {

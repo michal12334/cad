@@ -14,3 +14,4 @@ pub mod bezier_c2_points_deleted;
 pub mod bezier_c2_point_moved;
 pub mod bezier_c2_selected_bernstein_point_set;
 pub mod point_moved;
+pub mod bezier_int_created;
