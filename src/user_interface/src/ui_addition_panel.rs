@@ -18,35 +18,39 @@ type DomainBezierC2 = crate::domain::bezier_c2::BezierC2;
 
 impl Ui {
     pub fn build_object_addition_panel(&mut self, ui: &mut egui::Ui, cqrs: &mut CQRS) {
-        if ui.button("Add Torus").clicked() {
-            let id = cqrs.handle(&NewId {});
-            cqrs.execute(&AddTorus {
-                id,
-                major_radius: 1.0,
-                minor_radius: 0.5,
-                major_segments: 100,
-                minor_segments: 100,
-            });
-            self.objects.push(Torus(cqrs.get(&TorusDetails { id })));
-        }
-        if ui.button("Add Point").clicked() {
-            let id = cqrs.handle(&NewId {});
-            cqrs.execute(&AddPoint { id });
-            self.objects.push(Point(cqrs.get(&PointDetails { id })));
-        }
-        if ui.button("Add Bezier C0").clicked() {
-            let id = cqrs.handle(&NewId {});
-            cqrs.execute(&AddBezierC0 { id });
-            self.objects.push(BezierC0(DomainBezierC0::from_dto(
-                &cqrs.get(&BezierC0Details { id }),
-            )));
-        }
-        if ui.button("Add Bezier C2").clicked() {
-            let id = cqrs.handle(&NewId {});
-            cqrs.execute(&AddBezierC2 { id });
-            self.objects.push(Object::BezierC2(DomainBezierC2::from_dto(
-                &cqrs.get(&BezierC2Details { id }),
-            )));
-        }
+        ui.horizontal(|ui| {
+            if ui.button("Add Torus").clicked() {
+                let id = cqrs.handle(&NewId {});
+                cqrs.execute(&AddTorus {
+                    id,
+                    major_radius: 1.0,
+                    minor_radius: 0.5,
+                    major_segments: 100,
+                    minor_segments: 100,
+                });
+                self.objects.push(Torus(cqrs.get(&TorusDetails { id })));
+            }
+            if ui.button("Add Point").clicked() {
+                let id = cqrs.handle(&NewId {});
+                cqrs.execute(&AddPoint { id });
+                self.objects.push(Point(cqrs.get(&PointDetails { id })));
+            }
+        });
+        ui.horizontal(|ui| {
+            if ui.button("Add Bezier C0").clicked() {
+                let id = cqrs.handle(&NewId {});
+                cqrs.execute(&AddBezierC0 { id });
+                self.objects.push(BezierC0(DomainBezierC0::from_dto(
+                    &cqrs.get(&BezierC0Details { id }),
+                )));
+            }
+            if ui.button("Add Bezier C2").clicked() {
+                let id = cqrs.handle(&NewId {});
+                cqrs.execute(&AddBezierC2 { id });
+                self.objects.push(Object::BezierC2(DomainBezierC2::from_dto(
+                    &cqrs.get(&BezierC2Details { id }),
+                )));
+            }
+        });
     }
 }
