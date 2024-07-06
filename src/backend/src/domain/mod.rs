@@ -8,3 +8,4 @@ pub mod torus;
 pub mod transformer;
 pub mod vertex;
 pub mod bezier_c2;
+mod bezier_int;

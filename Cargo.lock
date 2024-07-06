@@ -159,6 +159,7 @@ dependencies = [
  "backend_events",
  "glium",
  "infrastructure",
+ "itertools",
  "math",
 ]
 
