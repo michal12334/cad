@@ -7,6 +7,7 @@ pub struct BezierInt {
     pub draw_polygon: bool,
     pub draw_bernstein_polygon: bool,
     pub draw_bernstein_points: bool,
+    pub selected_point: Option<(u64, String)>,
 }
 
 pub struct BezierIntPoint {
@@ -31,6 +32,7 @@ impl BezierInt {
             draw_polygon: false,
             draw_bernstein_polygon: false,
             draw_bernstein_points: false,
+            selected_point: None,
         }
     }
 }

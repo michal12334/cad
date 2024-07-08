@@ -27,6 +27,7 @@ use math::operations::multiply_quaternions;
 
 use crate::domain::bezier_c0::BezierC0;
 use crate::domain::bezier_c2::BezierC2;
+use crate::domain::bezier_int::BezierInt;
 use crate::object::Object;
 use crate::object_id::ObjectId;
 use crate::ui::Ui;
@@ -110,7 +111,10 @@ impl Ui {
                 let points = cqrs.get(&AllPoints {});
                 Ui::build_bezier_c2_transformation_panel(ui, cqrs, bezier, &points);
             }
-            Object::BezierInt(_) => {}
+            Object::BezierInt(bezier) => {
+                let points = cqrs.get(&AllPoints {});
+                Ui::build_bezier_int_transformation_panel(ui, cqrs, bezier, &points);
+            }
         }
     }
 
@@ -683,6 +687,78 @@ impl Ui {
             cqrs.execute(&SetBezierC0DrawPolygon {
                 id: bezier.id,
                 draw_polygon: bezier.draw_polygon,
+            });
+        }
+    }
+
+    fn build_bezier_int_transformation_panel(
+        ui: &mut egui::Ui,
+        cqrs: &mut CQRS,
+        bezier: &mut BezierInt,
+        points: &[PointDTO],
+    ) {
+        if ui.text_edit_singleline(&mut bezier.name).lost_focus() {
+            cqrs.execute(&RenameBezierC0 {
+                id: bezier.id,
+                name: bezier.name.clone(),
+            });
+        }
+
+        Resize::default()
+            .id_source("resize_bezier_int")
+            .default_height(320.0)
+            .show(ui, |ui| {
+                ScrollArea::vertical()
+                    .id_source("scroll_bezier_int")
+                    .show(ui, |ui| {
+                        for point in bezier.points.iter_mut() {
+                            if ui
+                                .selectable_label(point.is_selected, &point.name)
+                                .clicked()
+                            {
+                                point.is_selected = !point.is_selected;
+                            }
+                        }
+                    })
+            });
+
+        ui.horizontal(|ui| {
+            ComboBox::from_id_source("Bezier int select point")
+                .selected_text(if let Some(p) = &bezier.selected_point {
+                    &p.1
+                } else {
+                    ""
+                })
+                .show_ui(ui, |ui| {
+                    for point in points
+                        .iter()
+                        .filter(|p| !bezier.points.iter().any(|bp| bp.id == p.id))
+                    {
+                        if ui.selectable_label(false, &point.name).clicked() {
+                            bezier.selected_point = Some((point.id, point.name.clone()));
+                        }
+                    }
+                });
+            if ui.button("Add Point").clicked() {
+                if let Some((id, _name)) = &bezier.selected_point {
+                    cqrs.execute(&AddPointToBezierC0 {
+                        id: bezier.id,
+                        point_id: *id,
+                    });
+                }
+                bezier.selected_point = None;
+            }
+        });
+
+        if ui.button("Delete Points").clicked() {
+            cqrs.execute(&DeleteBezierC0Points {
+                id: bezier.id,
+                points: bezier
+                    .points
+                    .iter()
+                    .filter(|p| p.is_selected)
+                    .map(|p| p.id)
+                    .collect(),
             });
         }
     }
