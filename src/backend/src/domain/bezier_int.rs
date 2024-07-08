@@ -59,6 +59,29 @@ impl BezierInt {
     fn get_bernstein_points(points: &[Point]) -> Vec<BezierIntBernsteinPoint> {
         if points.len() < 2 {
             vec![]
+        } else if points.len() == 2 {
+            vec![
+                BezierIntBernsteinPoint {
+                    transformer: LittleTransformer {
+                        position: points[0].transformer.position,
+                    },
+                },
+                 BezierIntBernsteinPoint {
+                     transformer: LittleTransformer {
+                         position: points[0].transformer.position,
+                     },
+                 },
+                 BezierIntBernsteinPoint {
+                     transformer: LittleTransformer {
+                         position: points[1].transformer.position,
+                     },
+                 },
+                 BezierIntBernsteinPoint {
+                     transformer: LittleTransformer {
+                         position: points[1].transformer.position,
+                     },
+                 }
+            ]
         } else {
             let n = points.len() - 1;
 
