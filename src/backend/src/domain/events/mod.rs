@@ -17,3 +17,4 @@ pub mod bezier_c0_draw_polygon_set;
 pub mod bezier_c2_point_moved;
 pub mod bezier_c2_selected_bernstein_point_set;
 pub mod bezier_int_created;
+pub mod point_added_to_bezier_int;

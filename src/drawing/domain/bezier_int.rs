@@ -34,6 +34,23 @@ impl BezierInt {
         }
     }
     
+    pub fn update_points(&mut self, bernstein_points: &[BezierIntBernsteinPointDTO], display: &Display<WindowSurface>) {
+        self.bernstein_points = bernstein_points
+            .iter()
+            .map(|p| Vertex {
+                position: [
+                    p.transformer.position.0 as f32,
+                    p.transformer.position.1 as f32,
+                    p.transformer.position.2 as f32,
+                ],
+            })
+            .collect::<Vec<Vertex>>();
+        
+        let (vertex_buffer, index_buffer) = Self::get_buffers(&self.bernstein_points, display);
+        self.vertex_buffer = vertex_buffer;
+        self.index_buffer = index_buffer;
+    }
+    
     fn get_buffers(bernstein_points: &[Vertex], display: &Display<WindowSurface>) -> (Option<VertexBuffer<Vertex>>, Option<IndexBuffer<u16>>) {
         if bernstein_points.len() < 4 {
             return (None, None);
