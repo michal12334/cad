@@ -1,1 +1,2 @@
 pub mod publishers;
+pub mod add_point_to_selected_bezier_int_on_point_created;
