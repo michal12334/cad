@@ -44,6 +44,10 @@ impl BezierInt {
         }
     }
     
+    pub fn rename(&mut self, name: &str) {
+        self.name = name.to_string();
+    }
+
     fn get_bernstein_points(points: &[Point]) -> Vec<BezierIntBernsteinPoint> {
         if points.len() < 2 {
             vec![]

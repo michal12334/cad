@@ -12,6 +12,7 @@ use backend::cqrs::beziers_c2::set_bezier_c2_draw_b_spline_polygon::SetBezierC2D
 use backend::cqrs::beziers_c2::set_bezier_c2_draw_bernstein_points::SetBezierC2DrawBernsteinPoints;
 use backend::cqrs::beziers_c2::set_bezier_c2_draw_bernstein_polygon::SetBezierC2DrawBernsteinPolygon;
 use backend::cqrs::beziers_c2::set_bezier_c2_selected_bernstein_point::SetBezierC2SelectedBernsteinPoint;
+use backend::cqrs::beziers_int::rename_bezier_int::RenameBezierInt;
 use backend::cqrs::common::transform_selected_objects::TransformSelectedObjects;
 use backend::cqrs::cqrs::CQRS;
 use backend::cqrs::cursors::transform_cursor::TransformCursor;
@@ -698,7 +699,7 @@ impl Ui {
         points: &[PointDTO],
     ) {
         if ui.text_edit_singleline(&mut bezier.name).lost_focus() {
-            cqrs.execute(&RenameBezierC0 {
+            cqrs.execute(&RenameBezierInt {
                 id: bezier.id,
                 name: bezier.name.clone(),
             });
