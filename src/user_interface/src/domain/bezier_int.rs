@@ -4,9 +4,6 @@ pub struct BezierInt {
     pub id: u64,
     pub name: String,
     pub points: Vec<BezierIntPoint>,
-    pub draw_polygon: bool,
-    pub draw_bernstein_polygon: bool,
-    pub draw_bernstein_points: bool,
     pub selected_point: Option<(u64, String)>,
 }
 
@@ -29,9 +26,6 @@ impl BezierInt {
                     is_selected: false,
                 })
                 .collect(),
-            draw_polygon: false,
-            draw_bernstein_polygon: false,
-            draw_bernstein_points: false,
             selected_point: None,
         }
     }

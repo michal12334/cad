@@ -5,9 +5,6 @@ use crate::domain::transformer::LittleTransformer;
 pub struct BezierInt {
     pub id: u64,
     pub name: String,
-    pub draw_polygon: bool,
-    pub draw_bernstein_polygon: bool,
-    pub draw_bernstein_points: bool,
     pub points: Vec<BezierIntPoint>,
     pub bernstein_points: Vec<BezierIntBernsteinPoint>,
 }
@@ -36,9 +33,6 @@ impl BezierInt {
         Self {
             id,
             name: format!("Bezier Int {}", id),
-            draw_polygon: false,
-            draw_bernstein_polygon: false,
-            draw_bernstein_points: false,
             points,
             bernstein_points,
         }
