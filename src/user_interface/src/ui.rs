@@ -2,6 +2,8 @@ use backend::cqrs::beziers_c0::all_beziers_c0::AllBeziersC0;
 use chrono::{DateTime, Local};
 use egui::ScrollArea;
 use itertools::Itertools;
+use backend::cqrs::beziers_c2::all_beziers_c2::AllBeziersC2;
+use backend::cqrs::beziers_int::all_beziers_int::AllBeziersInt;
 
 use backend::cqrs::common::select_objects::{SelectObjects, SelectionObjectDTO};
 use backend::cqrs::cqrs::CQRS;
@@ -11,10 +13,12 @@ use backend::cqrs::points::all_points::AllPoints;
 use backend::cqrs::toruses::all_toruses::AllToruses;
 use backend::cqrs::toruses::torus_details::TransformerDTO;
 
-type DomainBezier = crate::domain::bezier_c0::BezierC0;
+type DomainBezierC0 = crate::domain::bezier_c0::BezierC0;
+type DomainBezierC2 = crate::domain::bezier_c2::BezierC2;
+type DomainBezierInt = crate::domain::bezier_int::BezierInt;
 
 use crate::object::Object;
-use crate::object::Object::{BezierC0, Point, Torus};
+use crate::object::Object::{BezierC0, BezierC2, BezierInt, Point, Torus};
 use crate::object_id::ObjectId;
 
 pub struct Ui {
@@ -65,7 +69,17 @@ impl Ui {
             .chain(
                 cqrs.get(&AllBeziersC0)
                     .iter()
-                    .map(|bezier| BezierC0(DomainBezier::from_dto(bezier))),
+                    .map(|bezier| BezierC0(DomainBezierC0::from_dto(bezier))),
+            )
+            .chain(
+                cqrs.get(&AllBeziersC2)
+                    .iter()
+                    .map(|bezier| BezierC2(DomainBezierC2::from_dto(bezier))),
+            )
+            .chain(
+                cqrs.get(&AllBeziersInt)
+                    .iter()
+                    .map(|bezier| BezierInt(DomainBezierInt::from_dto(bezier))),
             )
             .sorted_by_key(|object| object.get_id())
             .collect();
