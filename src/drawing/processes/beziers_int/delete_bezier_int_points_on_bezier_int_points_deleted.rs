@@ -1,18 +1,18 @@
-use std::any::Any;
-use std::cell::RefCell;
-use std::rc::Rc;
-use glium::Display;
-use glium::glutin::surface::WindowSurface;
+use crate::drawing::drawing_storage::DrawingStorage;
 use backend::cqrs::beziers_int::bezier_int_bernstein_points::BezierIntBernsteinPoints;
 use backend::cqrs::cqrs::CQRS;
 use backend_events::bezier_int_points_deleted::BezierIntPointsDeleted;
+use glium::glutin::surface::WindowSurface;
+use glium::Display;
 use infrastructure::consumer::{AnyConsumer, Consumer};
-use crate::drawing::drawing_storage::DrawingStorage;
+use std::any::Any;
+use std::cell::RefCell;
+use std::rc::Rc;
 
 pub struct DeleteBezierIntPointsOnBezierIntPointsDeleted {
     pub drawing_storage: Rc<RefCell<DrawingStorage>>,
     pub cqrs: CQRS,
-    pub display: Rc<Display<WindowSurface>>
+    pub display: Rc<Display<WindowSurface>>,
 }
 
 impl Consumer<BezierIntPointsDeleted> for DeleteBezierIntPointsOnBezierIntPointsDeleted {

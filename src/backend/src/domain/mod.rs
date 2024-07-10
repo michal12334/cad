@@ -1,4 +1,6 @@
 pub mod bezier_c0;
+pub mod bezier_c2;
+pub mod bezier_int;
 pub mod cursor;
 pub mod events;
 pub mod mesh;
@@ -7,5 +9,3 @@ pub mod selected_object;
 pub mod torus;
 pub mod transformer;
 pub mod vertex;
-pub mod bezier_c2;
-pub mod bezier_int;

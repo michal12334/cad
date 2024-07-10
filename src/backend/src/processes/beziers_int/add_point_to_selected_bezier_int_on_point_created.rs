@@ -1,7 +1,9 @@
 use std::any::Any;
 use std::cell::RefCell;
 use std::rc::Rc;
+
 use infrastructure::consumer::{AnyConsumer, Consumer};
+
 use crate::backend::Backend;
 use crate::domain::events::point_added_to_bezier_int::PointAddedToBezierInt;
 use crate::domain::events::point_created::PointCreated;
@@ -22,7 +24,11 @@ impl Consumer<PointCreated> for AddPointToSelectedBezierIntOnPointCreated {
                 let id = object.bezier_int_id.unwrap();
                 let bezier = storage.beziers_int.get_mut(&id).unwrap();
                 let storage = unsafe { &mut (*backend).storage };
-                let points: Vec<_> = bezier.points.iter().map(|p| storage.points.get(&p.id).unwrap().clone()).collect();
+                let points: Vec<_> = bezier
+                    .points
+                    .iter()
+                    .map(|p| storage.points.get(&p.id).unwrap().clone())
+                    .collect();
                 let mut points = points;
                 let point = storage.points.get(&event.id).unwrap();
                 points.push(point.clone());

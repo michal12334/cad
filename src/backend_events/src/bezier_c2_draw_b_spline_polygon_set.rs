@@ -5,6 +5,9 @@ pub struct BezierC2DrawBSplinePolygonSet {
 
 impl BezierC2DrawBSplinePolygonSet {
     pub fn new(bezier_id: u64, draw_b_spline_polygon: bool) -> Self {
-        Self { bezier_id, draw_b_spline_polygon, }
+        Self {
+            bezier_id,
+            draw_b_spline_polygon,
+        }
     }
 }

@@ -1,9 +1,9 @@
 use backend::cqrs::beziers_c0::all_beziers_c0::AllBeziersC0;
+use backend::cqrs::beziers_c2::all_beziers_c2::AllBeziersC2;
+use backend::cqrs::beziers_int::all_beziers_int::AllBeziersInt;
 use chrono::{DateTime, Local};
 use egui::ScrollArea;
 use itertools::Itertools;
-use backend::cqrs::beziers_c2::all_beziers_c2::AllBeziersC2;
-use backend::cqrs::beziers_int::all_beziers_int::AllBeziersInt;
 
 use backend::cqrs::common::select_objects::{SelectObjects, SelectionObjectDTO};
 use backend::cqrs::cqrs::CQRS;
@@ -134,20 +134,22 @@ impl Ui {
     pub fn build<'a>(&'a mut self, cqrs: &'a mut CQRS) -> impl FnMut(&egui::Context) + '_ {
         self.cursor = Some(cqrs.get(&CursorDetails {}));
         move |egui_ctx| {
-            egui::Window::new("panel").default_height(850.0).show(egui_ctx, |ui| {
-                if egui_ctx.is_pointer_over_area() {
-                    self.pointer_is_over_area = true;
-                } else {
-                    self.pointer_is_over_area = false;
-                }
+            egui::Window::new("panel")
+                .default_height(850.0)
+                .show(egui_ctx, |ui| {
+                    if egui_ctx.is_pointer_over_area() {
+                        self.pointer_is_over_area = true;
+                    } else {
+                        self.pointer_is_over_area = false;
+                    }
 
-                ScrollArea::vertical().id_source("a3").show(ui, |ui| {
-                    self.build_object_addition_panel(ui, cqrs);
-                    self.build_object_selection_panel(ui, cqrs);
-                    self.build_selected_object_transformation_panel(ui, cqrs);
-                    self.build_fps_counter(ui);
+                    ScrollArea::vertical().id_source("a3").show(ui, |ui| {
+                        self.build_object_addition_panel(ui, cqrs);
+                        self.build_object_selection_panel(ui, cqrs);
+                        self.build_selected_object_transformation_panel(ui, cqrs);
+                        self.build_fps_counter(ui);
+                    });
                 });
-            });
         }
     }
 

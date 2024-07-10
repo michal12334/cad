@@ -18,7 +18,8 @@ impl BezierInt {
         BezierInt {
             id: dto.id,
             name: dto.name.clone(),
-            points: dto.points
+            points: dto
+                .points
                 .iter()
                 .map(|bp| BezierIntPoint {
                     id: bp.id,

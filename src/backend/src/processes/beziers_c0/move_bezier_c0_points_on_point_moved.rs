@@ -1,7 +1,9 @@
 use std::any::Any;
 use std::cell::RefCell;
 use std::rc::Rc;
+
 use infrastructure::consumer::{AnyConsumer, Consumer};
+
 use crate::backend::Backend;
 use crate::domain::events::bezier_c0_point_moved::BezierC0PointMoved;
 use crate::domain::events::point_moved::PointMoved;
@@ -15,18 +17,11 @@ impl Consumer<PointMoved> for MoveBezierC0PointsOnPointMoved {
         let backend = self.backend.as_ptr();
         let storage = unsafe { &mut (*backend).storage };
         let publisher = unsafe { &(*backend).services.event_publisher };
-        storage
-            .beziers_c0
-            .values()
-            .for_each(|bezier_c0| {
-                if 
-                bezier_c0.points
-                    .iter()
-                    .any(|point| point.id == event.id)
-                {
-                    publisher.publish(Rc::new(BezierC0PointMoved::new(bezier_c0.id)));
-                }
-            });
+        storage.beziers_c0.values().for_each(|bezier_c0| {
+            if bezier_c0.points.iter().any(|point| point.id == event.id) {
+                publisher.publish(Rc::new(BezierC0PointMoved::new(bezier_c0.id)));
+            }
+        });
     }
 }
 

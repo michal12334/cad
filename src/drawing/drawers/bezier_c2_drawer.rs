@@ -2,6 +2,7 @@ use glium::glutin::surface::WindowSurface;
 use glium::{Display, DrawParameters, Frame, Program, Surface};
 
 use math::vector4::Vector4;
+
 use crate::drawing::domain::bezier_c2::BezierC2;
 
 pub struct BezierC2Drawer {
@@ -150,14 +151,14 @@ impl BezierC2Drawer {
                 (max_x.max(distance_x), max_y.max(distance_y), current)
             },
         );
-        
+
         let len = bezier.bernstein_points.len();
-        
+
         let number_of_draw_calls =
             (max_distance.0.max(max_distance.1) as u32).min(height.max(width)) / 50;
-        
+
         let number_of_draw_calls = number_of_draw_calls.max(1);
-        
+
         for i in 0..number_of_draw_calls {
             target
                 .draw(

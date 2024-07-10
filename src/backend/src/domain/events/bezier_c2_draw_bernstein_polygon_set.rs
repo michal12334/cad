@@ -5,6 +5,9 @@ pub struct BezierC2DrawBernsteinPolygonSet {
 
 impl BezierC2DrawBernsteinPolygonSet {
     pub fn new(bezier_id: u64, draw_bernstein_polygon: bool) -> Self {
-        Self { bezier_id, draw_bernstein_polygon, }
+        Self {
+            bezier_id,
+            draw_bernstein_polygon,
+        }
     }
 }

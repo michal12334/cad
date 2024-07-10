@@ -82,7 +82,7 @@ fn main() {
         .with_title("CAD")
         .with_inner_size(width, height)
         .build(&event_loop);
-    
+
     let display = Rc::new(display);
 
     let mut egui_glium = egui_glium::EguiGlium::new(&display, &window, &event_loop);
@@ -164,11 +164,9 @@ fn main() {
         .add_consumer(BezierC2PointMovedPublisher {
             backend: app_state.clone(),
         });
-    event_bus
-        .borrow_mut()
-        .add_consumer(PointMovedPublisher {
-            backend: app_state.clone(),
-        });
+    event_bus.borrow_mut().add_consumer(PointMovedPublisher {
+        backend: app_state.clone(),
+    });
     event_bus
         .borrow_mut()
         .add_consumer(BezierC2SelectedBernsteinPointSetPublisher {
@@ -246,26 +244,35 @@ fn main() {
         .add_consumer(SyncBezierC0AddedPointsWithBackend { ui: ui.clone() });
     event_bus
         .borrow_mut()
-        .add_consumer(SyncBezierC2AddedPointsWithBackend { ui: ui.clone(), cqrs: CQRS::new(app_state.clone()), });
+        .add_consumer(SyncBezierC2AddedPointsWithBackend {
+            ui: ui.clone(),
+            cqrs: CQRS::new(app_state.clone()),
+        });
     event_bus
         .borrow_mut()
-        .add_consumer(SyncBezierC2DeletedPointsWithBackend { ui: ui.clone(), cqrs: CQRS::new(app_state.clone()), });
+        .add_consumer(SyncBezierC2DeletedPointsWithBackend {
+            ui: ui.clone(),
+            cqrs: CQRS::new(app_state.clone()),
+        });
     event_bus
         .borrow_mut()
-        .add_consumer(SyncBezierC2PointPositionsWithBackend { ui: ui.clone(), cqrs: CQRS::new(app_state.clone()), });
+        .add_consumer(SyncBezierC2PointPositionsWithBackend {
+            ui: ui.clone(),
+            cqrs: CQRS::new(app_state.clone()),
+        });
     event_bus
         .borrow_mut()
-        .add_consumer(SyncPointPositionWithBackend { ui: ui.clone(), });
+        .add_consumer(SyncPointPositionWithBackend { ui: ui.clone() });
     event_bus
         .borrow_mut()
-        .add_consumer(SyncBezierIntAddedPointWithBackend { ui: ui.clone(), });
+        .add_consumer(SyncBezierIntAddedPointWithBackend { ui: ui.clone() });
     event_bus
         .borrow_mut()
-        .add_consumer(SyncBezierIntPointsDeletedWithBackend { ui: ui.clone(), });
+        .add_consumer(SyncBezierIntPointsDeletedWithBackend { ui: ui.clone() });
 
     event_bus
         .borrow_mut()
-        .add_consumer(AddBezierC0OnBezierC0Created { 
+        .add_consumer(AddBezierC0OnBezierC0Created {
             drawing_storage: drawing_storage.clone(),
             cqrs: CQRS::new(app_state.clone()),
             display: display.clone(),
@@ -344,11 +351,11 @@ fn main() {
             cqrs: CQRS::new(app_state.clone()),
             display: display.clone(),
         });
-    event_bus
-        .borrow_mut()
-        .add_consumer(SetSelectedBernsteinPointOnBezierC2SelectedBernsteinPointSet {
+    event_bus.borrow_mut().add_consumer(
+        SetSelectedBernsteinPointOnBezierC2SelectedBernsteinPointSet {
             drawing_storage: drawing_storage.clone(),
-        });
+        },
+    );
     event_bus
         .borrow_mut()
         .add_consumer(DeleteBezierC2OnBezierC2Deleted {

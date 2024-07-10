@@ -1,7 +1,9 @@
 use std::any::Any;
 use std::cell::RefCell;
 use std::rc::Rc;
+
 use infrastructure::consumer::{AnyConsumer, Consumer};
+
 use crate::backend::Backend;
 use crate::domain::events::point_moved::PointMoved;
 
@@ -12,12 +14,10 @@ pub struct PointMovedPublisher {
 impl Consumer<PointMoved> for PointMovedPublisher {
     fn consume(&self, event: &PointMoved) {
         let backend = self.backend.borrow();
-        let event = Rc::new(
-            backend_events::point_moved::PointMoved::new(
-                event.id,
-                event.position,
-            ),
-        );
+        let event = Rc::new(backend_events::point_moved::PointMoved::new(
+            event.id,
+            event.position,
+        ));
         backend.services.event_publisher.publish(event);
     }
 }

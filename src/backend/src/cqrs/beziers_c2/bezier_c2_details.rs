@@ -1,5 +1,6 @@
 use std::cell::RefCell;
 use std::rc::Rc;
+
 use crate::backend::Backend;
 use crate::cqrs::beziers_c2::bezier_c2_bernstein_points::BezierC2BernsteinPointDTO;
 use crate::cqrs::cqrs::Query;
@@ -31,12 +32,10 @@ impl Query<BezierC2Details, BezierC2DTO> for BezierC2Details {
             bernstein_points: bezier_c2
                 .bernstein_points
                 .iter()
-                .map(|bp| {
-                    BezierC2BernsteinPointDTO {
-                        transformer: LittleTransformerDTO {
-                            position: bp.transformer.position,
-                        },
-                    }
+                .map(|bp| BezierC2BernsteinPointDTO {
+                    transformer: LittleTransformerDTO {
+                        position: bp.transformer.position,
+                    },
                 })
                 .collect(),
             b_spline_points: bezier_c2

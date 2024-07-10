@@ -2,6 +2,7 @@ use glium::glutin::surface::WindowSurface;
 use glium::{Display, DrawParameters, Frame, Program, Surface};
 
 use math::vector4::Vector4;
+
 use crate::drawing::domain::bezier_int::BezierInt;
 
 pub struct BezierIntDrawer {
@@ -118,12 +119,12 @@ impl BezierIntDrawer {
                 (max_x.max(distance_x), max_y.max(distance_y), current)
             },
         );
-        
+
         let number_of_draw_calls =
             (max_distance.0.max(max_distance.1) as u32).min(height.max(width)) / 50;
-        
+
         let number_of_draw_calls = number_of_draw_calls.max(1);
-        
+
         for i in 0..number_of_draw_calls {
             target
                 .draw(

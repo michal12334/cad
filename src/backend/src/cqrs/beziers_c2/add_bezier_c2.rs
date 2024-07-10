@@ -1,5 +1,6 @@
 use std::cell::RefCell;
 use std::rc::Rc;
+
 use crate::backend::Backend;
 use crate::cqrs::cqrs::Command;
 use crate::domain::bezier_c2::BezierC2;
@@ -31,6 +32,9 @@ impl Command<AddBezierC2> for AddBezierC2 {
         backend.storage.beziers_c2.insert(command.id, bezier);
         drop(backend);
         let backend = app_state.borrow();
-        backend.services.event_publisher.publish(Rc::new(BezierC2Created::new(command.id)));
+        backend
+            .services
+            .event_publisher
+            .publish(Rc::new(BezierC2Created::new(command.id)));
     }
 }

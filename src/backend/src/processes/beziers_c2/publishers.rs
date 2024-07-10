@@ -1,7 +1,9 @@
 use std::any::Any;
 use std::cell::RefCell;
 use std::rc::Rc;
+
 use infrastructure::consumer::{AnyConsumer, Consumer};
+
 use crate::backend::Backend;
 use crate::domain::events::bezier_c2_created::BezierC2Created;
 use crate::domain::events::bezier_c2_deleted::BezierC2Deleted;
@@ -121,9 +123,7 @@ impl Consumer<BezierC2PointMoved> for BezierC2PointMovedPublisher {
     fn consume(&self, event: &BezierC2PointMoved) {
         let backend = self.backend.borrow();
         let event = Rc::new(
-            backend_events::bezier_c2_point_moved::BezierC2PointMoved::new(
-                event.bezier_id,
-            ),
+            backend_events::bezier_c2_point_moved::BezierC2PointMoved::new(event.bezier_id),
         );
         backend.services.event_publisher.publish(event);
     }
@@ -153,15 +153,12 @@ pub struct BezierC2DeletedPublisher {
 impl Consumer<BezierC2Deleted> for BezierC2DeletedPublisher {
     fn consume(&self, event: &BezierC2Deleted) {
         let backend = self.backend.borrow();
-        let event = Rc::new(
-            backend_events::bezier_c2_deleted::BezierC2Deleted::new(
-                event.id,
-            ),
-        );
+        let event = Rc::new(backend_events::bezier_c2_deleted::BezierC2Deleted::new(
+            event.id,
+        ));
         backend.services.event_publisher.publish(event);
     }
 }
-
 
 impl AnyConsumer for BezierC2CreatedPublisher {
     fn consume_any(&self, message: Rc<dyn Any>) {

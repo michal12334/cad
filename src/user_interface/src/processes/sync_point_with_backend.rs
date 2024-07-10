@@ -1,10 +1,10 @@
+use crate::object::Object;
+use crate::ui::Ui;
+use backend_events::point_moved::PointMoved;
+use infrastructure::consumer::{AnyConsumer, Consumer};
 use std::any::Any;
 use std::cell::RefCell;
 use std::rc::Rc;
-use backend_events::point_moved::PointMoved;
-use infrastructure::consumer::{AnyConsumer, Consumer};
-use crate::object::Object;
-use crate::ui::Ui;
 
 pub struct SyncPointPositionWithBackend {
     pub ui: Rc<RefCell<Ui>>,

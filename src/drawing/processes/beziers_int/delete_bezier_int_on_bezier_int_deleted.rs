@@ -1,9 +1,9 @@
+use crate::drawing::drawing_storage::DrawingStorage;
+use backend_events::bezier_int_deleted::BezierIntDeleted;
+use infrastructure::consumer::{AnyConsumer, Consumer};
 use std::any::Any;
 use std::cell::RefCell;
 use std::rc::Rc;
-use backend_events::bezier_int_deleted::BezierIntDeleted;
-use infrastructure::consumer::{AnyConsumer, Consumer};
-use crate::drawing::drawing_storage::DrawingStorage;
 
 pub struct DeleteBezierIntOnBezierIntDeleted {
     pub drawing_storage: Rc<RefCell<DrawingStorage>>,

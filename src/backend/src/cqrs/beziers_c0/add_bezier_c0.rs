@@ -32,6 +32,9 @@ impl Command<AddBezierC0> for AddBezierC0 {
         backend.storage.beziers_c0.insert(command.id, bezier);
         drop(backend);
         let backend = app_state.borrow();
-        backend.services.event_publisher.publish(Rc::new(BezierC0Created::new(command.id)));
+        backend
+            .services
+            .event_publisher
+            .publish(Rc::new(BezierC0Created::new(command.id)));
     }
 }

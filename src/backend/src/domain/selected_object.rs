@@ -36,7 +36,7 @@ impl SelectedObject {
             bezier_int_id: None,
         }
     }
-    
+
     pub fn new_bezier_c2(bezier_c2_id: u64) -> Self {
         Self {
             torus_id: None,
@@ -46,7 +46,7 @@ impl SelectedObject {
             bezier_int_id: None,
         }
     }
-    
+
     pub fn new_bezier_int(bezier_int_id: u64) -> Self {
         Self {
             torus_id: None,

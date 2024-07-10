@@ -64,38 +64,50 @@ impl Command<DeleteSelectedObjects> for DeleteSelectedObjects {
                     .values()
                     .any(|b| b.points.iter().any(|p| p.id == point.id))
         });
-        
-        let deleted_beziers_c0 = backend.storage
+
+        let deleted_beziers_c0 = backend
+            .storage
             .selected_objects
             .iter()
             .filter_map(|object| object.bezier_c0_id)
             .collect::<Vec<_>>();
 
-        let deleted_beziers_c2 = backend.storage
+        let deleted_beziers_c2 = backend
+            .storage
             .selected_objects
             .iter()
             .filter_map(|object| object.bezier_c2_id)
             .collect::<Vec<_>>();
 
-        let deleted_beziers_int = backend.storage
+        let deleted_beziers_int = backend
+            .storage
             .selected_objects
             .iter()
             .filter_map(|object| object.bezier_int_id)
             .collect::<Vec<_>>();
-        
+
         backend.storage.selected_objects.clear();
-        
+
         drop(binding);
-        
+
         let backend = app_state.borrow();
         deleted_beziers_c0.iter().for_each(|id| {
-            backend.services.event_publisher.publish(Rc::new(BezierC0Deleted::new(*id)));
+            backend
+                .services
+                .event_publisher
+                .publish(Rc::new(BezierC0Deleted::new(*id)));
         });
         deleted_beziers_c2.iter().for_each(|id| {
-            backend.services.event_publisher.publish(Rc::new(BezierC2Deleted::new(*id)));
+            backend
+                .services
+                .event_publisher
+                .publish(Rc::new(BezierC2Deleted::new(*id)));
         });
         deleted_beziers_int.iter().for_each(|id| {
-            backend.services.event_publisher.publish(Rc::new(BezierIntDeleted::new(*id)));
+            backend
+                .services
+                .event_publisher
+                .publish(Rc::new(BezierIntDeleted::new(*id)));
         });
     }
 }

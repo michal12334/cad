@@ -1,7 +1,7 @@
-use std::collections::HashMap;
 use crate::drawing::domain::bezier_c0::BezierC0;
 use crate::drawing::domain::bezier_c2::BezierC2;
 use crate::drawing::domain::bezier_int::BezierInt;
+use std::collections::HashMap;
 
 pub struct DrawingStorage {
     pub beziers_c0: HashMap<u64, BezierC0>,

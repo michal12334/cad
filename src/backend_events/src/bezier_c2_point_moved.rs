@@ -4,6 +4,6 @@ pub struct BezierC2PointMoved {
 
 impl BezierC2PointMoved {
     pub fn new(bezier_id: u64) -> Self {
-        Self { bezier_id,  }
+        Self { bezier_id }
     }
 }

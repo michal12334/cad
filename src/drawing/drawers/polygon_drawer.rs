@@ -1,7 +1,6 @@
 use glium::glutin::surface::WindowSurface;
 use glium::{Display, DrawParameters, Frame, IndexBuffer, Program, Surface, VertexBuffer};
 
-use backend::domain::point::Point;
 use backend::domain::vertex::Vertex;
 
 pub struct PolygonDrawer {

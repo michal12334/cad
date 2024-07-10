@@ -1,5 +1,6 @@
 use std::cell::RefCell;
 use std::rc::Rc;
+
 use crate::backend::Backend;
 use crate::cqrs::cqrs::Command;
 use crate::domain::events::bezier_int_points_deleted::BezierIntPointsDeleted;
@@ -13,7 +14,8 @@ impl Command<DeleteBezierIntPoints> for DeleteBezierIntPoints {
     fn execute(command: &DeleteBezierIntPoints, app_state: Rc<RefCell<Backend>>) {
         let mut backend = app_state.borrow_mut();
         let bezier = backend.storage.beziers_int.get(&command.id).unwrap();
-        let points: Vec<_> = bezier.points
+        let points: Vec<_> = bezier
+            .points
             .iter()
             .filter(|p| !command.points.contains(&p.id))
             .map(|p| backend.storage.points.get(&p.id).unwrap().clone())

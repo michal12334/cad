@@ -18,6 +18,12 @@ impl Command<TransformPoint> for TransformPoint {
         point.transform(command.transformer.position);
         drop(backend);
         let backend = app_state.borrow();
-        backend.services.event_publisher.publish(Rc::new(PointMoved::new(command.id, command.transformer.position)));
+        backend
+            .services
+            .event_publisher
+            .publish(Rc::new(PointMoved::new(
+                command.id,
+                command.transformer.position,
+            )));
     }
 }

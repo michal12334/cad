@@ -1,6 +1,7 @@
 use glium::glutin::surface::WindowSurface;
-use glium::{Display, IndexBuffer, VertexBuffer};
 use glium::index::PrimitiveType;
+use glium::{Display, IndexBuffer, VertexBuffer};
+
 use backend::cqrs::beziers_int::bezier_int_bernstein_points::BezierIntBernsteinPointDTO;
 use backend::domain::vertex::Vertex;
 
@@ -12,7 +13,11 @@ pub struct BezierInt {
 }
 
 impl BezierInt {
-    pub fn new(id: u64, bernstein_points: &[BezierIntBernsteinPointDTO], display: &Display<WindowSurface>) -> Self {
+    pub fn new(
+        id: u64,
+        bernstein_points: &[BezierIntBernsteinPointDTO],
+        display: &Display<WindowSurface>,
+    ) -> Self {
         let bernstein_points = bernstein_points
             .iter()
             .map(|p| Vertex {
@@ -23,9 +28,9 @@ impl BezierInt {
                 ],
             })
             .collect::<Vec<Vertex>>();
-        
+
         let (vertex_buffer, index_buffer) = Self::get_buffers(&bernstein_points, display);
-        
+
         Self {
             id,
             bernstein_points,
@@ -33,8 +38,12 @@ impl BezierInt {
             index_buffer,
         }
     }
-    
-    pub fn update_points(&mut self, bernstein_points: &[BezierIntBernsteinPointDTO], display: &Display<WindowSurface>) {
+
+    pub fn update_points(
+        &mut self,
+        bernstein_points: &[BezierIntBernsteinPointDTO],
+        display: &Display<WindowSurface>,
+    ) {
         self.bernstein_points = bernstein_points
             .iter()
             .map(|p| Vertex {
@@ -45,16 +54,19 @@ impl BezierInt {
                 ],
             })
             .collect::<Vec<Vertex>>();
-        
+
         let (vertex_buffer, index_buffer) = Self::get_buffers(&self.bernstein_points, display);
         self.vertex_buffer = vertex_buffer;
         self.index_buffer = index_buffer;
     }
-    
-    fn get_buffers(bernstein_points: &[Vertex], display: &Display<WindowSurface>) -> (Option<VertexBuffer<Vertex>>, Option<IndexBuffer<u16>>) {
+
+    fn get_buffers(
+        bernstein_points: &[Vertex],
+        display: &Display<WindowSurface>,
+    ) -> (Option<VertexBuffer<Vertex>>, Option<IndexBuffer<u16>>) {
         if bernstein_points.len() < 4 {
             return (None, None);
-        } else { 
+        } else {
             let vertex_buffer = VertexBuffer::new(display, &bernstein_points).ok();
             let index_buffer = IndexBuffer::new(
                 display,
@@ -63,7 +75,8 @@ impl BezierInt {
                     .step_by(3)
                     .flat_map(|f| [f, f + 1, f + 2, f + 3])
                     .collect::<Vec<u16>>(),
-            ).ok();
+            )
+            .ok();
             (vertex_buffer, index_buffer)
         }
     }

@@ -1,19 +1,22 @@
 use std::any::Any;
 use std::cell::RefCell;
 use std::rc::Rc;
-use glium::Display;
+
 use glium::glutin::surface::WindowSurface;
+use glium::Display;
+
 use backend::cqrs::beziers_c2::bezier_c2_b_spline_points::BezierC2BSplinePoints;
 use backend::cqrs::beziers_c2::bezier_c2_bernstein_points::BezierC2BernsteinPoints;
 use backend::cqrs::cqrs::CQRS;
 use backend_events::bezier_c2_points_deleted::BezierC2PointsDeleted;
 use infrastructure::consumer::{AnyConsumer, Consumer};
+
 use crate::drawing::drawing_storage::DrawingStorage;
 
 pub struct DeleteBezierC2PointsOnBezierC2PointsDeleted {
     pub drawing_storage: Rc<RefCell<DrawingStorage>>,
     pub cqrs: CQRS,
-    pub display: Rc<Display<WindowSurface>>
+    pub display: Rc<Display<WindowSurface>>,
 }
 
 impl Consumer<BezierC2PointsDeleted> for DeleteBezierC2PointsOnBezierC2PointsDeleted {

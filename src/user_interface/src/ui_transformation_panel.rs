@@ -41,17 +41,20 @@ impl Ui {
         ui: &mut egui::Ui,
         cqrs: &mut CQRS,
     ) {
-        Resize::default().id_source("resize_2").default_height(450.0).show(ui, |ui| {
-            ScrollArea::vertical().id_source("a2").show(ui, |ui| {
-                if self.cursor_selected {
-                    self.build_cursor_transformation_panel(ui, cqrs);
-                } else if self.selected_objects.len() == 1 {
-                    self.build_single_object_transformation_panel(ui, cqrs);
-                } else if self.selected_objects.len() > 1 {
-                    self.build_multiple_object_transformation_panel(ui, cqrs);
-                }
+        Resize::default()
+            .id_source("resize_2")
+            .default_height(450.0)
+            .show(ui, |ui| {
+                ScrollArea::vertical().id_source("a2").show(ui, |ui| {
+                    if self.cursor_selected {
+                        self.build_cursor_transformation_panel(ui, cqrs);
+                    } else if self.selected_objects.len() == 1 {
+                        self.build_single_object_transformation_panel(ui, cqrs);
+                    } else if self.selected_objects.len() > 1 {
+                        self.build_multiple_object_transformation_panel(ui, cqrs);
+                    }
+                });
             });
-        });
     }
 
     fn build_cursor_transformation_panel(&mut self, ui: &mut egui::Ui, cqrs: &mut CQRS) {
@@ -524,7 +527,7 @@ impl Ui {
                     .collect(),
             });
         }
-        
+
         if ui
             .checkbox(&mut bezier.draw_b_spline_polygon, "Draw B-Spline Polygon")
             .changed()
@@ -564,12 +567,12 @@ impl Ui {
                     .show(ui, |ui| {
                         for i in 0..bezier.bernstein_points.len() {
                             let selected = bezier.selected_bernstein_point == Some(i);
-                            if ui.selectable_label(selected, &format!("Bernstein Point {}", i)).clicked() {
-                                bezier.selected_bernstein_point = if selected {
-                                        None
-                                    } else {
-                                        Some(i)
-                                    };
+                            if ui
+                                .selectable_label(selected, &format!("Bernstein Point {}", i))
+                                .clicked()
+                            {
+                                bezier.selected_bernstein_point =
+                                    if selected { None } else { Some(i) };
                                 cqrs.execute(&SetBezierC2SelectedBernsteinPoint {
                                     id: bezier.id,
                                     selected_bernstein_point: bezier.selected_bernstein_point,
@@ -578,23 +581,29 @@ impl Ui {
                         }
                     })
             });
-        
+
         if let Some(i) = bezier.selected_bernstein_point {
             let mut transformer_drags = vec![];
-            
+
             ui.horizontal(|ui| {
                 ui.label("X");
-                transformer_drags.push(DragValue::new(&mut bezier.bernstein_points[i].x)
-                    .speed(0.01)
-                    .ui(ui));
+                transformer_drags.push(
+                    DragValue::new(&mut bezier.bernstein_points[i].x)
+                        .speed(0.01)
+                        .ui(ui),
+                );
                 ui.label("Y");
-                transformer_drags.push(DragValue::new(&mut bezier.bernstein_points[i].y)
-                    .speed(0.01)
-                    .ui(ui));
+                transformer_drags.push(
+                    DragValue::new(&mut bezier.bernstein_points[i].y)
+                        .speed(0.01)
+                        .ui(ui),
+                );
                 ui.label("Z");
-                transformer_drags.push(DragValue::new(&mut bezier.bernstein_points[i].z)
-                    .speed(0.01)
-                    .ui(ui));
+                transformer_drags.push(
+                    DragValue::new(&mut bezier.bernstein_points[i].z)
+                        .speed(0.01)
+                        .ui(ui),
+                );
             });
 
             if transformer_drags.iter().any(|f| f.changed()) {

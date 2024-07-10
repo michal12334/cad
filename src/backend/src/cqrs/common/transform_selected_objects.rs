@@ -104,7 +104,10 @@ impl Command<TransformSelectedObjects> for TransformSelectedObjects {
                     center_point.position.2 + delta_position.2 * command.transformer.scale.2,
                 );
                 point.transform(position);
-                events.push(Rc::new(PointMoved::new(point.id, point.transformer.position)));
+                events.push(Rc::new(PointMoved::new(
+                    point.id,
+                    point.transformer.position,
+                )));
             }
         }
         drop(binding);

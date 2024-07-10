@@ -1,7 +1,9 @@
 use std::any::Any;
 use std::cell::RefCell;
 use std::rc::Rc;
+
 use infrastructure::consumer::{AnyConsumer, Consumer};
+
 use crate::backend::Backend;
 use crate::domain::events::bezier_int_bernstein_point_moved::BezierIntBernsteinPointMoved;
 use crate::domain::events::bezier_int_created::BezierIntCreated;
@@ -30,11 +32,13 @@ pub struct PointAddedToBezierIntPublisher {
 impl Consumer<PointAddedToBezierInt> for PointAddedToBezierIntPublisher {
     fn consume(&self, event: &PointAddedToBezierInt) {
         let backend = self.backend.borrow();
-        let event = Rc::new(backend_events::point_added_to_bezier_int::PointAddedToBezierInt::new(
-            event.point_id,
-            event.bezier_id,
-            event.point_name.clone(),
-        ));
+        let event = Rc::new(
+            backend_events::point_added_to_bezier_int::PointAddedToBezierInt::new(
+                event.point_id,
+                event.bezier_id,
+                event.point_name.clone(),
+            ),
+        );
         backend.services.event_publisher.publish(event);
     }
 }
@@ -46,10 +50,12 @@ pub struct BezierIntPointsDeletedPublisher {
 impl Consumer<BezierIntPointsDeleted> for BezierIntPointsDeletedPublisher {
     fn consume(&self, event: &BezierIntPointsDeleted) {
         let backend = self.backend.borrow();
-        let event = Rc::new(backend_events::bezier_int_points_deleted::BezierIntPointsDeleted::new(
-            event.id,
-            event.deleted_points.clone(),
-        ));
+        let event = Rc::new(
+            backend_events::bezier_int_points_deleted::BezierIntPointsDeleted::new(
+                event.id,
+                event.deleted_points.clone(),
+            ),
+        );
         backend.services.event_publisher.publish(event);
     }
 }
@@ -61,9 +67,11 @@ pub struct BezierIntBernsteinPointMovedPublisher {
 impl Consumer<BezierIntBernsteinPointMoved> for BezierIntBernsteinPointMovedPublisher {
     fn consume(&self, event: &BezierIntBernsteinPointMoved) {
         let backend = self.backend.borrow();
-        let event = Rc::new(backend_events::bezier_int_bernstein_point_moved::BezierIntBernsteinPointMoved::new(
-            event.bezier_id,
-        ));
+        let event = Rc::new(
+            backend_events::bezier_int_bernstein_point_moved::BezierIntBernsteinPointMoved::new(
+                event.bezier_id,
+            ),
+        );
         backend.services.event_publisher.publish(event);
     }
 }
@@ -81,7 +89,6 @@ impl Consumer<BezierIntDeleted> for BezierIntDeletedPublisher {
         backend.services.event_publisher.publish(event);
     }
 }
-
 
 impl AnyConsumer for BezierIntCreatedPublisher {
     fn consume_any(&self, message: Rc<dyn Any>) {

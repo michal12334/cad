@@ -1,8 +1,10 @@
 use std::any::Any;
 use std::cell::RefCell;
 use std::rc::Rc;
+
 use backend_events::bezier_c2_deleted::BezierC2Deleted;
 use infrastructure::consumer::{AnyConsumer, Consumer};
+
 use crate::drawing::drawing_storage::DrawingStorage;
 
 pub struct DeleteBezierC2OnBezierC2Deleted {

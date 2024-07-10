@@ -1,8 +1,9 @@
+use std::cell::RefCell;
+use std::rc::Rc;
+
 use crate::backend::Backend;
 use crate::cqrs::beziers_c0::bezier_c0_details::{BezierC0DTO, BezierC0PointDTO};
 use crate::cqrs::cqrs::Query;
-use std::cell::RefCell;
-use std::rc::Rc;
 
 pub struct AllBeziersC0;
 

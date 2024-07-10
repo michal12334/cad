@@ -1,3 +1,4 @@
+use crate::object::Object;
 use backend::cqrs::beziers_c0::add_bezier_c0::AddBezierC0;
 use backend::cqrs::beziers_c0::bezier_c0_details::BezierC0Details;
 use backend::cqrs::beziers_c2::add_bezier_c2::AddBezierC2;
@@ -10,7 +11,6 @@ use backend::cqrs::points::add_point::AddPoint;
 use backend::cqrs::points::point_details::PointDetails;
 use backend::cqrs::toruses::add_torus::AddTorus;
 use backend::cqrs::toruses::torus_details::TorusDetails;
-use crate::object::Object;
 
 use crate::object::Object::{BezierC0, Point, Torus};
 use crate::ui::Ui;
@@ -57,9 +57,10 @@ impl Ui {
             if ui.button("Add Bezier Int").clicked() {
                 let id = cqrs.handle(&NewId {});
                 cqrs.execute(&AddBezierInt { id });
-                self.objects.push(Object::BezierInt(DomainBezierInt::from_dto(
-                    &cqrs.get(&BezierIntDetails { id }),
-                )));
+                self.objects
+                    .push(Object::BezierInt(DomainBezierInt::from_dto(
+                        &cqrs.get(&BezierIntDetails { id }),
+                    )));
             }
         });
     }

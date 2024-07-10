@@ -70,11 +70,9 @@ pub struct BezierC0CreatedPublisher {
 impl Consumer<BezierC0Created> for BezierC0CreatedPublisher {
     fn consume(&self, event: &BezierC0Created) {
         let backend = self.backend.borrow();
-        let event = Rc::new(
-            backend_events::bezier_c0_created::BezierC0Created::new(
-                event.id,
-            ),
-        );
+        let event = Rc::new(backend_events::bezier_c0_created::BezierC0Created::new(
+            event.id,
+        ));
         backend.services.event_publisher.publish(event);
     }
 }
@@ -87,8 +85,7 @@ impl Consumer<BezierC0PointMoved> for BezierC0PointMovedPublisher {
     fn consume(&self, event: &BezierC0PointMoved) {
         let backend = self.backend.borrow();
         let event = Rc::new(
-            backend_events::bezier_c0_point_moved::BezierC0PointMoved::new(
-                event.bezier_id),
+            backend_events::bezier_c0_point_moved::BezierC0PointMoved::new(event.bezier_id),
         );
         backend.services.event_publisher.publish(event);
     }
@@ -101,11 +98,9 @@ pub struct BezierC0DeletedPublisher {
 impl Consumer<BezierC0Deleted> for BezierC0DeletedPublisher {
     fn consume(&self, event: &BezierC0Deleted) {
         let backend = self.backend.borrow();
-        let event = Rc::new(
-            backend_events::bezier_c0_deleted::BezierC0Deleted::new(
-                event.id,
-            ),
-        );
+        let event = Rc::new(backend_events::bezier_c0_deleted::BezierC0Deleted::new(
+            event.id,
+        ));
         backend.services.event_publisher.publish(event);
     }
 }
@@ -126,7 +121,6 @@ impl Consumer<BezierC0DrawPolygonSet> for BezierC0DrawPolygonSetPublisher {
         backend.services.event_publisher.publish(event);
     }
 }
-
 
 impl AnyConsumer for BezierC0RenamedPublisher {
     fn consume_any(&self, message: Rc<dyn Any>) {
@@ -169,4 +163,3 @@ impl AnyConsumer for BezierC0DrawPolygonSetPublisher {
         self.consume_any_impl(message);
     }
 }
-

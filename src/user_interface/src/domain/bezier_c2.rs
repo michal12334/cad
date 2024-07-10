@@ -39,12 +39,14 @@ impl BezierC2 {
             selected_bernstein_point: None,
         }
     }
-    
+
     pub fn set_bernstein_points(&mut self, bernstein_points: &[BezierC2BernsteinPointDTO]) {
         self.bernstein_points = Self::bernstein_points_from_dto(bernstein_points);
     }
-    
-    fn bernstein_points_from_dto(bernstein_points: &[BezierC2BernsteinPointDTO]) -> Vec<BezierC2BernsteinPoint> {
+
+    fn bernstein_points_from_dto(
+        bernstein_points: &[BezierC2BernsteinPointDTO],
+    ) -> Vec<BezierC2BernsteinPoint> {
         bernstein_points
             .iter()
             .map(|bp| BezierC2BernsteinPoint {
@@ -54,12 +56,14 @@ impl BezierC2 {
             })
             .collect()
     }
-    
+
     pub fn set_b_spline_points(&mut self, b_spline_points: &[BezierC2BSplinePointDTO]) {
         self.b_spline_points = Self::b_spline_points_from_dto(b_spline_points);
     }
-    
-    fn b_spline_points_from_dto(b_spline_points: &[BezierC2BSplinePointDTO]) -> Vec<BezierC2BSplinePoint> {
+
+    fn b_spline_points_from_dto(
+        b_spline_points: &[BezierC2BSplinePointDTO],
+    ) -> Vec<BezierC2BSplinePoint> {
         b_spline_points
             .iter()
             .map(|bp| BezierC2BSplinePoint {

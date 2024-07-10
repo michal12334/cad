@@ -5,6 +5,9 @@ pub struct BezierC2SelectedBernsteinPointSet {
 
 impl BezierC2SelectedBernsteinPointSet {
     pub fn new(bezier_id: u64, selected_bernstein_point: Option<usize>) -> Self {
-        Self { bezier_id, selected_bernstein_point, }
+        Self {
+            bezier_id,
+            selected_bernstein_point,
+        }
     }
 }
