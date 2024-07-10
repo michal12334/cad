@@ -27,7 +27,7 @@ use backend::processes::beziers_c2::add_point_to_selected_beziers_c2_on_point_cr
 use backend::processes::beziers_c2::move_bezier_c2_points_on_point_moved::MoveBezierC2PointsOnPointMoved;
 use backend::processes::beziers_c2::publishers::{BezierC2CreatedPublisher, BezierC2DrawBernsteinPointsSetPublisher, BezierC2DrawBernsteinPolygonSetPublisher, BezierC2DrawBSplinePolygonSetPublisher, BezierC2PointMovedPublisher, BezierC2PointsDeletedPublisher, BezierC2SelectedBernsteinPointSetPublisher, PointAddedToBezierC2Publisher};
 use backend::processes::beziers_int::add_point_to_selected_bezier_int_on_point_created::AddPointToSelectedBezierIntOnPointCreated;
-use backend::processes::beziers_int::publishers::{BezierIntCreatedPublisher, PointAddedToBezierIntPublisher};
+use backend::processes::beziers_int::publishers::{BezierIntCreatedPublisher, BezierIntPointsDeletedPublisher, PointAddedToBezierIntPublisher};
 use backend::processes::points::publishers::PointMovedPublisher;
 use infrastructure::event_bus::EventBus;
 use math::vector4::Vector4;
@@ -36,7 +36,7 @@ use user_interface::processes::sync_bezier_c0_with_backend::{
     SyncBezierC0NameWithBackend,
 };
 use user_interface::processes::sync_bezier_c2_with_backend::{SyncBezierC2AddedPointsWithBackend, SyncBezierC2DeletedPointsWithBackend, SyncBezierC2PointPositionsWithBackend};
-use user_interface::processes::sync_bezier_int_with_backend::SyncBezierIntAddedPointWithBackend;
+use user_interface::processes::sync_bezier_int_with_backend::{SyncBezierIntAddedPointWithBackend, SyncBezierIntPointsDeletedWithBackend};
 use user_interface::processes::sync_point_with_backend::SyncPointPositionWithBackend;
 use user_interface::ui::Ui;
 use crate::drawing::drawers::bezier_c0_drawer::BezierC0Drawer;
@@ -65,6 +65,7 @@ use crate::drawing::processes::beziers_c2::set_selected_bernstein_point_on_bezie
 use crate::drawing::processes::beziers_c2::update_bezier_c2_points_on_bezier_c2_point_moved::UpdateBezierC2PointsOnBezierC2PointMoved;
 use crate::drawing::processes::beziers_int::add_bezier_int_on_bezier_int_created::AddBezierIntOnBezierIntCreated;
 use crate::drawing::processes::beziers_int::add_point_to_bezier_int_on_point_added_to_bezier_int::AddPointToBezierIntOnPointAddedToBezierInt;
+use crate::drawing::processes::beziers_int::delete_bezier_int_points_on_bezier_int_points_deleted::DeleteBezierIntPointsOnBezierIntPointsDeleted;
 
 mod drawing;
 
@@ -204,6 +205,11 @@ fn main() {
         .add_consumer(AddPointToSelectedBezierIntOnPointCreated {
             backend: app_state.clone(),
         });
+    event_bus
+        .borrow_mut()
+        .add_consumer(BezierIntPointsDeletedPublisher {
+            backend: app_state.clone(),
+        });
 
     event_bus
         .borrow_mut()
@@ -229,6 +235,9 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(SyncBezierIntAddedPointWithBackend { ui: ui.clone(), });
+    event_bus
+        .borrow_mut()
+        .add_consumer(SyncBezierIntPointsDeletedWithBackend { ui: ui.clone(), });
 
     event_bus
         .borrow_mut()
@@ -326,6 +335,13 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(AddPointToBezierIntOnPointAddedToBezierInt {
+            drawing_storage: drawing_storage.clone(),
+            cqrs: CQRS::new(app_state.clone()),
+            display: display.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(DeleteBezierIntPointsOnBezierIntPointsDeleted {
             drawing_storage: drawing_storage.clone(),
             cqrs: CQRS::new(app_state.clone()),
             display: display.clone(),

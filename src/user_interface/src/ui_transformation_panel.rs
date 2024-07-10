@@ -13,6 +13,7 @@ use backend::cqrs::beziers_c2::set_bezier_c2_draw_bernstein_points::SetBezierC2D
 use backend::cqrs::beziers_c2::set_bezier_c2_draw_bernstein_polygon::SetBezierC2DrawBernsteinPolygon;
 use backend::cqrs::beziers_c2::set_bezier_c2_selected_bernstein_point::SetBezierC2SelectedBernsteinPoint;
 use backend::cqrs::beziers_int::add_point_to_bezier_int::AddPointToBezierInt;
+use backend::cqrs::beziers_int::delete_bezier_int_points::DeleteBezierIntPoints;
 use backend::cqrs::beziers_int::rename_bezier_int::RenameBezierInt;
 use backend::cqrs::common::transform_selected_objects::TransformSelectedObjects;
 use backend::cqrs::cqrs::CQRS;
@@ -753,7 +754,7 @@ impl Ui {
         });
 
         if ui.button("Delete Points").clicked() {
-            cqrs.execute(&DeleteBezierC0Points {
+            cqrs.execute(&DeleteBezierIntPoints {
                 id: bezier.id,
                 points: bezier
                     .points
