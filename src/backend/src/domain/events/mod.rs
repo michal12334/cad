@@ -20,3 +20,5 @@ pub mod bezier_int_created;
 pub mod point_added_to_bezier_int;
 pub mod bezier_int_points_deleted;
 pub mod bezier_int_bernstein_point_moved;
+pub mod bezier_c2_deleted;
+pub mod bezier_int_deleted;

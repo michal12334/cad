@@ -6,3 +6,4 @@ pub mod set_draw_b_spline_polygon_on_bezier_c2_draw_b_spline_polygon_set;
 pub mod delete_bezier_c2_points_on_bezier_c2_points_deleted;
 pub mod update_bezier_c2_points_on_bezier_c2_point_moved;
 pub mod set_selected_bernstein_point_on_bezier_c2_selected_bernstein_point_set;
+pub mod delete_bezier_c2_on_bezier_c2_deleted;

@@ -54,6 +54,18 @@ impl Command<DeleteSelectedObjects> for DeleteSelectedObjects {
             .iter()
             .filter_map(|object| object.bezier_c0_id)
             .collect::<Vec<_>>();
+
+        let deleted_beziers_c2 = backend.storage
+            .selected_objects
+            .iter()
+            .filter_map(|object| object.bezier_c2_id)
+            .collect::<Vec<_>>();
+
+        let deleted_beziers_int = backend.storage
+            .selected_objects
+            .iter()
+            .filter_map(|object| object.bezier_int_id)
+            .collect::<Vec<_>>();
         
         backend.storage.selected_objects.clear();
         
