@@ -1,2 +1,3 @@
 pub mod publishers;
 pub mod add_point_to_selected_bezier_int_on_point_created;
+pub mod update_bezier_int_points_on_point_moved;

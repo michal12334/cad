@@ -3,6 +3,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use infrastructure::consumer::{AnyConsumer, Consumer};
 use crate::backend::Backend;
+use crate::domain::events::bezier_int_bernstein_point_moved::BezierIntBernsteinPointMoved;
 use crate::domain::events::bezier_int_created::BezierIntCreated;
 use crate::domain::events::bezier_int_points_deleted::BezierIntPointsDeleted;
 use crate::domain::events::point_added_to_bezier_int::PointAddedToBezierInt;
@@ -52,6 +53,20 @@ impl Consumer<BezierIntPointsDeleted> for BezierIntPointsDeletedPublisher {
     }
 }
 
+pub struct BezierIntBernsteinPointMovedPublisher {
+    pub backend: Rc<RefCell<Backend>>,
+}
+
+impl Consumer<BezierIntBernsteinPointMoved> for BezierIntBernsteinPointMovedPublisher {
+    fn consume(&self, event: &BezierIntBernsteinPointMoved) {
+        let backend = self.backend.borrow();
+        let event = Rc::new(backend_events::bezier_int_bernstein_point_moved::BezierIntBernsteinPointMoved::new(
+            event.bezier_id,
+        ));
+        backend.services.event_publisher.publish(event);
+    }
+}
+
 impl AnyConsumer for BezierIntCreatedPublisher {
     fn consume_any(&self, message: Rc<dyn Any>) {
         self.consume_any_impl(message);
@@ -65,6 +80,12 @@ impl AnyConsumer for PointAddedToBezierIntPublisher {
 }
 
 impl AnyConsumer for BezierIntPointsDeletedPublisher {
+    fn consume_any(&self, message: Rc<dyn Any>) {
+        self.consume_any_impl(message);
+    }
+}
+
+impl AnyConsumer for BezierIntBernsteinPointMovedPublisher {
     fn consume_any(&self, message: Rc<dyn Any>) {
         self.consume_any_impl(message);
     }
