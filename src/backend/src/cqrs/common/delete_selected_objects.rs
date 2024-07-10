@@ -37,6 +37,16 @@ impl Command<DeleteSelectedObjects> for DeleteSelectedObjects {
                     .beziers_c0
                     .values()
                     .any(|b| b.points.iter().any(|p| p.id == point.id))
+                || backend
+                    .storage
+                    .beziers_c2
+                    .values()
+                    .any(|b| b.b_spline_points.iter().any(|p| p.id == point.id))
+                || backend
+                    .storage
+                    .beziers_int
+                    .values()
+                    .any(|b| b.points.iter().any(|p| p.id == point.id))
         });
         
         let deleted_beziers_c0 = backend.storage
