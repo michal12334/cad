@@ -2,9 +2,9 @@ use std::any::Any;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use backend_events::bezier_c0_points_deleted::BezierC0PointsDeleted;
-use backend_events::bezier_c0_renamed::BezierC0Renamed;
-use backend_events::point_added_to_bezier_c0::PointAddedToBezierC0;
+use backend_events::beziers_c0::bezier_c0_points_deleted::BezierC0PointsDeleted;
+use backend_events::beziers_c0::bezier_c0_renamed::BezierC0Renamed;
+use backend_events::points::point_added_to_bezier_c0::PointAddedToBezierC0;
 use infrastructure::consumer::{AnyConsumer, Consumer};
 
 use crate::domain::bezier_c0::BezierC0Point;

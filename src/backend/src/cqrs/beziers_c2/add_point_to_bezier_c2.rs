@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 use crate::backend::Backend;
 use crate::cqrs::cqrs::Command;
-use crate::domain::events::point_added_to_bezier_c2::PointAddedToBezierC2;
+use crate::domain::events::points::point_added_to_bezier_c2::PointAddedToBezierC2;
 
 pub struct AddPointToBezierC2 {
     pub id: u64,

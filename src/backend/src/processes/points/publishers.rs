@@ -5,7 +5,7 @@ use std::rc::Rc;
 use infrastructure::consumer::{AnyConsumer, Consumer};
 
 use crate::backend::Backend;
-use crate::domain::events::point_moved::PointMoved;
+use crate::domain::events::points::point_moved::PointMoved;
 
 pub struct PointMovedPublisher {
     pub backend: Rc<RefCell<Backend>>,
@@ -14,7 +14,7 @@ pub struct PointMovedPublisher {
 impl Consumer<PointMoved> for PointMovedPublisher {
     fn consume(&self, event: &PointMoved) {
         let backend = self.backend.borrow();
-        let event = Rc::new(backend_events::point_moved::PointMoved::new(
+        let event = Rc::new(backend_events::points::point_moved::PointMoved::new(
             event.id,
             event.position,
         ));

@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 use crate::backend::Backend;
 use crate::cqrs::cqrs::Command;
-use crate::domain::events::point_created::PointCreated;
+use crate::domain::events::points::point_created::PointCreated;
 use crate::domain::point::Point;
 use crate::domain::transformer::LittleTransformer;
 

@@ -10,7 +10,7 @@ use crate::backend::Backend;
 use crate::cqrs::common::selected_objects_center::SelectedObjectsCenter;
 use crate::cqrs::cqrs::{Command, CQRS};
 use crate::cqrs::toruses::torus_details::TransformerDTO;
-use crate::domain::events::point_moved::PointMoved;
+use crate::domain::events::points::point_moved::PointMoved;
 
 pub struct TransformSelectedObjects {
     pub transformer: TransformerDTO,

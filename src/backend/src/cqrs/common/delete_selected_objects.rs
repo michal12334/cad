@@ -4,9 +4,9 @@ use std::rc::Rc;
 
 use crate::backend::Backend;
 use crate::cqrs::cqrs::Command;
-use crate::domain::events::bezier_c0_deleted::BezierC0Deleted;
-use crate::domain::events::bezier_c2_deleted::BezierC2Deleted;
-use crate::domain::events::bezier_int_deleted::BezierIntDeleted;
+use crate::domain::events::beziers_c0::bezier_c0_deleted::BezierC0Deleted;
+use crate::domain::events::beziers_c2::bezier_c2_deleted::BezierC2Deleted;
+use crate::domain::events::beziers_int::bezier_int_deleted::BezierIntDeleted;
 
 pub struct DeleteSelectedObjects;
 

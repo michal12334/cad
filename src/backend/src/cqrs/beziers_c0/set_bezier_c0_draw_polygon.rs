@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 use crate::backend::Backend;
 use crate::cqrs::cqrs::Command;
-use crate::domain::events::bezier_c0_draw_polygon_set::BezierC0DrawPolygonSet;
+use crate::domain::events::beziers_c0::bezier_c0_draw_polygon_set::BezierC0DrawPolygonSet;
 
 pub struct SetBezierC0DrawPolygon {
     pub id: u64,

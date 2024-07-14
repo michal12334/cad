@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 use crate::backend::Backend;
 use crate::cqrs::cqrs::Command;
-use crate::domain::events::bezier_c2_renamed::BezierC2Renamed;
+use crate::domain::events::beziers_c2::bezier_c2_renamed::BezierC2Renamed;
 
 pub struct RenameBezierC2 {
     pub id: u64,

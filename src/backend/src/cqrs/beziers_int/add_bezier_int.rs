@@ -4,7 +4,7 @@ use std::rc::Rc;
 use crate::backend::Backend;
 use crate::cqrs::cqrs::Command;
 use crate::domain::bezier_int::BezierInt;
-use crate::domain::events::bezier_int_created::BezierIntCreated;
+use crate::domain::events::beziers_int::bezier_int_created::BezierIntCreated;
 
 pub struct AddBezierInt {
     pub id: u64,

@@ -7,7 +7,7 @@ use glium::Display;
 
 use backend::cqrs::cqrs::CQRS;
 use backend::cqrs::points::point_details::PointDetails;
-use backend_events::point_added_to_bezier_c0::PointAddedToBezierC0;
+use backend_events::points::point_added_to_bezier_c0::PointAddedToBezierC0;
 use infrastructure::consumer::{AnyConsumer, Consumer};
 
 use crate::drawing::drawing_storage::DrawingStorage;

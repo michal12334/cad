@@ -4,7 +4,7 @@ use std::rc::Rc;
 use crate::backend::Backend;
 use crate::cqrs::cqrs::Command;
 use crate::domain::bezier_c0::{BezierC0, BezierC0Point};
-use crate::domain::events::bezier_c0_created::BezierC0Created;
+use crate::domain::events::beziers_c0::bezier_c0_created::BezierC0Created;
 
 pub struct AddBezierC0 {
     pub id: u64,

@@ -8,7 +8,7 @@ use glium::Display;
 use backend::cqrs::beziers_c2::bezier_c2_b_spline_points::BezierC2BSplinePoints;
 use backend::cqrs::beziers_c2::bezier_c2_bernstein_points::BezierC2BernsteinPoints;
 use backend::cqrs::cqrs::CQRS;
-use backend_events::point_added_to_bezier_c2::PointAddedToBezierC2;
+use backend_events::points::point_added_to_bezier_c2::PointAddedToBezierC2;
 use infrastructure::consumer::{AnyConsumer, Consumer};
 
 use crate::drawing::drawing_storage::DrawingStorage;

@@ -7,7 +7,7 @@ use glium::Display;
 
 use backend::cqrs::beziers_int::bezier_int_bernstein_points::BezierIntBernsteinPoints;
 use backend::cqrs::cqrs::CQRS;
-use backend_events::bezier_int_created::BezierIntCreated;
+use backend_events::beziers_int::bezier_int_created::BezierIntCreated;
 use infrastructure::consumer::{AnyConsumer, Consumer};
 
 use crate::drawing::domain::bezier_int::BezierInt;

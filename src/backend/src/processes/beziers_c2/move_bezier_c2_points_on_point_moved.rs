@@ -5,8 +5,8 @@ use std::rc::Rc;
 use infrastructure::consumer::{AnyConsumer, Consumer};
 
 use crate::backend::Backend;
-use crate::domain::events::bezier_c2_point_moved::BezierC2PointMoved;
-use crate::domain::events::point_moved::PointMoved;
+use crate::domain::events::beziers_c2::bezier_c2_point_moved::BezierC2PointMoved;
+use crate::domain::events::points::point_moved::PointMoved;
 
 pub struct MoveBezierC2PointsOnPointMoved {
     pub backend: Rc<RefCell<Backend>>,

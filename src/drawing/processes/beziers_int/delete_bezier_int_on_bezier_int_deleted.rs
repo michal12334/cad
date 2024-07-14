@@ -1,5 +1,5 @@
 use crate::drawing::drawing_storage::DrawingStorage;
-use backend_events::bezier_int_deleted::BezierIntDeleted;
+use backend_events::beziers_int::bezier_int_deleted::BezierIntDeleted;
 use infrastructure::consumer::{AnyConsumer, Consumer};
 use std::any::Any;
 use std::cell::RefCell;

@@ -1,6 +1,6 @@
 use crate::object::Object;
 use crate::ui::Ui;
-use backend_events::point_moved::PointMoved;
+use backend_events::points::point_moved::PointMoved;
 use infrastructure::consumer::{AnyConsumer, Consumer};
 use std::any::Any;
 use std::cell::RefCell;

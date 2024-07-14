@@ -1,7 +1,7 @@
 use crate::drawing::drawing_storage::DrawingStorage;
 use backend::cqrs::beziers_int::bezier_int_bernstein_points::BezierIntBernsteinPoints;
 use backend::cqrs::cqrs::CQRS;
-use backend_events::bezier_int_bernstein_point_moved::BezierIntBernsteinPointMoved;
+use backend_events::beziers_int::bezier_int_bernstein_point_moved::BezierIntBernsteinPointMoved;
 use glium::glutin::surface::WindowSurface;
 use glium::Display;
 use infrastructure::consumer::{AnyConsumer, Consumer};

@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 use crate::backend::Backend;
 use crate::cqrs::cqrs::Command;
-use crate::domain::events::bezier_c2_draw_bernstein_polygon_set::BezierC2DrawBernsteinPolygonSet;
+use crate::domain::events::beziers_c2::bezier_c2_draw_bernstein_polygon_set::BezierC2DrawBernsteinPolygonSet;
 
 pub struct SetBezierC2DrawBernsteinPolygon {
     pub id: u64,

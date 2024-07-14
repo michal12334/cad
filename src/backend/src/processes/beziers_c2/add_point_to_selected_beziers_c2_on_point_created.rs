@@ -5,8 +5,8 @@ use std::rc::Rc;
 use infrastructure::consumer::{AnyConsumer, Consumer};
 
 use crate::backend::Backend;
-use crate::domain::events::point_added_to_bezier_c2::PointAddedToBezierC2;
-use crate::domain::events::point_created::PointCreated;
+use crate::domain::events::points::point_added_to_bezier_c2::PointAddedToBezierC2;
+use crate::domain::events::points::point_created::PointCreated;
 
 pub struct AddPointToSelectedBeziersC2OnPointCreated {
     pub backend: Rc<RefCell<Backend>>,

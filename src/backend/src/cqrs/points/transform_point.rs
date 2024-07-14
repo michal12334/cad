@@ -4,7 +4,7 @@ use std::rc::Rc;
 use crate::backend::Backend;
 use crate::cqrs::cqrs::Command;
 use crate::cqrs::points::point_details::LittleTransformerDTO;
-use crate::domain::events::point_moved::PointMoved;
+use crate::domain::events::points::point_moved::PointMoved;
 
 pub struct TransformPoint {
     pub id: u64,

@@ -5,8 +5,8 @@ use std::rc::Rc;
 use infrastructure::consumer::{AnyConsumer, Consumer};
 
 use crate::backend::Backend;
-use crate::domain::events::bezier_int_bernstein_point_moved::BezierIntBernsteinPointMoved;
-use crate::domain::events::point_moved::PointMoved;
+use crate::domain::events::beziers_int::bezier_int_bernstein_point_moved::BezierIntBernsteinPointMoved;
+use crate::domain::events::points::point_moved::PointMoved;
 
 pub struct UpdateBezierIntPointsOnPointMoved {
     pub backend: Rc<RefCell<Backend>>,

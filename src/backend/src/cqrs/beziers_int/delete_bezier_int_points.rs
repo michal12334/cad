@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 use crate::backend::Backend;
 use crate::cqrs::cqrs::Command;
-use crate::domain::events::bezier_int_points_deleted::BezierIntPointsDeleted;
+use crate::domain::events::beziers_int::bezier_int_points_deleted::BezierIntPointsDeleted;
 
 pub struct DeleteBezierIntPoints {
     pub id: u64,

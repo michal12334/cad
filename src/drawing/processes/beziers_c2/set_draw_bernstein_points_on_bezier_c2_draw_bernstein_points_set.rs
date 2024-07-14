@@ -2,7 +2,7 @@ use std::any::Any;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use backend_events::bezier_c2_draw_bernstein_points_set::BezierC2DrawBernsteinPointsSet;
+use backend_events::beziers_c2::bezier_c2_draw_bernstein_points_set::BezierC2DrawBernsteinPointsSet;
 use infrastructure::consumer::{AnyConsumer, Consumer};
 
 use crate::drawing::drawing_storage::DrawingStorage;

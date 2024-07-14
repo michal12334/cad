@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 use crate::backend::Backend;
 use crate::cqrs::cqrs::Command;
-use crate::domain::events::bezier_c2_selected_bernstein_point_set::BezierC2SelectedBernsteinPointSet;
+use crate::domain::events::beziers_c2::bezier_c2_selected_bernstein_point_set::BezierC2SelectedBernsteinPointSet;
 
 pub struct SetBezierC2SelectedBernsteinPoint {
     pub id: u64,
