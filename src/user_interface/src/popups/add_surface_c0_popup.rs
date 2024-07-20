@@ -79,6 +79,7 @@ impl Popup for AddSurfaceC0Popup {
                                 size: self.size,
                             },
                         });
+                        self.is_closed = true;
                     }
                     if ui.button("Close").clicked() {
                         self.is_closed = true;
