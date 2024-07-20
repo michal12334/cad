@@ -37,12 +37,12 @@ pub fn create_surface(id: u64, create_surface_info: &CreateSurfaceInfoDTO, id_ge
         let size = create_surface_info.size;
         let size_x = size.0 * 3 + 1;
         let size_y = size.1 * 3 + 1;
-        let points = (0..size.0)
-            .flat_map(|x| (0..size.1).map(move |y| (x, y)))
+        let points = (0..size_x)
+            .flat_map(|x| (0..size_y).map(move |y| (x, y)))
             .map(|(x, y)| {
                 let x = x as f64;
                 let y = y as f64;
-                let position = (width * x / (size_x - 1) as f64, length * y / (size_y - 1) as f64, 0.0);
+                let position = (width * x / (size_x - 1) as f64, 0.0, length * y / (size_y - 1) as f64);
                 let position = LittleTransformer {
                     position: (position.0 + cursor_position.position.0, position.1 + cursor_position.position.1, position.2 + cursor_position.position.2),
                 };
