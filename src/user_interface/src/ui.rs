@@ -20,6 +20,7 @@ type DomainBezierInt = crate::domain::bezier_int::BezierInt;
 use crate::object::Object;
 use crate::object::Object::{BezierC0, BezierC2, BezierInt, Point, Torus};
 use crate::object_id::ObjectId;
+use crate::popups::popup::Popup;
 
 pub struct Ui {
     pub objects: Vec<Object>,
@@ -31,6 +32,7 @@ pub struct Ui {
     pub group_transformation: Option<TransformerDTO>,
     pub previous_group_transformation: Option<TransformerDTO>,
     pub previous_time: DateTime<Local>,
+    pub popup: Option<Box<dyn Popup>>,
 }
 
 impl Ui {
@@ -45,6 +47,7 @@ impl Ui {
             group_transformation: None,
             previous_group_transformation: None,
             previous_time: Local::now(),
+            popup: None,
         }
     }
 
@@ -150,6 +153,13 @@ impl Ui {
                         self.build_fps_counter(ui);
                     });
                 });
+            
+            if let Some(popup) = &mut self.popup {
+                popup.build(cqrs, egui_ctx);
+                if popup.is_closed() {
+                    self.popup = None;
+                }
+            }
         }
     }
 

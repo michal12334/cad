@@ -13,6 +13,7 @@ use backend::cqrs::toruses::add_torus::AddTorus;
 use backend::cqrs::toruses::torus_details::TorusDetails;
 
 use crate::object::Object::{BezierC0, Point, Torus};
+use crate::popups::add_surface_c0_popup::AddSurfaceC0Popup;
 use crate::ui::Ui;
 
 type DomainBezierC0 = crate::domain::bezier_c0::BezierC0;
@@ -61,6 +62,11 @@ impl Ui {
                     .push(Object::BezierInt(DomainBezierInt::from_dto(
                         &cqrs.get(&BezierIntDetails { id }),
                     )));
+            }
+        });
+        ui.horizontal(|ui| {
+            if ui.button("Add Surface C0").clicked() {
+                self.popup = Some(Box::new(AddSurfaceC0Popup::new()));
             }
         });
     }
