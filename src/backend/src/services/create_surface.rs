@@ -1,4 +1,4 @@
-use crate::cqrs::surfaces::create_surface::CreateSurfaceInfoDTO;
+use crate::cqrs::surfaces_c0::create_surface_c0::CreateSurfaceInfoDTO;
 use crate::domain::point::Point;
 use crate::domain::surface_c0::{SurfaceC0, SurfaceC0Point};
 use crate::domain::transformer::LittleTransformer;
