@@ -1,5 +1,6 @@
 use backend::cqrs::common::select_objects::ObjectTypeDTO;
 use backend::cqrs::points::point_details::PointDTO;
+use backend::cqrs::surfaces_c0::surface_c0_details::SurfaceC0DTO;
 use backend::cqrs::toruses::torus_details::TorusDTO;
 
 use crate::domain::bezier_c0::BezierC0;
@@ -12,6 +13,7 @@ pub enum Object {
     BezierC0(BezierC0),
     BezierC2(BezierC2),
     BezierInt(BezierInt),
+    SurfaceC0(SurfaceC0DTO),
 }
 
 impl Object {
@@ -22,6 +24,7 @@ impl Object {
             Object::BezierC0(bezier_c0) => bezier_c0.id,
             Object::BezierC2(bezier_c2) => bezier_c2.id,
             Object::BezierInt(bezier_int) => bezier_int.id,
+            Object::SurfaceC0(surface_c0) => surface_c0.id,
         }
     }
 
@@ -32,6 +35,7 @@ impl Object {
             Object::BezierC0(bezier_c0) => bezier_c0.name.clone(),
             Object::BezierC2(bezier_c2) => bezier_c2.name.clone(),
             Object::BezierInt(bezier_int) => bezier_int.name.clone(),
+            Object::SurfaceC0(surface_c0) => surface_c0.name.clone(),
         }
     }
 
@@ -42,6 +46,7 @@ impl Object {
             Object::BezierC0(_) => ObjectTypeDTO::BezierC0,
             Object::BezierC2(_) => ObjectTypeDTO::BezierC2,
             Object::BezierInt(_) => ObjectTypeDTO::BezierInt,
+            Object::SurfaceC0(_) => ObjectTypeDTO::SurfaceC0,
         }
     }
 }

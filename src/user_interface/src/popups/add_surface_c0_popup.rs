@@ -2,8 +2,13 @@ use egui::{Context, Widget};
 use backend::cqrs::cqrs::CQRS;
 use backend::cqrs::common::new_id::NewId;
 use backend::cqrs::surfaces_c0::create_surface_c0::{CreateSurface, CreateSurfaceInfoDTO};
+use backend::cqrs::surfaces_c0::surface_c0_details::SurfaceC0Details;
+use backend::cqrs::surfaces_c0::surface_c0_points::SurfaceC0Points;
+use backend::domain::surface_c0::SurfaceC0Point;
+use crate::object::Object;
 use crate::popups::popup::Popup;
 use crate::ui;
+use crate::ui::Ui;
 
 pub struct AddSurfaceC0Popup {
     is_closed: bool,
@@ -30,7 +35,9 @@ impl AddSurfaceC0Popup {
 }
 
 impl Popup for AddSurfaceC0Popup {
-    fn build(&mut self, cqrs: &mut CQRS, context: &Context) {
+    fn build(&mut self, cqrs: &mut CQRS, context: &Context) -> Vec<Object> {
+        let mut result = vec![];
+        
         egui::Window::new("Add Surface C0")
             .show(context, |ui| {
                 ui.checkbox(&mut self.is_cylinder, "Cylinder");
@@ -79,6 +86,15 @@ impl Popup for AddSurfaceC0Popup {
                                 size: self.size,
                             },
                         });
+                        
+                        let surface = cqrs.get(&SurfaceC0Details { id });
+                        let points = cqrs.get(&SurfaceC0Points { id });
+                        
+                        result.push(Object::SurfaceC0(surface));
+                        for point in points {
+                            result.push(Object::Point(point));
+                        }
+
                         self.is_closed = true;
                     }
                     if ui.button("Close").clicked() {
@@ -86,6 +102,8 @@ impl Popup for AddSurfaceC0Popup {
                     }
                 });
             });
+        
+        return  result;
     }
 
     fn is_closed(&self) -> bool {

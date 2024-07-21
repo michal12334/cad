@@ -155,7 +155,8 @@ impl Ui {
                 });
             
             if let Some(popup) = &mut self.popup {
-                popup.build(cqrs, egui_ctx);
+                let added_objects = popup.build(cqrs, egui_ctx);
+                self.objects.extend(added_objects);
                 if popup.is_closed() {
                     self.popup = None;
                 }

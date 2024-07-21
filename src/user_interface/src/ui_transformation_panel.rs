@@ -121,6 +121,7 @@ impl Ui {
                 let points = cqrs.get(&AllPoints {});
                 Ui::build_bezier_int_transformation_panel(ui, cqrs, bezier, &points);
             }
+            _ => {}
         }
     }
 
