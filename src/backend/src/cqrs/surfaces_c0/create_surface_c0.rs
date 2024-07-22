@@ -3,6 +3,7 @@ use std::rc::Rc;
 use crate::backend::Backend;
 use crate::cqrs::cqrs::Command;
 use crate::domain::events::points::point_created::PointCreated;
+use crate::domain::events::surfaces_c0::surface_c0_created::SurfaceC0Created;
 use crate::services::create_surface::create_surface;
 
 pub struct CreateSurface {
@@ -35,5 +36,6 @@ impl Command<CreateSurface> for CreateSurface {
         for event in events {
             backend.services.event_publisher.publish(event);
         }
+        backend.services.event_publisher.publish(Rc::new(SurfaceC0Created::new(command.id, command.create_surface_info.size)));
     }
 }

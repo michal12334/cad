@@ -30,6 +30,7 @@ use backend::processes::beziers_int::add_point_to_selected_bezier_int_on_point_c
 use backend::processes::beziers_int::publishers::{BezierIntBernsteinPointMovedPublisher, BezierIntCreatedPublisher, BezierIntDeletedPublisher, BezierIntPointsDeletedPublisher, PointAddedToBezierIntPublisher};
 use backend::processes::beziers_int::update_bezier_int_points_on_point_moved::UpdateBezierIntPointsOnPointMoved;
 use backend::processes::points::publishers::PointMovedPublisher;
+use backend::processes::surfaces_c0::publishers::SurfaceC0CreatedPublisher;
 use infrastructure::event_bus::EventBus;
 use math::vector4::Vector4;
 use user_interface::processes::sync_bezier_c0_with_backend::{
@@ -70,6 +71,7 @@ use crate::drawing::processes::beziers_int::add_point_to_bezier_int_on_point_add
 use crate::drawing::processes::beziers_int::delete_bezier_int_on_bezier_int_deleted::DeleteBezierIntOnBezierIntDeleted;
 use crate::drawing::processes::beziers_int::delete_bezier_int_points_on_bezier_int_points_deleted::DeleteBezierIntPointsOnBezierIntPointsDeleted;
 use crate::drawing::processes::beziers_int::update_bezier_int_points_on_bezier_int_bernstein_point_moved::UpdateBezierIntPointsOnBezierIntBernsteinPointMoved;
+use crate::drawing::processes::surfaces_c0::add_surface_c0_on_surface_c0_created::AddSurfaceC0OnSurfaceC0Created;
 
 mod drawing;
 
@@ -230,6 +232,11 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(BezierIntDeletedPublisher {
+            backend: app_state.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(SurfaceC0CreatedPublisher {
             backend: app_state.clone(),
         });
 
@@ -393,6 +400,13 @@ fn main() {
         .borrow_mut()
         .add_consumer(DeleteBezierIntOnBezierIntDeleted {
             drawing_storage: drawing_storage.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(AddSurfaceC0OnSurfaceC0Created {
+            drawing_storage: drawing_storage.clone(),
+            cqrs: CQRS::new(app_state.clone()),
+            display: display.clone(),
         });
 
     let torus_drawer = TorusDrawer::new(&display);
