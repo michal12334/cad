@@ -49,6 +49,7 @@ use crate::drawing::drawers::infinite_grid_drawer::InfiniteGridDrawer;
 use crate::drawing::drawers::point_drawer::PointDrawer;
 use crate::drawing::drawers::points_drawer::PointsDrawer;
 use crate::drawing::drawers::polygon_drawer::PolygonDrawer;
+use crate::drawing::drawers::surface_c0_drawer::SurfaceC0Drawer;
 use crate::drawing::drawers::torus_drawer::TorusDrawer;
 use crate::drawing::drawing_storage::DrawingStorage;
 use crate::drawing::processes::beziers_c0::add_bezier_c0_on_bezier_c0_created::AddBezierC0OnBezierC0Created;
@@ -418,6 +419,7 @@ fn main() {
     let bezier_int_drawer = BezierIntDrawer::new(&display);
     let polygon_drawer = PolygonDrawer::new(&display);
     let points_drawer = PointsDrawer::new(&display);
+    let surface_c0_drawer = SurfaceC0Drawer::new(&display);
 
     let mut mouse_position = (0.0, 0.0);
     let mut camera_direction = math::vector3::Vector3::new(0.0f32, 0.0, 1.0);
@@ -510,6 +512,10 @@ fn main() {
 
                 for bezier in drawing_storage.borrow().beziers_c2.values().filter(|b| b.draw_bernstein_points && b.bernstein_points_index_buffer.is_some()) {
                     points_drawer.draw(&mut target, &bezier.bernstein_vertex_buffer.as_ref().unwrap(), &bezier.bernstein_points_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, bernstein_color, selected_bernstein_color, bezier.selected_bernstein_point);
+                }
+
+                for surface in drawing_storage.borrow().surfaces_c0.values() {
+                    surface_c0_drawer.draw(&mut target, &surface, &perspective, &view_matrix, color);
                 }
 
                 cursor_drawer.draw(&mut target, &display, &app_state.storage.cursor, &perspective, &view_matrix);

@@ -7,3 +7,4 @@ pub mod point_drawer;
 pub mod points_drawer;
 pub mod polygon_drawer;
 pub mod torus_drawer;
+pub mod surface_c0_drawer;
