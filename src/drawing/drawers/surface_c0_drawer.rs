@@ -51,17 +51,13 @@ impl SurfaceC0Drawer {
 
                 gl_TessLevelOuter[0] = tess_level;
                 gl_TessLevelOuter[1] = tess_level;
-                gl_TessLevelOuter[2] = tess_level;
-                gl_TessLevelOuter[3] = tess_level;
-                gl_TessLevelInner[0] = tess_level;
-                gl_TessLevelInner[1] = tess_level;
             }
         "#;
 
         let tessellation_evaluation_shader = r#"
             #version 460 core
 
-            layout(quads, equal_spacing) in;
+            layout(isolines, equal_spacing) in;
 
             vec4 get_bernstein_value(float x, float y, vec4 positions[16]) {
                 vec4 v11 = positions[0];
@@ -106,7 +102,8 @@ impl SurfaceC0Drawer {
                 for (int i = 0; i < 16; i++) {
                     positions[i] = gl_in[i].gl_Position;
                 }
-                gl_Position = get_bernstein_value(gl_TessCoord.x, gl_TessCoord.y, positions);
+                float y = gl_TessCoord.y * float(gl_TessLevelOuter[0]) / float(gl_TessLevelOuter[0] - 1);
+                gl_Position = get_bernstein_value(gl_TessCoord.x, y, positions);
             }
         "#;
 
@@ -154,7 +151,7 @@ impl SurfaceC0Drawer {
                     perspective: perspective.data,
                     view: view_matrix.data,
                     obj_color: color,
-                    tess_level: 4,
+                    tess_level: 16,
                 },
                 &self.drawing_parameters,
             )

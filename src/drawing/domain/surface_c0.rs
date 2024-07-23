@@ -32,7 +32,7 @@ impl SurfaceC0 {
             PrimitiveType::Patches { vertices_per_patch: 16 },
             &(0..size.0)
                 .flat_map(|x| (0..size.1).map(move |y| (x, y)))
-                .flat_map(|(x, y)| vec![
+                .flat_map(|(x, y)| [
                     (3 * x, 3 * y),
                     (3 * x + 1, 3 * y),
                     (3 * x + 2, 3 * y),
@@ -48,6 +48,22 @@ impl SurfaceC0 {
                     (3 * x, 3 * y + 3),
                     (3 * x + 1, 3 * y + 3),
                     (3 * x + 2, 3 * y + 3),
+                    (3 * x + 3, 3 * y + 3),
+                    (3 * x, 3 * y),
+                    (3 * x, 3 * y + 1),
+                    (3 * x, 3 * y + 2),
+                    (3 * x, 3 * y + 3),
+                    (3 * x + 1, 3 * y),
+                    (3 * x + 1, 3 * y + 1),
+                    (3 * x + 1, 3 * y + 2),
+                    (3 * x + 1, 3 * y + 3),
+                    (3 * x + 2, 3 * y),
+                    (3 * x + 2, 3 * y + 1),
+                    (3 * x + 2, 3 * y + 2),
+                    (3 * x + 2, 3 * y + 3),
+                    (3 * x + 3, 3 * y),
+                    (3 * x + 3, 3 * y + 1),
+                    (3 * x + 3, 3 * y + 2),
                     (3 * x + 3, 3 * y + 3),
                 ])
                 .map(|(x, y)| x * (size.1 * 3 + 1) + y)
