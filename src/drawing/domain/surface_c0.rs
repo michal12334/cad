@@ -97,4 +97,19 @@ impl SurfaceC0 {
     pub fn set_draw_polygon(&mut self, draw_polygon: bool) {
         self.draw_polygon = draw_polygon;
     }
+    
+    pub fn update_points(&mut self, points: &[PointDTO], display: &Display<WindowSurface>) {
+        self.vertex_buffer = VertexBuffer::new(
+            display,
+            &points.iter()
+                .map(|p| Vertex {
+                    position: [
+                        p.transformer.position.0 as f32,
+                        p.transformer.position.1 as f32,
+                        p.transformer.position.2 as f32,
+                    ],
+                })
+                .collect::<Vec<Vertex>>())
+            .unwrap();
+    }
 }

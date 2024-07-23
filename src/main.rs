@@ -30,6 +30,7 @@ use backend::processes::beziers_int::add_point_to_selected_bezier_int_on_point_c
 use backend::processes::beziers_int::publishers::{BezierIntBernsteinPointMovedPublisher, BezierIntCreatedPublisher, BezierIntDeletedPublisher, BezierIntPointsDeletedPublisher, PointAddedToBezierIntPublisher};
 use backend::processes::beziers_int::update_bezier_int_points_on_point_moved::UpdateBezierIntPointsOnPointMoved;
 use backend::processes::points::publishers::PointMovedPublisher;
+use backend::processes::surfaces_c0::move_surface_c0_point_on_point_moved::MoveSurfaceC0PointOnPointMoved;
 use backend::processes::surfaces_c0::publishers::SurfaceC0CreatedPublisher;
 use infrastructure::event_bus::EventBus;
 use math::vector4::Vector4;
@@ -73,6 +74,7 @@ use crate::drawing::processes::beziers_int::delete_bezier_int_on_bezier_int_dele
 use crate::drawing::processes::beziers_int::delete_bezier_int_points_on_bezier_int_points_deleted::DeleteBezierIntPointsOnBezierIntPointsDeleted;
 use crate::drawing::processes::beziers_int::update_bezier_int_points_on_bezier_int_bernstein_point_moved::UpdateBezierIntPointsOnBezierIntBernsteinPointMoved;
 use crate::drawing::processes::surfaces_c0::add_surface_c0_on_surface_c0_created::AddSurfaceC0OnSurfaceC0Created;
+use crate::drawing::processes::surfaces_c0::update_surface_c0_points_on_surface_c0_point_moved::UpdateSurfaceC0PointsOnSurfaceC0PointMoved;
 
 mod drawing;
 
@@ -240,6 +242,11 @@ fn main() {
         .add_consumer(SurfaceC0CreatedPublisher {
             backend: app_state.clone(),
         });
+    event_bus
+        .borrow_mut()
+        .add_consumer(MoveSurfaceC0PointOnPointMoved {
+            backend: app_state.clone(),
+        });
 
     event_bus
         .borrow_mut()
@@ -405,6 +412,13 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(AddSurfaceC0OnSurfaceC0Created {
+            drawing_storage: drawing_storage.clone(),
+            cqrs: CQRS::new(app_state.clone()),
+            display: display.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(UpdateSurfaceC0PointsOnSurfaceC0PointMoved {
             drawing_storage: drawing_storage.clone(),
             cqrs: CQRS::new(app_state.clone()),
             display: display.clone(),
