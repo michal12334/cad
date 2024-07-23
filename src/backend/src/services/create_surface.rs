@@ -9,7 +9,7 @@ pub fn create_surface(id: u64, create_surface_info: &CreateSurfaceInfoDTO, id_ge
         let radius = create_surface_info.radius.unwrap();
         let height = create_surface_info.height.unwrap();
         let size = create_surface_info.size;
-        let size_x = size.0 * 3 + 1;
+        let size_x = size.0 * 3;
         let size_y = size.1 * 3 + 1;
         let points = (0..size_x)
             .flat_map(|x| (0..size_y).map(move |y| (x, y)))
@@ -26,7 +26,7 @@ pub fn create_surface(id: u64, create_surface_info: &CreateSurfaceInfoDTO, id_ge
             })
             .collect::<Vec<_>>();
         let surface_points = points.iter()
-            .chain(points.iter().skip((size_x * (size_y - 1)) as usize))
+            .chain(points.iter().take(size_y as usize))
             .map(|point| SurfaceC0Point { id: point.id })
             .collect();
         let surface = SurfaceC0::new(id, surface_points);
