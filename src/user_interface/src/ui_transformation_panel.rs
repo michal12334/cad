@@ -22,6 +22,8 @@ use backend::cqrs::points::all_points::AllPoints;
 use backend::cqrs::points::point_details::{LittleTransformerDTO, PointDTO, PointDetails};
 use backend::cqrs::points::rename_point::RenamePoint;
 use backend::cqrs::points::transform_point::TransformPoint;
+use backend::cqrs::surfaces_c0::rename_surface_c0::RenameSurfaceC0;
+use backend::cqrs::surfaces_c0::surface_c0_details::SurfaceC0DTO;
 use backend::cqrs::toruses::rename_torus::RenameTorus;
 use backend::cqrs::toruses::torus_details::{TorusDTO, TorusDetails, TransformerDTO};
 use backend::cqrs::toruses::transform_torus::TransformTours;
@@ -121,7 +123,9 @@ impl Ui {
                 let points = cqrs.get(&AllPoints {});
                 Ui::build_bezier_int_transformation_panel(ui, cqrs, bezier, &points);
             }
-            _ => {}
+            Object::SurfaceC0(surface) => {
+                Ui::build_surface_c0_transformation_panel(ui, cqrs, surface);
+            }
         }
     }
 
@@ -772,6 +776,15 @@ impl Ui {
                     .filter(|p| p.is_selected)
                     .map(|p| p.id)
                     .collect(),
+            });
+        }
+    }
+
+    fn build_surface_c0_transformation_panel(ui: &mut egui::Ui, cqrs: &mut CQRS, surface: &mut SurfaceC0DTO) {
+        if ui.text_edit_singleline(&mut surface.name).lost_focus() {
+            cqrs.execute(&RenameSurfaceC0 {
+                id: surface.id,
+                name: surface.name.clone(),
             });
         }
     }
