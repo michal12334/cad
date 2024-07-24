@@ -31,9 +31,10 @@ use backend::processes::beziers_int::publishers::{BezierIntBernsteinPointMovedPu
 use backend::processes::beziers_int::update_bezier_int_points_on_point_moved::UpdateBezierIntPointsOnPointMoved;
 use backend::processes::points::publishers::PointMovedPublisher;
 use backend::processes::surfaces_c0::move_surface_c0_point_on_point_moved::MoveSurfaceC0PointOnPointMoved;
-use backend::processes::surfaces_c0::publishers::SurfaceC0CreatedPublisher;
+use backend::processes::surfaces_c0::publishers::{SurfaceC0CreatedPublisher, SurfaceC0PointsSelectedPublisher};
 use infrastructure::event_bus::EventBus;
 use math::vector4::Vector4;
+use user_interface::processes::selected_surface_c0_poins_on_surface_c0_points_selected::SelectedSurfaceC0PointsOnSurfaceC0PointsSelected;
 use user_interface::processes::sync_bezier_c0_with_backend::{
     SyncBezierC0AddedPointsWithBackend, SyncBezierC0DeletedPointsWithBackend,
     SyncBezierC0NameWithBackend,
@@ -247,6 +248,11 @@ fn main() {
         .add_consumer(MoveSurfaceC0PointOnPointMoved {
             backend: app_state.clone(),
         });
+    event_bus
+        .borrow_mut()
+        .add_consumer(SurfaceC0PointsSelectedPublisher {
+            backend: app_state.clone(),
+        });
 
     event_bus
         .borrow_mut()
@@ -284,6 +290,12 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(SyncBezierIntPointsDeletedWithBackend { ui: ui.clone() });
+    event_bus
+        .borrow_mut()
+        .add_consumer(SelectedSurfaceC0PointsOnSurfaceC0PointsSelected {
+            ui: ui.clone(),
+            cqrs: CQRS::new(app_state.clone()),
+        });
 
     event_bus
         .borrow_mut()

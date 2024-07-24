@@ -23,7 +23,9 @@ use backend::cqrs::points::point_details::{LittleTransformerDTO, PointDTO, Point
 use backend::cqrs::points::rename_point::RenamePoint;
 use backend::cqrs::points::transform_point::TransformPoint;
 use backend::cqrs::surfaces_c0::rename_surface_c0::RenameSurfaceC0;
+use backend::cqrs::surfaces_c0::select_surface_c0_points::SelectSurfaceC0Points;
 use backend::cqrs::surfaces_c0::surface_c0_details::SurfaceC0DTO;
+use backend::cqrs::surfaces_c0::surface_c0_points::SurfaceC0Points;
 use backend::cqrs::toruses::rename_torus::RenameTorus;
 use backend::cqrs::toruses::torus_details::{TorusDTO, TorusDetails, TransformerDTO};
 use backend::cqrs::toruses::transform_torus::TransformTours;
@@ -787,5 +789,9 @@ impl Ui {
                 name: surface.name.clone(),
             });
         }
+        
+        if ui.button("Select points").clicked() { 
+            cqrs.execute(&SelectSurfaceC0Points { surface_id: surface.id, });
+        } 
     }
 }

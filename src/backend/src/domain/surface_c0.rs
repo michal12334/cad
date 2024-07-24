@@ -5,6 +5,7 @@ pub struct SurfaceC0 {
     pub points: Vec<SurfaceC0Point>,
 }
 
+#[derive(Clone)]
 pub struct SurfaceC0Point {
     pub id: u64,
 }
