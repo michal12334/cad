@@ -31,7 +31,7 @@ use backend::processes::beziers_int::publishers::{BezierIntBernsteinPointMovedPu
 use backend::processes::beziers_int::update_bezier_int_points_on_point_moved::UpdateBezierIntPointsOnPointMoved;
 use backend::processes::points::publishers::PointMovedPublisher;
 use backend::processes::surfaces_c0::move_surface_c0_point_on_point_moved::MoveSurfaceC0PointOnPointMoved;
-use backend::processes::surfaces_c0::publishers::{SurfaceC0CreatedPublisher, SurfaceC0PointsSelectedPublisher};
+use backend::processes::surfaces_c0::publishers::{SurfaceC0CreatedPublisher, SurfaceC0PointsSelectedPublisher, SurfaceC0UpdatedPublisher};
 use infrastructure::event_bus::EventBus;
 use math::vector4::Vector4;
 use user_interface::processes::selected_surface_c0_poins_on_surface_c0_points_selected::SelectedSurfaceC0PointsOnSurfaceC0PointsSelected;
@@ -75,6 +75,7 @@ use crate::drawing::processes::beziers_int::delete_bezier_int_on_bezier_int_dele
 use crate::drawing::processes::beziers_int::delete_bezier_int_points_on_bezier_int_points_deleted::DeleteBezierIntPointsOnBezierIntPointsDeleted;
 use crate::drawing::processes::beziers_int::update_bezier_int_points_on_bezier_int_bernstein_point_moved::UpdateBezierIntPointsOnBezierIntBernsteinPointMoved;
 use crate::drawing::processes::surfaces_c0::add_surface_c0_on_surface_c0_created::AddSurfaceC0OnSurfaceC0Created;
+use crate::drawing::processes::surfaces_c0::update_surface_c0_on_surface_c0_updated::UpdateSurfaceC0OnSurfaceC0Updated;
 use crate::drawing::processes::surfaces_c0::update_surface_c0_points_on_surface_c0_point_moved::UpdateSurfaceC0PointsOnSurfaceC0PointMoved;
 
 mod drawing;
@@ -251,6 +252,11 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(SurfaceC0PointsSelectedPublisher {
+            backend: app_state.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(SurfaceC0UpdatedPublisher {
             backend: app_state.clone(),
         });
 
@@ -435,6 +441,11 @@ fn main() {
             cqrs: CQRS::new(app_state.clone()),
             display: display.clone(),
         });
+    event_bus
+        .borrow_mut()
+        .add_consumer(UpdateSurfaceC0OnSurfaceC0Updated {
+            drawing_storage: drawing_storage.clone(),
+        });
 
     let torus_drawer = TorusDrawer::new(&display);
     let point_drawer = PointDrawer::new(&display);
@@ -541,7 +552,11 @@ fn main() {
                 }
 
                 for surface in drawing_storage.borrow().surfaces_c0.values() {
-                    surface_c0_drawer.draw(&mut target, &surface, &perspective, &view_matrix, color);
+                    surface_c0_drawer.draw(&mut target, &surface, &perspective, &view_matrix, color, surface.tess_level);
+                }
+
+                for surface in drawing_storage.borrow().surfaces_c0.values().filter(|s| s.draw_polygon) {
+                    polygon_drawer.draw(&mut target, &surface.vertex_buffer, &surface.polygon_index_buffer, &perspective, &view_matrix, color);
                 }
 
                 cursor_drawer.draw(&mut target, &display, &app_state.storage.cursor, &perspective, &view_matrix);

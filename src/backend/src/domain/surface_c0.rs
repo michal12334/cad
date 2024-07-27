@@ -2,6 +2,7 @@ pub struct SurfaceC0 {
     pub id: u64,
     pub name: String,
     pub draw_polygon: bool,
+    pub tess_level: u8,
     pub points: Vec<SurfaceC0Point>,
 }
 
@@ -16,6 +17,7 @@ impl SurfaceC0 {
             id,
             name: format!("SurfaceC0 {}", id),
             draw_polygon: false,
+            tess_level: 8,
             points,
         }
     }
@@ -26,5 +28,9 @@ impl SurfaceC0 {
 
     pub fn set_draw_polygon(&mut self, draw_polygon: bool) {
         self.draw_polygon = draw_polygon;
+    }
+    
+    pub fn set_tess_level(&mut self, tess_level: u8) {
+        self.tess_level = tess_level;
     }
 }

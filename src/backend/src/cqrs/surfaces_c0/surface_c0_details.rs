@@ -11,6 +11,7 @@ pub struct SurfaceC0DTO {
     pub id: u64,
     pub name: String,
     pub draw_polygon: bool,
+    pub tess_level: u8,
 }
 
 impl Query<SurfaceC0Details, SurfaceC0DTO> for SurfaceC0Details {
@@ -21,6 +22,7 @@ impl Query<SurfaceC0Details, SurfaceC0DTO> for SurfaceC0Details {
             id: surface_c0.id,
             name: surface_c0.name.clone(),
             draw_polygon: surface_c0.draw_polygon,
+            tess_level: surface_c0.tess_level,
         }
     }
 }

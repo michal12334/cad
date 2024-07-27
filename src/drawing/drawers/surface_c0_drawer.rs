@@ -141,6 +141,7 @@ impl SurfaceC0Drawer {
         perspective: &math::matrix4::Matrix4,
         view_matrix: &math::matrix4::Matrix4,
         color: [f32; 4],
+        tess_level: u8,
     ) {
         target
             .draw(
@@ -151,7 +152,7 @@ impl SurfaceC0Drawer {
                     perspective: perspective.data,
                     view: view_matrix.data,
                     obj_color: color,
-                    tess_level: 16,
+                    tess_level: tess_level as i32,
                 },
                 &self.drawing_parameters,
             )

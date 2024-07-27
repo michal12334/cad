@@ -5,6 +5,7 @@ use infrastructure::consumer::{AnyConsumer, Consumer};
 use crate::backend::Backend;
 use crate::domain::events::surfaces_c0::surface_c0_created::SurfaceC0Created;
 use crate::domain::events::surfaces_c0::surface_c0_points_selected::SurfaceC0PointsSelected;
+use crate::domain::events::surfaces_c0::surface_c0_updated::SurfaceC0Updated;
 
 pub struct SurfaceC0CreatedPublisher {
     pub backend: Rc<RefCell<Backend>>,
@@ -46,3 +47,22 @@ impl AnyConsumer for SurfaceC0PointsSelectedPublisher {
     }
 }
 
+pub struct SurfaceC0UpdatedPublisher {
+    pub backend: Rc<RefCell<Backend>>,
+}
+
+impl Consumer<SurfaceC0Updated> for SurfaceC0UpdatedPublisher {
+    fn consume(&self, message: &SurfaceC0Updated) {
+        let backend = self.backend.borrow();
+        let event = Rc::new(
+            backend_events::surfaces_c0::surface_c0_updated::SurfaceC0Updated::new(message.id, message.draw_polygon, message.tess_level),
+        );
+        backend.services.event_publisher.publish(event);
+    }
+}
+
+impl AnyConsumer for SurfaceC0UpdatedPublisher {
+    fn consume_any(&self, message: Rc<dyn Any>) {
+        self.consume_any_impl(message);
+    }
+}

@@ -53,11 +53,11 @@ impl PolygonDrawer {
         }
     }
 
-    pub fn draw(
+    pub fn draw<T: glium::index::Index>(
         &self,
         target: &mut Frame,
         vertex_buffer: &VertexBuffer<Vertex>,
-        index_buffer: &IndexBuffer<u16>,
+        index_buffer: &IndexBuffer<T>,
         perspective: &math::matrix4::Matrix4,
         view_matrix: &math::matrix4::Matrix4,
         color: [f32; 4],
