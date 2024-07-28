@@ -63,8 +63,8 @@ pub fn create_surface_c2(id: u64, create_surface_info: &CreateSurfaceInfoDTO, id
         let radius = create_surface_info.radius.unwrap();
         let height = create_surface_info.height.unwrap();
         let size = create_surface_info.size;
-        let size_x = size.0 * 3;
-        let size_y = size.1 * 3 + 1;
+        let size_x = size.0;
+        let size_y = size.1 + 3;
         let points = (0..size_x)
             .flat_map(|x| (0..size_y).map(move |y| (x, y)))
             .map(|(x, y)| {
@@ -80,7 +80,7 @@ pub fn create_surface_c2(id: u64, create_surface_info: &CreateSurfaceInfoDTO, id
             })
             .collect::<Vec<_>>();
         let surface_points = points.iter()
-            .chain(points.iter().take(size_y as usize))
+            .chain(points.iter().take(3 * size_y as usize))
             .map(|point| SurfaceC2Point { id: point.id })
             .collect();
         let surface = SurfaceC2::new(id, surface_points);
@@ -89,8 +89,8 @@ pub fn create_surface_c2(id: u64, create_surface_info: &CreateSurfaceInfoDTO, id
         let width = create_surface_info.width.unwrap();
         let length = create_surface_info.length.unwrap();
         let size = create_surface_info.size;
-        let size_x = size.0 * 3 + 1;
-        let size_y = size.1 * 3 + 1;
+        let size_x = size.0 + 3;
+        let size_y = size.1 + 3;
         let points = (0..size_x)
             .flat_map(|x| (0..size_y).map(move |y| (x, y)))
             .map(|(x, y)| {
@@ -110,4 +110,3 @@ pub fn create_surface_c2(id: u64, create_surface_info: &CreateSurfaceInfoDTO, id
         (surface, points)
     }
 }
-

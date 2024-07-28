@@ -49,6 +49,10 @@ impl Popup for AddSurfaceC2Popup {
                         egui::DragValue::new(&mut self.height).clamp_range(0.1..=100.0).speed(0.1).ui(ui);
                         ui.label("Height");
                     });
+                    ui.horizontal(|ui| {
+                        egui::DragValue::new(&mut self.size.0).clamp_range(3..=100).ui(ui);
+                        ui.label("Size X");
+                    });
                 } else {
                     ui.horizontal(|ui| { 
                         egui::DragValue::new(&mut self.length).clamp_range(0.1..=100.0).speed(0.1).ui(ui);
@@ -58,12 +62,11 @@ impl Popup for AddSurfaceC2Popup {
                         egui::DragValue::new(&mut self.width).clamp_range(0.1..=100.0).speed(0.1).ui(ui);
                         ui.label("Width");
                     });
+                    ui.horizontal(|ui| {
+                        egui::DragValue::new(&mut self.size.0).clamp_range(1..=100).ui(ui);
+                        ui.label("Size X");
+                    });
                 }
-
-                ui.horizontal(|ui| {
-                    egui::DragValue::new(&mut self.size.0).clamp_range(1..=100).ui(ui);
-                    ui.label("Size X");
-                });
 
                 ui.horizontal(|ui| {
                     egui::DragValue::new(&mut self.size.1).clamp_range(1..=100).ui(ui);

@@ -76,17 +76,19 @@ impl SurfaceC2Drawer {
                 vec4 v34 = positions[14];
                 vec4 v44 = positions[15];
 
-                float ix = 1.0 - x;
-                float b0x = ix * ix * ix;
-                float b1x = 3.0 * ix * ix * x;
-                float b2x = 3.0 * ix * x * x;
-                float b3x = x * x * x;
+                float x2 = x * x;
+                float x3 = x2 * x;
+                float b0x = (-x3 + 3 * x2 - 3 * x + 1) / 6;
+                float b1x = (3 * x3 - 6 * x2 + 4) / 6;
+                float b2x = (-3 * x3 + 3 * x2 + 3 * x + 1) / 6;
+                float b3x = (x3) / 6;
 
-                float iy = 1.0 - y;
-                float b0y = iy * iy * iy;
-                float b1y = 3.0 * iy * iy * y;
-                float b2y = 3.0 * iy * y * y;
-                float b3y = y * y * y;
+                float y2 = y * y;
+                float y3 = y2 * y;
+                float b0y = (-y3 + 3 * y2 - 3 * y + 1) / 6;
+                float b1y = (3 * y3 - 6 * y2 + 4) / 6;
+                float b2y = (-3 * y3 + 3 * y2 + 3 * y + 1) / 6;
+                float b3y = (y3) / 6;
 
                 vec4 p = b0x * (b0y * v11 + b1y * v12 + b2y * v13 + b3y * v14) +
                          b1x * (b0y * v21 + b1y * v22 + b2y * v23 + b3y * v24) +
