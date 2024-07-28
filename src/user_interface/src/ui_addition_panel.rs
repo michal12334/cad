@@ -14,6 +14,7 @@ use backend::cqrs::toruses::torus_details::TorusDetails;
 
 use crate::object::Object::{BezierC0, Point, Torus};
 use crate::popups::add_surface_c0_popup::AddSurfaceC0Popup;
+use crate::popups::add_surface_c2_popup::AddSurfaceC2Popup;
 use crate::ui::Ui;
 
 type DomainBezierC0 = crate::domain::bezier_c0::BezierC0;
@@ -67,6 +68,11 @@ impl Ui {
         ui.horizontal(|ui| {
             if ui.button("Add Surface C0").clicked() {
                 self.popup = Some(Box::new(AddSurfaceC0Popup::new()));
+            }
+        });
+        ui.horizontal(|ui| {
+            if ui.button("Add Surface C2").clicked() {
+                self.popup = Some(Box::new(AddSurfaceC2Popup::new()));
             }
         });
     }

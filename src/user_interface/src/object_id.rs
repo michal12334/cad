@@ -7,6 +7,7 @@ pub enum ObjectId {
     BezierC2(u64),
     BezierInt(u64),
     SurfaceC0(u64),
+    SurfaceC2(u64),
 }
 
 impl ObjectId {
@@ -18,6 +19,7 @@ impl ObjectId {
             ObjectId::BezierC2(id) => *id,
             ObjectId::BezierInt(id) => *id,
             ObjectId::SurfaceC0(id) => *id,
+            ObjectId::SurfaceC2(id) => *id,
         }
     }
 
@@ -29,6 +31,7 @@ impl ObjectId {
             ObjectId::BezierC2(_) => ObjectTypeDTO::BezierC2,
             ObjectId::BezierInt(_) => ObjectTypeDTO::BezierInt,
             ObjectId::SurfaceC0(_) => ObjectTypeDTO::SurfaceC0,
+            ObjectId::SurfaceC2(_) => ObjectTypeDTO::SurfaceC2,
         }
     }
 }

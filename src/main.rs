@@ -32,9 +32,12 @@ use backend::processes::beziers_int::update_bezier_int_points_on_point_moved::Up
 use backend::processes::points::publishers::PointMovedPublisher;
 use backend::processes::surfaces_c0::move_surface_c0_point_on_point_moved::MoveSurfaceC0PointOnPointMoved;
 use backend::processes::surfaces_c0::publishers::{SurfaceC0CreatedPublisher, SurfaceC0PointsSelectedPublisher, SurfaceC0UpdatedPublisher};
+use backend::processes::surfaces_c2::move_surface_c2_point_on_point_moved::MoveSurfaceC2PointOnPointMoved;
+use backend::processes::surfaces_c2::publishers::{SurfaceC2CreatedPublisher, SurfaceC2PointsSelectedPublisher, SurfaceC2UpdatedPublisher};
 use infrastructure::event_bus::EventBus;
 use math::vector4::Vector4;
-use user_interface::processes::selected_surface_c0_poins_on_surface_c0_points_selected::SelectedSurfaceC0PointsOnSurfaceC0PointsSelected;
+use user_interface::processes::selected_surface_c0_points_on_surface_c0_points_selected::SelectedSurfaceC0PointsOnSurfaceC0PointsSelected;
+use user_interface::processes::selected_surface_c2_points_on_surface_c2_points_selected::SelectedSurfaceC2PointsOnSurfaceC2PointsSelected;
 use user_interface::processes::sync_bezier_c0_with_backend::{
     SyncBezierC0AddedPointsWithBackend, SyncBezierC0DeletedPointsWithBackend,
     SyncBezierC0NameWithBackend,
@@ -52,6 +55,7 @@ use crate::drawing::drawers::point_drawer::PointDrawer;
 use crate::drawing::drawers::points_drawer::PointsDrawer;
 use crate::drawing::drawers::polygon_drawer::PolygonDrawer;
 use crate::drawing::drawers::surface_c0_drawer::SurfaceC0Drawer;
+use crate::drawing::drawers::surface_c2_drawer::SurfaceC2Drawer;
 use crate::drawing::drawers::torus_drawer::TorusDrawer;
 use crate::drawing::drawing_storage::DrawingStorage;
 use crate::drawing::processes::beziers_c0::add_bezier_c0_on_bezier_c0_created::AddBezierC0OnBezierC0Created;
@@ -77,6 +81,9 @@ use crate::drawing::processes::beziers_int::update_bezier_int_points_on_bezier_i
 use crate::drawing::processes::surfaces_c0::add_surface_c0_on_surface_c0_created::AddSurfaceC0OnSurfaceC0Created;
 use crate::drawing::processes::surfaces_c0::update_surface_c0_on_surface_c0_updated::UpdateSurfaceC0OnSurfaceC0Updated;
 use crate::drawing::processes::surfaces_c0::update_surface_c0_points_on_surface_c0_point_moved::UpdateSurfaceC0PointsOnSurfaceC0PointMoved;
+use crate::drawing::processes::surfaces_c2::add_surface_c2_on_surface_c2_created::AddSurfaceC2OnSurfaceC2Created;
+use crate::drawing::processes::surfaces_c2::update_surface_c2_on_surface_c2_updated::UpdateSurfaceC2OnSurfaceC2Updated;
+use crate::drawing::processes::surfaces_c2::update_surface_c2_points_on_surface_c2_point_moved::UpdateSurfaceC2PointsOnSurfaceC2PointMoved;
 
 mod drawing;
 
@@ -259,6 +266,26 @@ fn main() {
         .add_consumer(SurfaceC0UpdatedPublisher {
             backend: app_state.clone(),
         });
+    event_bus
+        .borrow_mut()
+        .add_consumer(SurfaceC2CreatedPublisher {
+            backend: app_state.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(MoveSurfaceC2PointOnPointMoved {
+            backend: app_state.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(SurfaceC2PointsSelectedPublisher {
+            backend: app_state.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(SurfaceC2UpdatedPublisher {
+            backend: app_state.clone(),
+        });
 
     event_bus
         .borrow_mut()
@@ -299,6 +326,12 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(SelectedSurfaceC0PointsOnSurfaceC0PointsSelected {
+            ui: ui.clone(),
+            cqrs: CQRS::new(app_state.clone()),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(SelectedSurfaceC2PointsOnSurfaceC2PointsSelected {
             ui: ui.clone(),
             cqrs: CQRS::new(app_state.clone()),
         });
@@ -446,6 +479,25 @@ fn main() {
         .add_consumer(UpdateSurfaceC0OnSurfaceC0Updated {
             drawing_storage: drawing_storage.clone(),
         });
+    event_bus
+        .borrow_mut()
+        .add_consumer(AddSurfaceC2OnSurfaceC2Created {
+            drawing_storage: drawing_storage.clone(),
+            cqrs: CQRS::new(app_state.clone()),
+            display: display.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(UpdateSurfaceC2PointsOnSurfaceC2PointMoved {
+            drawing_storage: drawing_storage.clone(),
+            cqrs: CQRS::new(app_state.clone()),
+            display: display.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(UpdateSurfaceC2OnSurfaceC2Updated {
+            drawing_storage: drawing_storage.clone(),
+        });
 
     let torus_drawer = TorusDrawer::new(&display);
     let point_drawer = PointDrawer::new(&display);
@@ -457,6 +509,7 @@ fn main() {
     let polygon_drawer = PolygonDrawer::new(&display);
     let points_drawer = PointsDrawer::new(&display);
     let surface_c0_drawer = SurfaceC0Drawer::new(&display);
+    let surface_c2_drawer = SurfaceC2Drawer::new(&display);
 
     let mut mouse_position = (0.0, 0.0);
     let mut camera_direction = math::vector3::Vector3::new(0.0f32, 0.0, 1.0);
@@ -556,6 +609,14 @@ fn main() {
                 }
 
                 for surface in drawing_storage.borrow().surfaces_c0.values().filter(|s| s.draw_polygon) {
+                    polygon_drawer.draw(&mut target, &surface.vertex_buffer, &surface.polygon_index_buffer, &perspective, &view_matrix, color);
+                }
+
+                for surface in drawing_storage.borrow().surfaces_c2.values() {
+                    surface_c2_drawer.draw(&mut target, &surface, &perspective, &view_matrix, color, surface.tess_level);
+                }
+
+                for surface in drawing_storage.borrow().surfaces_c2.values().filter(|s| s.draw_polygon) {
                     polygon_drawer.draw(&mut target, &surface.vertex_buffer, &surface.polygon_index_buffer, &perspective, &view_matrix, color);
                 }
 

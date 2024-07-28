@@ -27,6 +27,10 @@ use backend::cqrs::surfaces_c0::select_surface_c0_points::SelectSurfaceC0Points;
 use backend::cqrs::surfaces_c0::surface_c0_details::SurfaceC0DTO;
 use backend::cqrs::surfaces_c0::surface_c0_points::SurfaceC0Points;
 use backend::cqrs::surfaces_c0::update_surface_c0::UpdateSurfaceC0;
+use backend::cqrs::surfaces_c2::rename_surface_c2::RenameSurfaceC2;
+use backend::cqrs::surfaces_c2::select_surface_c2_points::SelectSurfaceC2Points;
+use backend::cqrs::surfaces_c2::surface_c2_details::SurfaceC2DTO;
+use backend::cqrs::surfaces_c2::update_surface_c2::UpdateSurfaceC2;
 use backend::cqrs::toruses::rename_torus::RenameTorus;
 use backend::cqrs::toruses::torus_details::{TorusDTO, TorusDetails, TransformerDTO};
 use backend::cqrs::toruses::transform_torus::TransformTours;
@@ -128,6 +132,9 @@ impl Ui {
             }
             Object::SurfaceC0(surface) => {
                 Ui::build_surface_c0_transformation_panel(ui, cqrs, surface);
+            }
+            Object::SurfaceC2(surface) => {
+                Ui::build_surface_c2_transformation_panel(ui, cqrs, surface);
             }
         }
     }
@@ -810,6 +817,40 @@ impl Ui {
         
         if ui.checkbox(&mut surface.draw_polygon, "Draw Polygon").changed() {
             cqrs.execute(&UpdateSurfaceC0 {
+                id: surface.id,
+                tess_level: surface.tess_level,
+                draw_polygon: surface.draw_polygon,
+            });
+        }
+    }
+
+    fn build_surface_c2_transformation_panel(ui: &mut egui::Ui, cqrs: &mut CQRS, surface: &mut SurfaceC2DTO) {
+        if ui.text_edit_singleline(&mut surface.name).lost_focus() {
+            cqrs.execute(&RenameSurfaceC2 {
+                id: surface.id,
+                name: surface.name.clone(),
+            });
+        }
+
+        if ui.button("Select points").clicked() {
+            cqrs.execute(&SelectSurfaceC2Points { surface_id: surface.id, });
+        }
+
+        ui.horizontal(|ui| {
+            ui.label("Tessellation level");
+            if DragValue::new(&mut surface.tess_level)
+                .clamp_range(2..=64)
+                .ui(ui).changed() {
+                cqrs.execute(&UpdateSurfaceC2 {
+                    id: surface.id,
+                    tess_level: surface.tess_level,
+                    draw_polygon: surface.draw_polygon,
+                });
+            }
+        });
+
+        if ui.checkbox(&mut surface.draw_polygon, "Draw Polygon").changed() {
+            cqrs.execute(&UpdateSurfaceC2 {
                 id: surface.id,
                 tess_level: surface.tess_level,
                 draw_polygon: surface.draw_polygon,

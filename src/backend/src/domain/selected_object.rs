@@ -5,6 +5,7 @@ pub struct SelectedObject {
     pub bezier_c2_id: Option<u64>,
     pub bezier_int_id: Option<u64>,
     pub surface_c0_id: Option<u64>,
+    pub surface_c2_id: Option<u64>,
 }
 
 impl SelectedObject {
@@ -16,6 +17,7 @@ impl SelectedObject {
             bezier_c2_id: None,
             bezier_int_id: None,
             surface_c0_id: None,
+            surface_c2_id: None,
         }
     }
 
@@ -27,6 +29,7 @@ impl SelectedObject {
             bezier_c2_id: None,
             bezier_int_id: None,
             surface_c0_id: None,
+            surface_c2_id: None,
         }
     }
 
@@ -38,6 +41,7 @@ impl SelectedObject {
             bezier_c2_id: None,
             bezier_int_id: None,
             surface_c0_id: None,
+            surface_c2_id: None,
         }
     }
 
@@ -49,6 +53,7 @@ impl SelectedObject {
             bezier_c2_id: Some(bezier_c2_id),
             bezier_int_id: None,
             surface_c0_id: None,
+            surface_c2_id: None,
         }
     }
 
@@ -60,6 +65,7 @@ impl SelectedObject {
             bezier_c2_id: None,
             bezier_int_id: Some(bezier_int_id),
             surface_c0_id: None,
+            surface_c2_id: None,
         }
     }
     
@@ -71,6 +77,19 @@ impl SelectedObject {
             bezier_c2_id: None,
             bezier_int_id: None,
             surface_c0_id: Some(surface_c0_id),
+            surface_c2_id: None,
+        }
+    }
+    
+    pub fn new_surface_c2(surface_c2_id: u64) -> Self {
+        Self {
+            torus_id: None,
+            point_id: None,
+            bezier_c0_id: None,
+            bezier_c2_id: None,
+            bezier_int_id: None,
+            surface_c0_id: None,
+            surface_c2_id: Some(surface_c2_id),
         }
     }
 }

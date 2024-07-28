@@ -1,13 +1,14 @@
 use egui::{Context, Widget};
 use backend::cqrs::cqrs::CQRS;
 use backend::cqrs::common::new_id::NewId;
-use backend::cqrs::surfaces_c0::create_surface_c0::{CreateSurfaceC0, CreateSurfaceInfoDTO};
-use backend::cqrs::surfaces_c0::surface_c0_details::SurfaceC0Details;
-use backend::cqrs::surfaces_c0::surface_c0_points::SurfaceC0Points;
+use backend::cqrs::surfaces_c0::create_surface_c0::CreateSurfaceInfoDTO;
+use backend::cqrs::surfaces_c2::create_surface_c2::CreateSurfaceC2;
+use backend::cqrs::surfaces_c2::surface_c2_details::SurfaceC2Details;
+use backend::cqrs::surfaces_c2::surface_c2_points::SurfaceC2Points;
 use crate::object::Object;
 use crate::popups::popup::Popup;
 
-pub struct AddSurfaceC0Popup {
+pub struct AddSurfaceC2Popup {
     is_closed: bool,
     pub is_cylinder: bool,
     pub length: f64,
@@ -17,7 +18,7 @@ pub struct AddSurfaceC0Popup {
     pub size: (u32, u32),
 }
 
-impl AddSurfaceC0Popup {
+impl AddSurfaceC2Popup {
     pub fn new() -> Self {
         Self {
             is_closed: false,
@@ -31,11 +32,11 @@ impl AddSurfaceC0Popup {
     }
 }
 
-impl Popup for AddSurfaceC0Popup {
+impl Popup for AddSurfaceC2Popup {
     fn build(&mut self, cqrs: &mut CQRS, context: &Context) -> Vec<Object> {
         let mut result = vec![];
         
-        egui::Window::new("Add Surface C0")
+        egui::Window::new("Add Surface C2")
             .show(context, |ui| {
                 ui.checkbox(&mut self.is_cylinder, "Cylinder");
                 
@@ -72,7 +73,7 @@ impl Popup for AddSurfaceC0Popup {
                 ui.horizontal(|ui| {
                     if ui.button("Create").clicked() {
                         let id = cqrs.handle(&NewId {});
-                        cqrs.execute(&CreateSurfaceC0 {
+                        cqrs.execute(&CreateSurfaceC2 {
                             id,
                             create_surface_info: CreateSurfaceInfoDTO {
                                 is_cylinder: self.is_cylinder,
@@ -84,10 +85,10 @@ impl Popup for AddSurfaceC0Popup {
                             },
                         });
                         
-                        let surface = cqrs.get(&SurfaceC0Details { id });
-                        let points = cqrs.get(&SurfaceC0Points { id });
+                        let surface = cqrs.get(&SurfaceC2Details { id });
+                        let points = cqrs.get(&SurfaceC2Points { id });
                         
-                        result.push(Object::SurfaceC0(surface));
+                        result.push(Object::SurfaceC2(surface));
                         for point in points {
                             result.push(Object::Point(point));
                         }
