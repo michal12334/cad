@@ -1,3 +1,4 @@
+use rfd::FileDialog;
 use crate::object::Object;
 use backend::cqrs::beziers_c0::add_bezier_c0::AddBezierC0;
 use backend::cqrs::beziers_c0::bezier_c0_details::BezierC0Details;
@@ -76,7 +77,12 @@ impl Ui {
         });
         ui.horizontal(|ui| {
             if ui.button("Save").clicked() {
-                cqrs.execute(&SaveScene { file_path: "scene.json".to_string() });
+                let path = FileDialog::new().save_file();
+                if let Some(path) = path {
+                    cqrs.execute(&SaveScene {
+                        file_path: path.to_str().unwrap().to_string(),
+                    });
+                }
             }
         });
     }

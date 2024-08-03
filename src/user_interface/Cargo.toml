@@ -9,6 +9,7 @@ edition = "2021"
 chrono = "0.4.38"
 egui = "0.23.0"
 itertools = "0.12.1"
+rfd = "0.13.0"
 
 backend = { path = "../backend" }
 backend_events = { path = "../backend_events" }
