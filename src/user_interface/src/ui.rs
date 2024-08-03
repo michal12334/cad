@@ -33,6 +33,7 @@ pub struct Ui {
     pub previous_group_transformation: Option<TransformerDTO>,
     pub previous_time: DateTime<Local>,
     pub popup: Option<Box<dyn Popup>>,
+    pub filter: String,
 }
 
 impl Ui {
@@ -48,6 +49,7 @@ impl Ui {
             previous_group_transformation: None,
             previous_time: Local::now(),
             popup: None,
+            filter: String::new(),
         }
     }
 
