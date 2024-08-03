@@ -12,3 +12,5 @@ itertools = "0.12.1"
 math = { path = "../math" }
 infrastructure = { path = "../infrastructure" }
 backend_events = { path = "../backend_events" }
+serde = { version = "1.0.204", features = ["derive"] }
+serde_json = "1.0.122"

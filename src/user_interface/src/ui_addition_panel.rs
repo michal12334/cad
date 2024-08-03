@@ -6,6 +6,7 @@ use backend::cqrs::beziers_c2::bezier_c2_details::BezierC2Details;
 use backend::cqrs::beziers_int::add_bezier_int::AddBezierInt;
 use backend::cqrs::beziers_int::bezier_int_details::BezierIntDetails;
 use backend::cqrs::common::new_id::NewId;
+use backend::cqrs::common::save_scene::SaveScene;
 use backend::cqrs::cqrs::CQRS;
 use backend::cqrs::points::add_point::AddPoint;
 use backend::cqrs::points::point_details::PointDetails;
@@ -69,10 +70,13 @@ impl Ui {
             if ui.button("Add Surface C0").clicked() {
                 self.popup = Some(Box::new(AddSurfaceC0Popup::new()));
             }
-        });
-        ui.horizontal(|ui| {
             if ui.button("Add Surface C2").clicked() {
                 self.popup = Some(Box::new(AddSurfaceC2Popup::new()));
+            }
+        });
+        ui.horizontal(|ui| {
+            if ui.button("Save").clicked() {
+                cqrs.execute(&SaveScene { file_path: "scene.json".to_string() });
             }
         });
     }
