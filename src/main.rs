@@ -29,6 +29,7 @@ use backend::processes::beziers_c2::publishers::{BezierC2CreatedPublisher, Bezie
 use backend::processes::beziers_int::add_point_to_selected_bezier_int_on_point_created::AddPointToSelectedBezierIntOnPointCreated;
 use backend::processes::beziers_int::publishers::{BezierIntBernsteinPointMovedPublisher, BezierIntCreatedPublisher, BezierIntDeletedPublisher, BezierIntPointsDeletedPublisher, PointAddedToBezierIntPublisher};
 use backend::processes::beziers_int::update_bezier_int_points_on_point_moved::UpdateBezierIntPointsOnPointMoved;
+use backend::processes::common::publishers::SceneLoadedPublisher;
 use backend::processes::points::publishers::PointMovedPublisher;
 use backend::processes::surfaces_c0::move_surface_c0_point_on_point_moved::MoveSurfaceC0PointOnPointMoved;
 use backend::processes::surfaces_c0::publishers::{SurfaceC0CreatedPublisher, SurfaceC0PointsSelectedPublisher, SurfaceC0UpdatedPublisher};
@@ -36,6 +37,7 @@ use backend::processes::surfaces_c2::move_surface_c2_point_on_point_moved::MoveS
 use backend::processes::surfaces_c2::publishers::{SurfaceC2CreatedPublisher, SurfaceC2PointsSelectedPublisher, SurfaceC2UpdatedPublisher};
 use infrastructure::event_bus::EventBus;
 use math::vector4::Vector4;
+use user_interface::processes::fetch_objects_on_scene_loaded::FetchObjectsOnSceneLoaded;
 use user_interface::processes::selected_surface_c0_points_on_surface_c0_points_selected::SelectedSurfaceC0PointsOnSurfaceC0PointsSelected;
 use user_interface::processes::selected_surface_c2_points_on_surface_c2_points_selected::SelectedSurfaceC2PointsOnSurfaceC2PointsSelected;
 use user_interface::processes::sync_bezier_c0_with_backend::{
@@ -78,6 +80,7 @@ use crate::drawing::processes::beziers_int::add_point_to_bezier_int_on_point_add
 use crate::drawing::processes::beziers_int::delete_bezier_int_on_bezier_int_deleted::DeleteBezierIntOnBezierIntDeleted;
 use crate::drawing::processes::beziers_int::delete_bezier_int_points_on_bezier_int_points_deleted::DeleteBezierIntPointsOnBezierIntPointsDeleted;
 use crate::drawing::processes::beziers_int::update_bezier_int_points_on_bezier_int_bernstein_point_moved::UpdateBezierIntPointsOnBezierIntBernsteinPointMoved;
+use crate::drawing::processes::common::rebuild_storage_on_scene_loaded::RebuildStorageOnSceneLoaded;
 use crate::drawing::processes::surfaces_c0::add_surface_c0_on_surface_c0_created::AddSurfaceC0OnSurfaceC0Created;
 use crate::drawing::processes::surfaces_c0::update_surface_c0_on_surface_c0_updated::UpdateSurfaceC0OnSurfaceC0Updated;
 use crate::drawing::processes::surfaces_c0::update_surface_c0_points_on_surface_c0_point_moved::UpdateSurfaceC0PointsOnSurfaceC0PointMoved;
@@ -286,6 +289,11 @@ fn main() {
         .add_consumer(SurfaceC2UpdatedPublisher {
             backend: app_state.clone(),
         });
+    event_bus
+        .borrow_mut()
+        .add_consumer(SceneLoadedPublisher {
+            backend: app_state.clone(),
+        });
 
     event_bus
         .borrow_mut()
@@ -332,6 +340,12 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(SelectedSurfaceC2PointsOnSurfaceC2PointsSelected {
+            ui: ui.clone(),
+            cqrs: CQRS::new(app_state.clone()),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(FetchObjectsOnSceneLoaded {
             ui: ui.clone(),
             cqrs: CQRS::new(app_state.clone()),
         });
@@ -497,6 +511,13 @@ fn main() {
         .borrow_mut()
         .add_consumer(UpdateSurfaceC2OnSurfaceC2Updated {
             drawing_storage: drawing_storage.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(RebuildStorageOnSceneLoaded {
+            drawing_storage: drawing_storage.clone(),
+            cqrs: CQRS::new(app_state.clone()),
+            display: display.clone(),
         });
 
     let torus_drawer = TorusDrawer::new(&display);
@@ -697,7 +718,7 @@ fn main() {
                         } else if input.virtual_keycode == Some(event::VirtualKeyCode::Delete) && input.state == Pressed {
                             let mut cqrs = CQRS::new(app_state.clone());
                             cqrs.execute(&backend::cqrs::common::delete_selected_objects::DeleteSelectedObjects);
-                            ui.borrow_mut().fetch_objects(&mut cqrs);
+                            ui.borrow_mut().fetch_objects(&cqrs);
                         }
                     }
                     _ => {}

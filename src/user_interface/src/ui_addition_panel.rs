@@ -6,6 +6,7 @@ use backend::cqrs::beziers_c2::add_bezier_c2::AddBezierC2;
 use backend::cqrs::beziers_c2::bezier_c2_details::BezierC2Details;
 use backend::cqrs::beziers_int::add_bezier_int::AddBezierInt;
 use backend::cqrs::beziers_int::bezier_int_details::BezierIntDetails;
+use backend::cqrs::common::load_scene::LoadScene;
 use backend::cqrs::common::new_id::NewId;
 use backend::cqrs::common::save_scene::SaveScene;
 use backend::cqrs::cqrs::CQRS;
@@ -80,6 +81,14 @@ impl Ui {
                 let path = FileDialog::new().save_file();
                 if let Some(path) = path {
                     cqrs.execute(&SaveScene {
+                        file_path: path.to_str().unwrap().to_string(),
+                    });
+                }
+            }
+            if ui.button("Load").clicked() {
+                let path = FileDialog::new().pick_file();
+                if let Some(path) = path {
+                    cqrs.execute(&LoadScene {
                         file_path: path.to_str().unwrap().to_string(),
                     });
                 }

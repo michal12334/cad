@@ -16,6 +16,14 @@ impl Point {
         }
     }
 
+    pub fn new_with_name(id: u64, name: String, transformer: LittleTransformer) -> Self {
+        Self {
+            id,
+            name,
+            transformer,
+        }
+    }
+
     pub fn transform(&mut self, position: (f64, f64, f64)) {
         self.transformer.position = position;
     }

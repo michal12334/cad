@@ -61,7 +61,7 @@ impl Ui {
         self.control_pressed = control_pressed;
     }
 
-    pub fn fetch_objects(&mut self, cqrs: &mut CQRS) {
+    pub fn fetch_objects(&mut self, cqrs: &CQRS) {
         self.objects = cqrs
             .get(&AllToruses)
             .iter()
