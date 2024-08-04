@@ -1,4 +1,5 @@
 use egui::{Context, Widget};
+use itertools::Itertools;
 use backend::cqrs::cqrs::CQRS;
 use backend::cqrs::common::new_id::NewId;
 use backend::cqrs::surfaces_c0::create_surface_c0::{CreateSurfaceC0, CreateSurfaceInfoDTO};
@@ -88,7 +89,7 @@ impl Popup for AddSurfaceC0Popup {
                         let points = cqrs.get(&SurfaceC0Points { id });
                         
                         result.push(Object::SurfaceC0(surface));
-                        for point in points {
+                        for point in points.into_iter().unique_by(|p| p.id) {
                             result.push(Object::Point(point));
                         }
 
