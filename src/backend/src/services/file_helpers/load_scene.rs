@@ -1,6 +1,8 @@
 use crate::data_access::storage::Storage;
 use crate::domain::point::Point;
-use crate::domain::transformer::LittleTransformer;
+use crate::domain::torus::Torus;
+use crate::domain::transformer::{LittleTransformer, Transformer};
+use crate::services::file_helpers::geometry_obj::GeometryObj;
 use crate::services::file_helpers::scene::Scene;
 
 pub fn load_scene(storage: &mut Storage, file_path: &str) {
@@ -14,6 +16,21 @@ pub fn load_scene(storage: &mut Storage, file_path: &str) {
             LittleTransformer {
                 position: (point.position.x, point.position.y, point.position.z),
             }
+        ));
+    }
+    for torus in scene.geometry.iter().filter_map(|g| if let GeometryObj::Torus(torus) = g { Some(torus) } else { None } ) {
+        storage.toruses.insert(torus.id, Torus::new_with_name(
+            torus.id,
+            torus.name.clone(),
+            torus.large_radius,
+            torus.small_radius,
+            torus.samples.y,
+            torus.samples.x,
+            Transformer {
+                position: (torus.position.x, torus.position.y, torus.position.z),
+                rotation: (torus.rotation.x, torus.rotation.y, torus.rotation.z, 1f64),
+                scale: (torus.scale.x, torus.scale.y, torus.scale.z),
+            },
         ));
     }
 }

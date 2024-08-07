@@ -37,6 +37,29 @@ impl Torus {
         }
     }
 
+    pub fn new_with_name(
+        id: u64,
+        name: String,
+        major_radius: f64,
+        minor_radius: f64,
+        major_segments: u32,
+        minor_segments: u32,
+        transformer: Transformer,
+    ) -> Self {
+        let mesh = Mesh::from_torus(major_radius, minor_radius, major_segments, minor_segments);
+
+        Self {
+            id,
+            name,
+            major_radius,
+            minor_radius,
+            major_segments,
+            minor_segments,
+            transformer,
+            mesh,
+        }
+    }
+
     pub fn update(
         &mut self,
         major_radius: f64,
