@@ -1,3 +1,4 @@
+use math::operations::quaternion_to_euler;
 use crate::data_access::storage::Storage;
 use crate::services::file_helpers::geometry_obj::GeometryObj;
 use crate::services::file_helpers::point::Point;
@@ -29,11 +30,7 @@ pub fn save_scene(storage: &Storage, file_path: &str) {
                     y: t.transformer.position.1,
                     z: t.transformer.position.2,
                 },
-                rotation: Xyz {
-                    x: t.transformer.rotation.0,
-                    y: t.transformer.rotation.1,
-                    z: t.transformer.rotation.2,
-                },
+                rotation: Xyz::from_tuple(quaternion_to_euler(t.transformer.rotation)),
                 scale: Xyz {
                     x: t.transformer.scale.0,
                     y: t.transformer.scale.1,

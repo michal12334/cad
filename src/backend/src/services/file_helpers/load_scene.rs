@@ -1,3 +1,4 @@
+use math::operations::euler_to_quaternion;
 use crate::data_access::storage::Storage;
 use crate::domain::point::Point;
 use crate::domain::torus::Torus;
@@ -28,7 +29,7 @@ pub fn load_scene(storage: &mut Storage, file_path: &str) {
             torus.samples.x,
             Transformer {
                 position: (torus.position.x, torus.position.y, torus.position.z),
-                rotation: (torus.rotation.x, torus.rotation.y, torus.rotation.z, 1f64),
+                rotation: euler_to_quaternion(torus.rotation.x, torus.rotation.y, torus.rotation.z),
                 scale: (torus.scale.x, torus.scale.y, torus.scale.z),
             },
         ));
