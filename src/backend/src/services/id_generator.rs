@@ -12,4 +12,8 @@ impl IdGenerator {
         self.next_id += 1;
         id
     }
+    
+    pub fn set_next_id(&mut self, next_id: u64) {
+        self.next_id = next_id;
+    }
 }
