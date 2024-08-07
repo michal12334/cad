@@ -7,3 +7,4 @@ mod geometry_obj;
 mod torus;
 mod bezier_c2;
 mod bezier_int;
+mod bezier_c0;

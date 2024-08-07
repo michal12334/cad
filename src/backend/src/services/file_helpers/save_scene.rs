@@ -1,5 +1,6 @@
 use math::operations::quaternion_to_euler;
 use crate::data_access::storage::Storage;
+use crate::services::file_helpers::bezier_c0::{BezierC0, BezierC0Point};
 use crate::services::file_helpers::bezier_c2::{BezierC2, BezierC2Point};
 use crate::services::file_helpers::bezier_int::{BezierInt, BezierIntPoint};
 use crate::services::file_helpers::geometry_obj::GeometryObj;
@@ -45,6 +46,18 @@ pub fn save_scene(storage: &Storage, file_path: &str) {
                     y: t.major_segments,
                 },
             }))
+            .chain(storage.beziers_c0
+                .values()
+                .map(|b| GeometryObj::BezierC0(BezierC0 {
+                    id: b.id,
+                    name: b.name.clone(),
+                    control_points: b.points
+                        .iter()
+                        .map(|p| BezierC0Point {
+                            id: p.id,
+                        })
+                        .collect(),
+                })))
             .chain(storage.beziers_c2
                 .values()
                 .map(|b| GeometryObj::BezierC2(BezierC2 {

@@ -19,6 +19,15 @@ impl BezierC0 {
         }
     }
 
+    pub fn new_with_name(id: u64, name: String, points: Vec<BezierC0Point>) -> Self {
+        Self {
+            id,
+            name,
+            draw_polygon: false,
+            points,
+        }
+    }
+
     pub fn add_point(&mut self, point: BezierC0Point) {
         self.points.push(point);
     }
