@@ -1,5 +1,6 @@
 use math::operations::euler_to_quaternion;
 use crate::data_access::storage::Storage;
+use crate::domain::bezier_c2::BezierC2;
 use crate::domain::point::Point;
 use crate::domain::torus::Torus;
 use crate::domain::transformer::{LittleTransformer, Transformer};
@@ -32,6 +33,14 @@ pub fn load_scene(storage: &mut Storage, file_path: &str) {
                 rotation: euler_to_quaternion(torus.rotation.x, torus.rotation.y, torus.rotation.z),
                 scale: (torus.scale.x, torus.scale.y, torus.scale.z),
             },
+        ));
+    }
+    for bezier_c2 in scene.geometry.iter().filter_map(|g| if let GeometryObj::BezierC2(bezier) = g { Some(bezier) } else { None } ) {
+        let points = bezier_c2.de_boor_points.iter().map(|p| storage.points.get(&p.id).unwrap().clone()).collect();
+        storage.beziers_c2.insert(bezier_c2.id, BezierC2::new_with_name(
+            bezier_c2.id,
+            bezier_c2.name.clone(),
+            points,
         ));
     }
 }

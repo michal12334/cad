@@ -5,3 +5,4 @@ mod xyz;
 pub mod load_scene;
 mod geometry_obj;
 mod torus;
+mod bezier_c2;

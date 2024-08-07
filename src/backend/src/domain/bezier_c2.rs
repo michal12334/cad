@@ -41,6 +41,26 @@ impl BezierC2 {
         }
     }
 
+    pub fn new_with_name(id: u64, name: String, b_spline_points: Vec<Point>) -> Self {
+        let bernstein_points = Self::get_bernstein_points(&b_spline_points);
+
+        let b_spline_points = b_spline_points
+            .iter()
+            .map(|point| BezierC2BSplinePoint { id: point.id })
+            .collect();
+
+        Self {
+            id,
+            name,
+            draw_b_spline_polygon: false,
+            draw_bernstein_polygon: false,
+            draw_bernstein_points: false,
+            b_spline_points,
+            bernstein_points,
+            selected_bernstein_point: None,
+        }
+    }
+
     pub fn update_points(&mut self, b_spline_points: Vec<Point>) {
         self.b_spline_points = b_spline_points
             .iter()
