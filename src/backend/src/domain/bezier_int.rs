@@ -35,6 +35,22 @@ impl BezierInt {
         }
     }
 
+    pub fn new_with_name(id: u64, name: String, points: Vec<Point>) -> Self {
+        let bernstein_points = Self::get_bernstein_points(&points);
+
+        let points = points
+            .iter()
+            .map(|point| BezierIntPoint { id: point.id })
+            .collect();
+
+        Self {
+            id,
+            name,
+            points,
+            bernstein_points,
+        }
+    }
+
     pub fn rename(&mut self, name: &str) {
         self.name = name.to_string();
     }

@@ -1,6 +1,7 @@
 use math::operations::euler_to_quaternion;
 use crate::data_access::storage::Storage;
 use crate::domain::bezier_c2::BezierC2;
+use crate::domain::bezier_int::BezierInt;
 use crate::domain::point::Point;
 use crate::domain::torus::Torus;
 use crate::domain::transformer::{LittleTransformer, Transformer};
@@ -40,6 +41,14 @@ pub fn load_scene(storage: &mut Storage, file_path: &str) {
         storage.beziers_c2.insert(bezier_c2.id, BezierC2::new_with_name(
             bezier_c2.id,
             bezier_c2.name.clone(),
+            points,
+        ));
+    }
+    for bezier_int in scene.geometry.iter().filter_map(|g| if let GeometryObj::InterpolatedC2(bezier) = g { Some(bezier) } else { None } ) {
+        let points = bezier_int.control_points.iter().map(|p| storage.points.get(&p.id).unwrap().clone()).collect();
+        storage.beziers_int.insert(bezier_int.id, BezierInt::new_with_name(
+            bezier_int.id,
+            bezier_int.name.clone(),
             points,
         ));
     }

@@ -1,6 +1,7 @@
 use math::operations::quaternion_to_euler;
 use crate::data_access::storage::Storage;
 use crate::services::file_helpers::bezier_c2::{BezierC2, BezierC2Point};
+use crate::services::file_helpers::bezier_int::{BezierInt, BezierIntPoint};
 use crate::services::file_helpers::geometry_obj::GeometryObj;
 use crate::services::file_helpers::point::Point;
 use crate::services::file_helpers::scene::Scene;
@@ -52,6 +53,18 @@ pub fn save_scene(storage: &Storage, file_path: &str) {
                     de_boor_points: b.b_spline_points
                         .iter()
                         .map(|p| BezierC2Point {
+                            id: p.id,
+                        })
+                        .collect(),
+                })))
+            .chain(storage.beziers_int
+                .values()
+                .map(|b| GeometryObj::InterpolatedC2(BezierInt {
+                    id: b.id,
+                    name: b.name.clone(),
+                    control_points: b.points
+                        .iter()
+                        .map(|p| BezierIntPoint {
                             id: p.id,
                         })
                         .collect(),
