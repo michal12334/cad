@@ -7,6 +7,7 @@ use std::ops::Deref;
 use std::rc::Rc;
 
 use egui::Color32;
+use egui_winit::State;
 use glium::Surface;
 use winit::event::ElementState::Pressed;
 use winit::event::MouseButton;
@@ -719,6 +720,8 @@ fn main() {
                             let mut cqrs = CQRS::new(app_state.clone());
                             cqrs.execute(&backend::cqrs::common::delete_selected_objects::DeleteSelectedObjects);
                             ui.borrow_mut().fetch_objects(&cqrs);
+                        } else if input.virtual_keycode == Some(event::VirtualKeyCode::C) && input.state == Pressed { 
+                            mouse_middle_button_pressed = !mouse_middle_button_pressed;
                         }
                     }
                     _ => {}
