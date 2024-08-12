@@ -10,6 +10,6 @@ pub struct SaveScene {
 
 impl Command<SaveScene> for SaveScene {
     fn execute(command: &SaveScene, app_state: Rc<RefCell<Backend>>) {
-        save_scene(&app_state.borrow().storage, &command.file_path);
+        save_scene(&app_state.borrow().storage, &command.file_path, &mut app_state.borrow().services.id_generator.clone());
     }
 }

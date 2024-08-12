@@ -4,6 +4,7 @@ pub struct SurfaceC0 {
     pub draw_polygon: bool,
     pub tess_level: u8,
     pub points: Vec<SurfaceC0Point>,
+    pub size: (u32, u32),
 }
 
 #[derive(Clone)]
@@ -12,13 +13,14 @@ pub struct SurfaceC0Point {
 }
 
 impl SurfaceC0 {
-    pub fn new(id: u64, points: Vec<SurfaceC0Point>) -> Self {
+    pub fn new(id: u64, points: Vec<SurfaceC0Point>, size: (u32, u32)) -> Self {
         Self {
             id,
             name: format!("SurfaceC0 {}", id),
             draw_polygon: false,
             tess_level: 8,
             points,
+            size,
         }
     }
 

@@ -6,10 +6,12 @@ use crate::services::file_helpers::bezier_int::{BezierInt, BezierIntPoint};
 use crate::services::file_helpers::geometry_obj::GeometryObj;
 use crate::services::file_helpers::point::Point;
 use crate::services::file_helpers::scene::Scene;
+use crate::services::file_helpers::surface_c0::{SurfaceC0, SurfaceC0ControlPoint, SurfaceC0Patch};
 use crate::services::file_helpers::torus::Torus;
 use crate::services::file_helpers::xyz::{Xyu32, Xyz};
+use crate::services::id_generator::IdGenerator;
 
-pub fn save_scene(storage: &Storage, file_path: &str) {
+pub fn save_scene(storage: &Storage, file_path: &str, id_generator: &mut IdGenerator) {
     let scene = Scene {
         points: storage.points
             .values()
@@ -81,6 +83,47 @@ pub fn save_scene(storage: &Storage, file_path: &str) {
                             id: p.id,
                         })
                         .collect(),
+                })))
+            .chain(storage.surfaces_c0
+                .values()
+                .map(|s| GeometryObj::BezierSurfaceC0(SurfaceC0 {
+                    id: s.id,
+                    name: s.name.clone(),
+                    patches: (0..s.size.0)
+                        .flat_map(|x| (0..s.size.1).map(move |y| (x, y)))
+                        .map(|(x, y)| [
+                            (3 * x, 3 * y),
+                            (3 * x + 1, 3 * y),
+                            (3 * x + 2, 3 * y),
+                            (3 * x + 3, 3 * y),
+                            (3 * x, 3 * y + 1),
+                            (3 * x + 1, 3 * y + 1),
+                            (3 * x + 2, 3 * y + 1),
+                            (3 * x + 3, 3 * y + 1),
+                            (3 * x, 3 * y + 2),
+                            (3 * x + 1, 3 * y + 2),
+                            (3 * x + 2, 3 * y + 2),
+                            (3 * x + 3, 3 * y + 2),
+                            (3 * x, 3 * y + 3),
+                            (3 * x + 1, 3 * y + 3),
+                            (3 * x + 2, 3 * y + 3),
+                            (3 * x + 3, 3 * y + 3),
+                        ])
+                        .map(|p| SurfaceC0Patch {
+                            id: id_generator.next(),
+                            name: "".to_string(),
+                            object_type: "bezierPatchC0".to_string(),
+                            control_points: p.iter()
+                                .map(|(x, y)| SurfaceC0ControlPoint {
+                                    id: s.points[(x * (s.size.1 * 3 + 1) + y) as usize].id,
+                                })
+                                .collect(),
+                            samples: Xyu32 {
+                                x: 4,
+                                y: 4,
+                            },
+                        })
+                        .collect::<Vec<_>>(),
                 })))
             .collect(),
     };

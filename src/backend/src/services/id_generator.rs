@@ -1,3 +1,4 @@
+#[derive(Debug, Clone)]
 pub struct IdGenerator {
     pub next_id: u64,
 }
