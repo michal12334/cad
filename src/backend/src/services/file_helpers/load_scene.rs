@@ -5,6 +5,7 @@ use crate::domain::bezier_c2::BezierC2;
 use crate::domain::bezier_int::BezierInt;
 use crate::domain::point::Point;
 use crate::domain::surface_c0::{SurfaceC0, SurfaceC0Point};
+use crate::domain::surface_c2::{SurfaceC2, SurfaceC2Point};
 use crate::domain::torus::Torus;
 use crate::domain::transformer::{LittleTransformer, Transformer};
 use crate::services::file_helpers::geometry_obj::GeometryObj;
@@ -82,6 +83,28 @@ pub fn load_scene(storage: &mut Storage, file_path: &str) {
             surface_c0.name.clone(),
             points,
             (surface_c0.size.x, surface_c0.size.y),
+        ));
+    }
+    for surface_c2 in scene.geometry.iter().filter_map(|g| if let GeometryObj::BezierSurfaceC2(surface) = g { Some(surface) } else { None } ) {
+        let mut points = vec![];
+
+        for i in 0..surface_c2.size.x {
+            for j in if i == surface_c2.size.x - 1 { 0..4 } else { 0..1 } {
+                for k in 0..surface_c2.size.y {
+                    for g in if k == surface_c2.size.y - 1 { 0..4 } else { 0..1 } {
+                        let patch = &surface_c2.patches[(i * surface_c2.size.y + k) as usize];
+                        let control_point = &patch.control_points[(j * 4 + g) as usize];
+                        points.push(SurfaceC2Point { id: control_point.id });
+                    }
+                }
+            }
+        }
+
+        storage.surfaces_c2.insert(surface_c2.id, SurfaceC2::new_with_name(
+            surface_c2.id,
+            surface_c2.name.clone(),
+            points,
+            (surface_c2.size.x, surface_c2.size.y),
         ));
     }
 }

@@ -83,7 +83,7 @@ pub fn create_surface_c2(id: u64, create_surface_info: &CreateSurfaceInfoDTO, id
             .chain(points.iter().take(3 * size_y as usize))
             .map(|point| SurfaceC2Point { id: point.id })
             .collect();
-        let surface = SurfaceC2::new(id, surface_points);
+        let surface = SurfaceC2::new(id, surface_points, create_surface_info.size);
         (surface, points)
     } else {
         let width = create_surface_info.width.unwrap();
@@ -106,7 +106,7 @@ pub fn create_surface_c2(id: u64, create_surface_info: &CreateSurfaceInfoDTO, id
         let surface_points = points.iter()
             .map(|point| SurfaceC2Point { id: point.id })
             .collect();
-        let surface = SurfaceC2::new(id, surface_points);
+        let surface = SurfaceC2::new(id, surface_points, create_surface_info.size);
         (surface, points)
     }
 }

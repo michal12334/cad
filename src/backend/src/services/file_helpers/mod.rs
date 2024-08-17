@@ -9,3 +9,4 @@ mod bezier_c2;
 mod bezier_int;
 mod bezier_c0;
 mod surface_c0;
+mod surface_c2;

@@ -11,14 +11,17 @@ use backend::cqrs::beziers_c2::bezier_c2_b_spline_points::BezierC2BSplinePoints;
 use backend::cqrs::beziers_c2::bezier_c2_bernstein_points::BezierC2BernsteinPoints;
 use backend::cqrs::beziers_int::bezier_int_bernstein_points::BezierIntBernsteinPoints;
 use backend::cqrs::surfaces_c0::all_surfaces_c0::AllSurfacesC0;
+use backend::cqrs::surfaces_c2::all_surfaces_c2::AllSurfacesC2;
 use backend::cqrs::cqrs::CQRS;
 use backend::cqrs::surfaces_c0::surface_c0_points::SurfaceC0Points;
+use backend::cqrs::surfaces_c2::surface_c2_points::SurfaceC2Points;
 use backend_events::common::scene_loaded::SceneLoaded;
 use infrastructure::consumer::{AnyConsumer, Consumer};
 use crate::drawing::domain::bezier_c0::BezierC0;
 use crate::drawing::domain::bezier_c2::BezierC2;
 use crate::drawing::domain::bezier_int::BezierInt;
 use crate::drawing::domain::surface_c0::SurfaceC0;
+use crate::drawing::domain::surface_c2::SurfaceC2;
 use crate::drawing::drawing_storage::DrawingStorage;
 
 pub struct RebuildStorageOnSceneLoaded {
@@ -65,6 +68,13 @@ impl Consumer<SceneLoaded> for RebuildStorageOnSceneLoaded {
                 .surfaces_c0
                 .insert(surface_c0.id, SurfaceC0::new(surface_c0.id, &points, surface_c0.size, &self.display));
             
+        }
+        
+        for surface_c2 in self.cqrs.get(&AllSurfacesC2 {}) {
+            let points = self.cqrs.get(&SurfaceC2Points { id: surface_c2.id });
+            drawing_storage
+                .surfaces_c2
+                .insert(surface_c2.id, SurfaceC2::new(surface_c2.id, &points, surface_c2.size, &self.display));
         }
     }
 }

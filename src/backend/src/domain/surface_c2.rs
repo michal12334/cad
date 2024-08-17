@@ -4,6 +4,7 @@ pub struct SurfaceC2 {
     pub draw_polygon: bool,
     pub tess_level: u8,
     pub points: Vec<SurfaceC2Point>,
+    pub size: (u32, u32),
 }
 
 #[derive(Clone)]
@@ -12,13 +13,25 @@ pub struct SurfaceC2Point {
 }
 
 impl SurfaceC2 {
-    pub fn new(id: u64, points: Vec<SurfaceC2Point>) -> Self {
+    pub fn new(id: u64, points: Vec<SurfaceC2Point>, size: (u32, u32)) -> Self {
         Self {
             id,
             name: format!("SurfaceC2 {}", id),
             draw_polygon: false,
             tess_level: 8,
             points,
+            size
+        }
+    }
+
+    pub fn new_with_name(id: u64, name: String, points: Vec<SurfaceC2Point>, size: (u32, u32)) -> Self {
+        Self {
+            id,
+            name,
+            draw_polygon: false,
+            tess_level: 8,
+            points,
+            size
         }
     }
 
