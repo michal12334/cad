@@ -89,8 +89,12 @@ pub fn save_scene(storage: &Storage, file_path: &str, id_generator: &mut IdGener
                 .map(|s| GeometryObj::BezierSurfaceC0(SurfaceC0 {
                     id: s.id,
                     name: s.name.clone(),
-                    patches: (0..s.size.0)
-                        .flat_map(|x| (0..s.size.1).map(move |y| (x, y)))
+                    size: Xyu32 {
+                        x: s.size.0,
+                        y: s.size.1,
+                    },
+                    patches: (0..s.size.1)
+                        .flat_map(|y| (0..s.size.0).map(move |x| (x, y)))
                         .map(|(x, y)| [
                             (3 * x, 3 * y),
                             (3 * x + 1, 3 * y),

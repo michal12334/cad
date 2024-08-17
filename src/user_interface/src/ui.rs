@@ -10,6 +10,7 @@ use backend::cqrs::cqrs::CQRS;
 use backend::cqrs::cursors::cursor_details::CursorDTO;
 use backend::cqrs::cursors::cursor_details::CursorDetails;
 use backend::cqrs::points::all_points::AllPoints;
+use backend::cqrs::surfaces_c0::all_surfaces_c0::AllSurfacesC0;
 use backend::cqrs::toruses::all_toruses::AllToruses;
 use backend::cqrs::toruses::torus_details::TransformerDTO;
 
@@ -18,7 +19,7 @@ type DomainBezierC2 = crate::domain::bezier_c2::BezierC2;
 type DomainBezierInt = crate::domain::bezier_int::BezierInt;
 
 use crate::object::Object;
-use crate::object::Object::{BezierC0, BezierC2, BezierInt, Point, Torus};
+use crate::object::Object::{BezierC0, BezierC2, BezierInt, Point, SurfaceC0, Torus};
 use crate::object_id::ObjectId;
 use crate::popups::popup::Popup;
 
@@ -85,6 +86,11 @@ impl Ui {
                 cqrs.get(&AllBeziersInt)
                     .iter()
                     .map(|bezier| BezierInt(DomainBezierInt::from_dto(bezier))),
+            )
+            .chain(
+                cqrs.get(&AllSurfacesC0)
+                    .iter()
+                    .map(|surface| SurfaceC0(surface.clone())),
             )
             .sorted_by_key(|object| object.get_id())
             .collect();

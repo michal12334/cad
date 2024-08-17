@@ -24,6 +24,17 @@ impl SurfaceC0 {
         }
     }
 
+    pub fn new_with_name(id: u64, name: String, points: Vec<SurfaceC0Point>, size: (u32, u32)) -> Self {
+        Self {
+            id,
+            name,
+            draw_polygon: false,
+            tess_level: 8,
+            points,
+            size,
+        }
+    }
+
     pub fn rename(&mut self, name: &str) {
         self.name = name.to_string();
     }
