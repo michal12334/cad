@@ -97,8 +97,8 @@ pub fn save_scene(storage: &Storage, file_path: &str, id_generator: &mut IdGener
                         x: s.size.0,
                         y: s.size.1,
                     },
-                    patches: (0..s.size.0)
-                        .flat_map(|y| (0..s.size.1).map(move |x| (x, y)))
+                    patches: (0..s.size.1)
+                        .flat_map(|y| (0..s.size.0).map(move |x| (x, y)))
                         .map(|(x, y)| [
                             (3 * x, 3 * y),
                             (3 * x + 1, 3 * y),
@@ -123,7 +123,7 @@ pub fn save_scene(storage: &Storage, file_path: &str, id_generator: &mut IdGener
                             object_type: "bezierPatchC0".to_string(),
                             control_points: p.iter()
                                 .map(|(x, y)| SurfaceC0ControlPoint {
-                                    id: s.points[(x + y * (s.size.1 * 3 + 1)) as usize].id,
+                                    id: s.points[(x * (s.size.1 * 3 + 1) + y) as usize].id,
                                 })
                                 .collect(),
                             samples: Xyu32 {
@@ -142,8 +142,8 @@ pub fn save_scene(storage: &Storage, file_path: &str, id_generator: &mut IdGener
                         x: s.size.0,
                         y: s.size.1,
                     },
-                    patches: (0..s.size.0)
-                        .flat_map(|y| (0..s.size.1).map(move |x| (x, y)))
+                    patches: (0..s.size.1)
+                        .flat_map(|y| (0..s.size.0).map(move |x| (x, y)))
                         .map(|(x, y)| [
                             (x, y),
                             (x + 1, y),
@@ -168,7 +168,7 @@ pub fn save_scene(storage: &Storage, file_path: &str, id_generator: &mut IdGener
                             object_type: "bezierPatchC2".to_string(),
                             control_points: p.iter()
                                 .map(|(x, y)| SurfaceC2ControlPoint {
-                                    id: s.points[(x + y * (s.size.1 + 3)) as usize].id,
+                                    id: s.points[(x * (s.size.1 + 3) + y) as usize].id,
                                 })
                                 .collect(),
                             samples: Xyu32 {

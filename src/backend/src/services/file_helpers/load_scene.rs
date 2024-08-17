@@ -15,6 +15,13 @@ pub fn load_scene(storage: &mut Storage, file_path: &str) {
     let serialized = std::fs::read_to_string(file_path).unwrap();
     let scene: Scene = serde_json::from_str(&serialized).unwrap();
     storage.points.clear();
+    storage.toruses.clear();
+    storage.beziers_c0.clear();
+    storage.beziers_c2.clear();
+    storage.beziers_int.clear();
+    storage.surfaces_c0.clear();
+    storage.surfaces_c2.clear();
+    storage.selected_objects.clear();
     for point in scene.points {
         storage.points.insert(point.id, Point::new_with_name(
             point.id,
@@ -70,8 +77,8 @@ pub fn load_scene(storage: &mut Storage, file_path: &str) {
             for j in if i == surface_c0.size.x - 1 { 0..4 } else { 0..3 } {
                 for k in 0..surface_c0.size.y {
                     for g in if k == surface_c0.size.y - 1 { 0..4 } else { 0..3 } {
-                        let patch = &surface_c0.patches[(i * surface_c0.size.y + k) as usize];
-                        let control_point = &patch.control_points[(j * 4 + g) as usize];
+                        let patch = &surface_c0.patches[(i + k * surface_c0.size.x) as usize];
+                        let control_point = &patch.control_points[(j + g * 4) as usize];
                         points.push(SurfaceC0Point { id: control_point.id });
                     }
                 }
@@ -92,8 +99,8 @@ pub fn load_scene(storage: &mut Storage, file_path: &str) {
             for j in if i == surface_c2.size.x - 1 { 0..4 } else { 0..1 } {
                 for k in 0..surface_c2.size.y {
                     for g in if k == surface_c2.size.y - 1 { 0..4 } else { 0..1 } {
-                        let patch = &surface_c2.patches[(i * surface_c2.size.y + k) as usize];
-                        let control_point = &patch.control_points[(j * 4 + g) as usize];
+                        let patch = &surface_c2.patches[(i + k * surface_c2.size.x) as usize];
+                        let control_point = &patch.control_points[(j + g * 4) as usize];
                         points.push(SurfaceC2Point { id: control_point.id });
                     }
                 }
