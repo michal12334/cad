@@ -34,21 +34,21 @@ pub fn quaternion_to_euler(q: (f64, f64, f64, f64)) -> (f64, f64, f64) {
     let t4 = 1.0 - 2.0 * (ysqr + z * z);
     let yaw = t3.atan2(t4);
     
-    (roll, pitch, yaw)
+    (-roll, -pitch, yaw)
 }
 
 pub fn euler_to_quaternion(roll: f64, pitch: f64, yaw: f64) -> (f64, f64, f64, f64) {
     let cy = (yaw * 0.5).cos();
     let sy = (yaw * 0.5).sin();
-    let cp = (pitch * 0.5).cos();
-    let sp = (pitch * 0.5).sin();
-    let cr = (roll * 0.5).cos();
-    let sr = (roll * 0.5).sin();
+    let cp = (-pitch * 0.5).cos();
+    let sp = (-pitch * 0.5).sin();
+    let cr = (-roll * 0.5).cos();
+    let sr = (-roll * 0.5).sin();
 
     let w = cr * cp * cy + sr * sp * sy;
     let x = sr * cp * cy - cr * sp * sy;
     let y = cr * sp * cy + sr * cp * sy;
     let z = cr * cp * sy - sr * sp * cy;
 
-    normalize_quaternion((x, y, z, w))
+    (x, y, z, w)
 }
