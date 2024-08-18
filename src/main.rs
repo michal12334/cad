@@ -696,7 +696,7 @@ fn main() {
                                 let position = (math::matrix4::Matrix4::perspective(std::f32::consts::PI / 3.0, width as f32 / height as f32, 0.1, 1024.0) * view_matrix * position).to_vector3();
                                 let x = mouse_position.0 as f32 / width as f32 * 2.0 - 1.0;
                                 let y = 1.0 - mouse_position.1 as f32 / height as f32 * 2.0;
-                                if (position.x - x) * (position.x - x) + (position.y - y) * (position.y - y) <= 0.005 {
+                                if (position.x - x) * (position.x - x) + (position.y - y) * (position.y - y) <= 0.0001 {
                                     ui.borrow_mut().change_point_selection(point.id, &mut cqrs);
                                 }
                             }
