@@ -27,7 +27,7 @@ pub fn load_scene(storage: &mut Storage, file_path: &str) {
             point.id,
             point.name,
             LittleTransformer {
-                position: (point.position.x, point.position.y, point.position.z),
+                position: (point.position.x, point.position.y, -point.position.z),
             }
         ));
     }
@@ -40,7 +40,7 @@ pub fn load_scene(storage: &mut Storage, file_path: &str) {
             torus.samples.y,
             torus.samples.x,
             Transformer {
-                position: (torus.position.x, torus.position.y, torus.position.z),
+                position: (torus.position.x, torus.position.y, -torus.position.z),
                 rotation: euler_to_quaternion(torus.rotation.x, torus.rotation.y, torus.rotation.z),
                 scale: (torus.scale.x, torus.scale.y, torus.scale.z),
             },

@@ -21,8 +21,8 @@ impl Mesh {
                 let v = j as f64 / minor_segments as f64 * 2.0 * std::f64::consts::PI;
 
                 let x = (major_radius + minor_radius * v.cos()) * u.cos();
-                let y = (major_radius + minor_radius * v.cos()) * u.sin();
-                let z = minor_radius * v.sin();
+                let z = (major_radius + minor_radius * v.cos()) * u.sin();
+                let y = minor_radius * v.sin();
 
                 vertices.push(Vertex {
                     position: [x as f32, y as f32, z as f32],

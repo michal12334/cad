@@ -50,5 +50,5 @@ pub fn euler_to_quaternion(roll: f64, pitch: f64, yaw: f64) -> (f64, f64, f64, f
     let y = cr * sp * cy + sr * cp * sy;
     let z = cr * cp * sy - sr * sp * cy;
 
-    (x, y, z, w)
+    normalize_quaternion((x, y, z, w))
 }

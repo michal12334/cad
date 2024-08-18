@@ -25,7 +25,7 @@ pub fn save_scene(storage: &Storage, file_path: &str, id_generator: &mut IdGener
                 position: Xyz {
                     x: p.transformer.position.0,
                     y: p.transformer.position.1,
-                    z: p.transformer.position.2,
+                    z: -p.transformer.position.2,
                 }
             })
             .collect(),
@@ -37,7 +37,7 @@ pub fn save_scene(storage: &Storage, file_path: &str, id_generator: &mut IdGener
                 position: Xyz {
                     x: t.transformer.position.0,
                     y: t.transformer.position.1,
-                    z: t.transformer.position.2,
+                    z: -t.transformer.position.2,
                 },
                 rotation: Xyz::from_tuple(quaternion_to_euler(t.transformer.rotation)),
                 scale: Xyz {
