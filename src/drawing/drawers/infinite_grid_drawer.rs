@@ -1,5 +1,5 @@
 use glium::glutin::surface::WindowSurface;
-use glium::{Blend, Display, IndexBuffer, Program, Surface, VertexBuffer};
+use glium::{Blend, BlendingFunction, Display, IndexBuffer, LinearBlendingFactor, Program, Surface, VertexBuffer};
 
 use backend::domain::vertex::Vertex;
 
@@ -141,7 +141,17 @@ impl InfiniteGridDrawer {
                 write: true,
                 ..Default::default()
             },
-            blend: Blend::alpha_blending(),
+            blend: Blend {
+                color: BlendingFunction::Addition {
+                    source: LinearBlendingFactor::SourceAlpha,
+                    destination: LinearBlendingFactor::DestinationAlpha,
+                },
+                alpha: BlendingFunction::Addition {
+                    source: LinearBlendingFactor::SourceAlpha,
+                    destination: LinearBlendingFactor::DestinationAlpha
+                },
+                constant_value: (0.0, 0.0, 0.0, 0.0)
+            },
             ..Default::default()
         };
 

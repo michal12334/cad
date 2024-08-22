@@ -1,5 +1,5 @@
 use glium::glutin::surface::WindowSurface;
-use glium::{Display, DrawParameters, Frame, Program, Surface};
+use glium::{BlendingFunction, Display, DrawParameters, Frame, LinearBlendingFactor, Program, Surface};
 
 use backend::domain::point::Point;
 use backend::domain::vertex::Vertex;
@@ -47,7 +47,17 @@ impl PointDrawer {
             write: true,
             ..Default::default()
         };
-        drawing_parameters.blend = glium::Blend::alpha_blending();
+        drawing_parameters.blend = glium::Blend {
+            color: BlendingFunction::Addition {
+                source: LinearBlendingFactor::SourceAlpha,
+                destination: LinearBlendingFactor::DestinationAlpha,
+            },
+            alpha: BlendingFunction::Addition {
+                source: LinearBlendingFactor::SourceAlpha,
+                destination: LinearBlendingFactor::DestinationAlpha
+            },
+            constant_value: (0.0, 0.0, 0.0, 0.0)
+        };
 
         Self {
             program,
