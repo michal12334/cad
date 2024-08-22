@@ -61,6 +61,8 @@ impl Ui {
                         self.build_single_object_transformation_panel(ui, cqrs);
                     } else if self.selected_objects.len() > 1 {
                         self.build_multiple_object_transformation_panel(ui, cqrs);
+                    } else {
+                        self.build_stereoscopy_settings_panel(ui);
                     }
                 });
             });
@@ -856,5 +858,13 @@ impl Ui {
                 draw_polygon: surface.draw_polygon,
             });
         }
+    }
+    
+    fn build_stereoscopy_settings_panel(&mut self, ui: &mut egui::Ui) {
+        ui.checkbox(&mut self.stereoscopy, "Stereoscopy");
+        Slider::new(&mut self.stereoscopy_eye_distance, 0.01..=10.0)
+            .step_by(0.01)
+            .text("Eye distance")
+            .ui(ui);
     }
 }

@@ -127,6 +127,7 @@ impl SurfaceC0Drawer {
             write: true,
             ..Default::default()
         };
+        drawing_parameters.blend = glium::Blend::alpha_blending();
 
         Self {
             program,

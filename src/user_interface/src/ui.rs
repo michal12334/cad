@@ -36,6 +36,8 @@ pub struct Ui {
     pub previous_time: DateTime<Local>,
     pub popup: Option<Box<dyn Popup>>,
     pub filter: String,
+    pub stereoscopy: bool,
+    pub stereoscopy_eye_distance: f32,
 }
 
 impl Ui {
@@ -52,6 +54,8 @@ impl Ui {
             previous_time: Local::now(),
             popup: None,
             filter: String::new(),
+            stereoscopy: false,
+            stereoscopy_eye_distance: 1f32,
         }
     }
 

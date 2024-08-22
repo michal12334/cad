@@ -145,6 +145,19 @@ impl Matrix4 {
         }
     }
 
+    pub fn perspective_stereoscopy(fov: f32, aspect: f32, near: f32, far: f32, left: f32, right: f32) -> Self {
+        let f = 1.0 / (fov / 2.0).tan();
+        let nf = 1.0 / (near - far);
+        Self {
+            data: [
+                [f / aspect, 0.0, 0.0, 0.0],
+                [0.0, f, 0.0, 0.0],
+                [(left + right) / (right - left), 0.0, -(far + near) * nf, 1.0],
+                [0.0, 0.0, (2.0 * far * near) * nf, 0.0],
+            ],
+        }
+    }
+
     pub fn view(position: Vector3, direction: Vector3, up: Vector3) -> Self {
         let f = {
             let f = direction;

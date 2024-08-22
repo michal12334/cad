@@ -51,6 +51,8 @@ impl InfiniteGridDrawer {
             in mat4 fragProj;
             out vec4 outColor;
             
+            uniform vec4 color_mask;
+            
             vec4 grid(vec3 fragPos3D, float scale) {
                 vec2 coord = fragPos3D.xz * scale;
                 vec2 derivative = fwidth(coord);
@@ -89,6 +91,8 @@ impl InfiniteGridDrawer {
             
                 outColor = (grid(fragPos3D, 10) + grid(fragPos3D, 1))* float(t > 0); // adding multiple resolution for the grid
                 outColor.a *= fading;
+                
+                outColor = min(outColor, color_mask);
             }
         "#;
 
@@ -129,6 +133,7 @@ impl InfiniteGridDrawer {
         target: &mut glium::Frame,
         perspective: &[[f32; 4]; 4],
         view: &[[f32; 4]; 4],
+        color_mask: [f32; 4],
     ) {
         let draw_params = glium::DrawParameters {
             depth: glium::Depth {
@@ -148,6 +153,7 @@ impl InfiniteGridDrawer {
                 &uniform! {
                     perspective: *perspective,
                     view: *view,
+                    color_mask: color_mask,
                 },
                 &draw_params,
             )

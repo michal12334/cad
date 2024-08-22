@@ -28,9 +28,11 @@ impl CursorDrawer {
             #version 140
     
             out vec4 color;
+
+            uniform vec4 obj_color;
     
             void main() {
-                color = vec4(0.0, 1.0, 0.0, 1.0);
+                color = obj_color;
             }
         "#;
 
@@ -45,6 +47,7 @@ impl CursorDrawer {
             write: true,
             ..Default::default()
         };
+        drawing_parameters.blend = glium::Blend::alpha_blending();
 
         Self {
             program,
@@ -59,6 +62,7 @@ impl CursorDrawer {
         cursor: &Cursor,
         perspective: &math::matrix4::Matrix4,
         view_matrix: &math::matrix4::Matrix4,
+        color: [f32; 4],
     ) {
         let vertex_buffer = glium::VertexBuffer::new(display, &cursor.mesh.vertices).unwrap();
         let indices = glium::IndexBuffer::new(
@@ -77,6 +81,7 @@ impl CursorDrawer {
                     perspective: perspective.data,
                     model_matrix: model_matrix.data,
                     view: view_matrix.data,
+                    obj_color: color
                 },
                 &self.drawing_parameters,
             )
