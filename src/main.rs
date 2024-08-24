@@ -8,7 +8,7 @@ use std::rc::Rc;
 
 use egui::Color32;
 use egui_winit::State;
-use glium::Surface;
+use glium::{Blend, BlendingFunction, LinearBlendingFactor, PolygonMode, Surface};
 use winit::event::ElementState::Pressed;
 use winit::event::MouseButton;
 use winit::{event, event_loop};
@@ -553,6 +553,36 @@ fn main() {
     let right_eye_color = [1.0, 0.0, 0.0, 1.0];
     let left_eye_color = [0.0, 1.0, 1.0, 1.0];
 
+    let draw_params = glium::DrawParameters {
+        depth: glium::Depth {
+            test: glium::draw_parameters::DepthTest::IfLess,
+            write: true,
+            ..Default::default()
+        },
+        line_width: Some(1.0),
+        point_size: Some(8.0),
+        polygon_mode: PolygonMode::Line,
+        blend: Blend::alpha_blending(),
+        ..Default::default()
+    };
+    let draw_params_stereo = {
+        let mut draw_params = draw_params.clone();
+
+        draw_params.blend = Blend {
+            color: BlendingFunction::Addition {
+                source: LinearBlendingFactor::SourceAlpha,
+                destination: LinearBlendingFactor::DestinationAlpha,
+            },
+            alpha: BlendingFunction::Addition {
+                source: LinearBlendingFactor::SourceAlpha,
+                destination: LinearBlendingFactor::DestinationAlpha
+            },
+            constant_value: (0.0, 0.0, 0.0, 0.0)
+        };
+        
+        draw_params
+    };
+
     event_loop.run(move |event, _window_target, control_flow| {
         let mut redraw = || {
             let mut cqrs = CQRS::new(app_state.clone());
@@ -588,66 +618,66 @@ fn main() {
                     let view_matrix = math::matrix4::Matrix4::view(camera_direction * camera_distant * (-1.0) - (math::matrix4::Matrix4::rotation_y(camera_angle.y) * math::matrix4::Matrix4::rotation_x(camera_angle.x) * Vector4::new(1.0, 0.0, 0.0, 0.0)).xyz() * (eye_distance / 2.0), camera_direction, camera_up);
                     
                     for torus in app_state.storage.toruses.iter() {
-                        torus_drawer.draw(&mut target, &display, &torus.1, &perspective, &view_matrix, right_eye_color);
+                        torus_drawer.draw(&mut target, &display, &torus.1, &perspective, &view_matrix, right_eye_color, &draw_params_stereo);
                     }
 
                     for point in app_state.storage.points.iter() {
-                        point_drawer.draw(&mut target, &display, &point.1, &perspective, &view_matrix, right_eye_color);
+                        point_drawer.draw(&mut target, &display, &point.1, &perspective, &view_matrix, right_eye_color, &draw_params_stereo);
                     }
 
                     let center_point = cqrs.get(&SelectedObjectsCenter);
                     if let Some(center_point) = center_point {
                         let mut transformer = LittleTransformer::new();
                         transformer.position = center_point.position;
-                        point_drawer.draw(&mut target, &display, &Point::new(0, transformer), &perspective, &view_matrix, right_eye_color);
+                        point_drawer.draw(&mut target, &display, &Point::new(0, transformer), &perspective, &view_matrix, right_eye_color, &draw_params_stereo);
                     }
 
                     for bezier in drawing_storage.borrow().beziers_c0.values() {
-                        bezier_c0_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, right_eye_color, width, height);
+                        bezier_c0_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, right_eye_color, width, height, &draw_params_stereo);
                     }
 
                     for bezier in drawing_storage.borrow().beziers_c2.values() {
-                        bezier_c2_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, right_eye_color, width, height);
+                        bezier_c2_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, right_eye_color, width, height, &draw_params_stereo);
                     }
 
                     for bezier in drawing_storage.borrow().beziers_int.values() {
-                        bezier_int_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, right_eye_color, width, height);
+                        bezier_int_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, right_eye_color, width, height, &draw_params_stereo);
                     }
 
                     for bezier in drawing_storage.borrow().beziers_c0.values().filter(|b| b.draw_polygon && b.polygon_index_buffer.is_some()) {
-                        polygon_drawer.draw(&mut target, &bezier.vertex_buffer.as_ref().unwrap(), &bezier.polygon_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, right_eye_color);
+                        polygon_drawer.draw(&mut target, &bezier.vertex_buffer.as_ref().unwrap(), &bezier.polygon_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, right_eye_color, &draw_params_stereo);
                     }
 
                     for bezier in drawing_storage.borrow().beziers_c2.values().filter(|b| b.draw_b_spline_polygon && b.b_spline_polygon_index_buffer.is_some()) {
-                        polygon_drawer.draw(&mut target, &bezier.b_spline_vertex_buffer.as_ref().unwrap(), &bezier.b_spline_polygon_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, right_eye_color);
+                        polygon_drawer.draw(&mut target, &bezier.b_spline_vertex_buffer.as_ref().unwrap(), &bezier.b_spline_polygon_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, right_eye_color, &draw_params_stereo);
                     }
 
                     for bezier in drawing_storage.borrow().beziers_c2.values().filter(|b| b.draw_bernstein_polygon && b.bernstein_polygon_index_buffer.is_some()) {
-                        polygon_drawer.draw(&mut target, &bezier.bernstein_vertex_buffer.as_ref().unwrap(), &bezier.bernstein_polygon_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, right_eye_color);
+                        polygon_drawer.draw(&mut target, &bezier.bernstein_vertex_buffer.as_ref().unwrap(), &bezier.bernstein_polygon_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, right_eye_color, &draw_params_stereo);
                     }
 
                     for bezier in drawing_storage.borrow().beziers_c2.values().filter(|b| b.draw_bernstein_points && b.bernstein_points_index_buffer.is_some()) {
-                        points_drawer.draw(&mut target, &bezier.bernstein_vertex_buffer.as_ref().unwrap(), &bezier.bernstein_points_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, right_eye_color, selected_bernstein_color, bezier.selected_bernstein_point);
+                        points_drawer.draw(&mut target, &bezier.bernstein_vertex_buffer.as_ref().unwrap(), &bezier.bernstein_points_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, right_eye_color, selected_bernstein_color, bezier.selected_bernstein_point, &draw_params_stereo);
                     }
 
                     for surface in drawing_storage.borrow().surfaces_c0.values() {
-                        surface_c0_drawer.draw(&mut target, &surface, &perspective, &view_matrix, right_eye_color, surface.tess_level);
+                        surface_c0_drawer.draw(&mut target, &surface, &perspective, &view_matrix, right_eye_color, surface.tess_level, &draw_params_stereo);
                     }
 
                     for surface in drawing_storage.borrow().surfaces_c0.values().filter(|s| s.draw_polygon) {
-                        polygon_drawer.draw(&mut target, &surface.vertex_buffer, &surface.polygon_index_buffer, &perspective, &view_matrix, right_eye_color);
+                        polygon_drawer.draw(&mut target, &surface.vertex_buffer, &surface.polygon_index_buffer, &perspective, &view_matrix, right_eye_color, &draw_params_stereo);
                     }
 
                     for surface in drawing_storage.borrow().surfaces_c2.values() {
-                        surface_c2_drawer.draw(&mut target, &surface, &perspective, &view_matrix, right_eye_color, surface.tess_level);
+                        surface_c2_drawer.draw(&mut target, &surface, &perspective, &view_matrix, right_eye_color, surface.tess_level, &draw_params_stereo);
                     }
 
                     for surface in drawing_storage.borrow().surfaces_c2.values().filter(|s| s.draw_polygon) {
-                        polygon_drawer.draw(&mut target, &surface.vertex_buffer, &surface.polygon_index_buffer, &perspective, &view_matrix, right_eye_color);
+                        polygon_drawer.draw(&mut target, &surface.vertex_buffer, &surface.polygon_index_buffer, &perspective, &view_matrix, right_eye_color, &draw_params_stereo);
                     }
 
-                    cursor_drawer.draw(&mut target, &display, &app_state.storage.cursor, &perspective, &view_matrix, right_eye_color);
-                    infinite_grid_drawer.draw(&mut target, &perspective.data, &view_matrix.data, right_eye_color);
+                    cursor_drawer.draw(&mut target, &display, &app_state.storage.cursor, &perspective, &view_matrix, right_eye_color, &draw_params_stereo);
+                    infinite_grid_drawer.draw(&mut target, &perspective.data, &view_matrix.data, right_eye_color, &draw_params_stereo);
 
                     let perspective = math::matrix4::Matrix4::perspective_stereoscopy(std::f32::consts::PI / 3.0, width as f32 / height as f32, 0.1, 1024.0, -100.0 + eye_distance / 2.0, 100.0 + eye_distance / 2.0);
                     let view_matrix = math::matrix4::Matrix4::view(camera_direction * camera_distant * (-1.0) + (math::matrix4::Matrix4::rotation_y(camera_angle.y) * math::matrix4::Matrix4::rotation_x(camera_angle.x) * Vector4::new(1.0, 0.0, 0.0, 0.0)).xyz() * (eye_distance / 2.0), camera_direction, camera_up);
@@ -655,134 +685,134 @@ fn main() {
                     target.clear_depth(1.0);
 
                     for torus in app_state.storage.toruses.iter() {
-                        torus_drawer.draw(&mut target, &display, &torus.1, &perspective, &view_matrix, left_eye_color);
+                        torus_drawer.draw(&mut target, &display, &torus.1, &perspective, &view_matrix, left_eye_color, &draw_params_stereo);
                     }
 
                     for point in app_state.storage.points.iter() {
-                        point_drawer.draw(&mut target, &display, &point.1, &perspective, &view_matrix, left_eye_color);
+                        point_drawer.draw(&mut target, &display, &point.1, &perspective, &view_matrix, left_eye_color, &draw_params_stereo);
                     }
 
                     let center_point = cqrs.get(&SelectedObjectsCenter);
                     if let Some(center_point) = center_point {
                         let mut transformer = LittleTransformer::new();
                         transformer.position = center_point.position;
-                        point_drawer.draw(&mut target, &display, &Point::new(0, transformer), &perspective, &view_matrix, left_eye_color);
+                        point_drawer.draw(&mut target, &display, &Point::new(0, transformer), &perspective, &view_matrix, left_eye_color, &draw_params_stereo);
                     }
 
                     for bezier in drawing_storage.borrow().beziers_c0.values() {
-                        bezier_c0_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, left_eye_color, width, height);
+                        bezier_c0_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, left_eye_color, width, height, &draw_params_stereo);
                     }
 
                     for bezier in drawing_storage.borrow().beziers_c2.values() {
-                        bezier_c2_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, left_eye_color, width, height);
+                        bezier_c2_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, left_eye_color, width, height, &draw_params_stereo);
                     }
 
                     for bezier in drawing_storage.borrow().beziers_int.values() {
-                        bezier_int_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, left_eye_color, width, height);
+                        bezier_int_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, left_eye_color, width, height, &draw_params_stereo);
                     }
 
                     for bezier in drawing_storage.borrow().beziers_c0.values().filter(|b| b.draw_polygon && b.polygon_index_buffer.is_some()) {
-                        polygon_drawer.draw(&mut target, &bezier.vertex_buffer.as_ref().unwrap(), &bezier.polygon_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, left_eye_color);
+                        polygon_drawer.draw(&mut target, &bezier.vertex_buffer.as_ref().unwrap(), &bezier.polygon_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, left_eye_color, &draw_params_stereo);
                     }
 
                     for bezier in drawing_storage.borrow().beziers_c2.values().filter(|b| b.draw_b_spline_polygon && b.b_spline_polygon_index_buffer.is_some()) {
-                        polygon_drawer.draw(&mut target, &bezier.b_spline_vertex_buffer.as_ref().unwrap(), &bezier.b_spline_polygon_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, left_eye_color);
+                        polygon_drawer.draw(&mut target, &bezier.b_spline_vertex_buffer.as_ref().unwrap(), &bezier.b_spline_polygon_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, left_eye_color, &draw_params_stereo);
                     }
 
                     for bezier in drawing_storage.borrow().beziers_c2.values().filter(|b| b.draw_bernstein_polygon && b.bernstein_polygon_index_buffer.is_some()) {
-                        polygon_drawer.draw(&mut target, &bezier.bernstein_vertex_buffer.as_ref().unwrap(), &bezier.bernstein_polygon_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, left_eye_color);
+                        polygon_drawer.draw(&mut target, &bezier.bernstein_vertex_buffer.as_ref().unwrap(), &bezier.bernstein_polygon_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, left_eye_color, &draw_params_stereo);
                     }
 
                     for bezier in drawing_storage.borrow().beziers_c2.values().filter(|b| b.draw_bernstein_points && b.bernstein_points_index_buffer.is_some()) {
-                        points_drawer.draw(&mut target, &bezier.bernstein_vertex_buffer.as_ref().unwrap(), &bezier.bernstein_points_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, left_eye_color, selected_bernstein_color, bezier.selected_bernstein_point);
+                        points_drawer.draw(&mut target, &bezier.bernstein_vertex_buffer.as_ref().unwrap(), &bezier.bernstein_points_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, left_eye_color, selected_bernstein_color, bezier.selected_bernstein_point, &draw_params_stereo);
                     }
 
                     for surface in drawing_storage.borrow().surfaces_c0.values() {
-                        surface_c0_drawer.draw(&mut target, &surface, &perspective, &view_matrix, left_eye_color, surface.tess_level);
+                        surface_c0_drawer.draw(&mut target, &surface, &perspective, &view_matrix, left_eye_color, surface.tess_level, &draw_params_stereo);
                     }
 
                     for surface in drawing_storage.borrow().surfaces_c0.values().filter(|s| s.draw_polygon) {
-                        polygon_drawer.draw(&mut target, &surface.vertex_buffer, &surface.polygon_index_buffer, &perspective, &view_matrix, left_eye_color);
+                        polygon_drawer.draw(&mut target, &surface.vertex_buffer, &surface.polygon_index_buffer, &perspective, &view_matrix, left_eye_color, &draw_params_stereo);
                     }
 
                     for surface in drawing_storage.borrow().surfaces_c2.values() {
-                        surface_c2_drawer.draw(&mut target, &surface, &perspective, &view_matrix, left_eye_color, surface.tess_level);
+                        surface_c2_drawer.draw(&mut target, &surface, &perspective, &view_matrix, left_eye_color, surface.tess_level, &draw_params_stereo);
                     }
 
                     for surface in drawing_storage.borrow().surfaces_c2.values().filter(|s| s.draw_polygon) {
-                        polygon_drawer.draw(&mut target, &surface.vertex_buffer, &surface.polygon_index_buffer, &perspective, &view_matrix, left_eye_color);
+                        polygon_drawer.draw(&mut target, &surface.vertex_buffer, &surface.polygon_index_buffer, &perspective, &view_matrix, left_eye_color, &draw_params_stereo);
                     }
 
-                    cursor_drawer.draw(&mut target, &display, &app_state.storage.cursor, &perspective, &view_matrix, left_eye_color);
+                    cursor_drawer.draw(&mut target, &display, &app_state.storage.cursor, &perspective, &view_matrix, left_eye_color, &draw_params_stereo);
 
-                    infinite_grid_drawer.draw(&mut target, &perspective.data, &view_matrix.data, left_eye_color);
+                    infinite_grid_drawer.draw(&mut target, &perspective.data, &view_matrix.data, left_eye_color, &draw_params_stereo);
                 } else {
                     let perspective = math::matrix4::Matrix4::perspective(std::f32::consts::PI / 3.0, width as f32 / height as f32, 0.1, 1024.0);
                     
                     for torus in app_state.storage.toruses.iter() {
                         let color = if app_state.storage.selected_objects.iter().any(|so| so.torus_id == Some(*torus.0)) { selected_color } else { color };
-                        torus_drawer.draw(&mut target, &display, &torus.1, &perspective, &view_matrix, color);
+                        torus_drawer.draw(&mut target, &display, &torus.1, &perspective, &view_matrix, color, &draw_params);
                     }
 
                     for point in app_state.storage.points.iter() {
                         let color = if app_state.storage.selected_objects.iter().any(|so| so.point_id == Some(*point.0)) { selected_color } else { color };
-                        point_drawer.draw(&mut target, &display, &point.1, &perspective, &view_matrix, color);
+                        point_drawer.draw(&mut target, &display, &point.1, &perspective, &view_matrix, color, &draw_params);
                     }
 
                     let center_point = cqrs.get(&SelectedObjectsCenter);
                     if let Some(center_point) = center_point {
                         let mut transformer = LittleTransformer::new();
                         transformer.position = center_point.position;
-                        point_drawer.draw(&mut target, &display, &Point::new(0, transformer), &perspective, &view_matrix, Color32::BROWN.to_normalized_gamma_f32());
+                        point_drawer.draw(&mut target, &display, &Point::new(0, transformer), &perspective, &view_matrix, Color32::BROWN.to_normalized_gamma_f32(), &draw_params);
                     }
 
                     for bezier in drawing_storage.borrow().beziers_c0.values() {
-                        bezier_c0_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, color, width, height);
+                        bezier_c0_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, color, width, height, &draw_params);
                     }
 
                     for bezier in drawing_storage.borrow().beziers_c2.values() {
-                        bezier_c2_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, color, width, height);
+                        bezier_c2_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, color, width, height, &draw_params);
                     }
 
                     for bezier in drawing_storage.borrow().beziers_int.values() {
-                        bezier_int_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, color, width, height);
+                        bezier_int_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, color, width, height, &draw_params);
                     }
 
                     for bezier in drawing_storage.borrow().beziers_c0.values().filter(|b| b.draw_polygon && b.polygon_index_buffer.is_some()) {
-                        polygon_drawer.draw(&mut target, &bezier.vertex_buffer.as_ref().unwrap(), &bezier.polygon_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, color);
+                        polygon_drawer.draw(&mut target, &bezier.vertex_buffer.as_ref().unwrap(), &bezier.polygon_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, color, &draw_params);
                     }
 
                     for bezier in drawing_storage.borrow().beziers_c2.values().filter(|b| b.draw_b_spline_polygon && b.b_spline_polygon_index_buffer.is_some()) {
-                        polygon_drawer.draw(&mut target, &bezier.b_spline_vertex_buffer.as_ref().unwrap(), &bezier.b_spline_polygon_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, color);
+                        polygon_drawer.draw(&mut target, &bezier.b_spline_vertex_buffer.as_ref().unwrap(), &bezier.b_spline_polygon_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, color, &draw_params);
                     }
 
                     for bezier in drawing_storage.borrow().beziers_c2.values().filter(|b| b.draw_bernstein_polygon && b.bernstein_polygon_index_buffer.is_some()) {
-                        polygon_drawer.draw(&mut target, &bezier.bernstein_vertex_buffer.as_ref().unwrap(), &bezier.bernstein_polygon_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, color);
+                        polygon_drawer.draw(&mut target, &bezier.bernstein_vertex_buffer.as_ref().unwrap(), &bezier.bernstein_polygon_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, color, &draw_params);
                     }
 
                     for bezier in drawing_storage.borrow().beziers_c2.values().filter(|b| b.draw_bernstein_points && b.bernstein_points_index_buffer.is_some()) {
-                        points_drawer.draw(&mut target, &bezier.bernstein_vertex_buffer.as_ref().unwrap(), &bezier.bernstein_points_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, bernstein_color, selected_bernstein_color, bezier.selected_bernstein_point);
+                        points_drawer.draw(&mut target, &bezier.bernstein_vertex_buffer.as_ref().unwrap(), &bezier.bernstein_points_index_buffer.as_ref().unwrap(), &perspective, &view_matrix, bernstein_color, selected_bernstein_color, bezier.selected_bernstein_point, &draw_params);
                     }
 
                     for surface in drawing_storage.borrow().surfaces_c0.values() {
-                        surface_c0_drawer.draw(&mut target, &surface, &perspective, &view_matrix, color, surface.tess_level);
+                        surface_c0_drawer.draw(&mut target, &surface, &perspective, &view_matrix, color, surface.tess_level, &draw_params);
                     }
 
                     for surface in drawing_storage.borrow().surfaces_c0.values().filter(|s| s.draw_polygon) {
-                        polygon_drawer.draw(&mut target, &surface.vertex_buffer, &surface.polygon_index_buffer, &perspective, &view_matrix, color);
+                        polygon_drawer.draw(&mut target, &surface.vertex_buffer, &surface.polygon_index_buffer, &perspective, &view_matrix, color, &draw_params);
                     }
 
                     for surface in drawing_storage.borrow().surfaces_c2.values() {
-                        surface_c2_drawer.draw(&mut target, &surface, &perspective, &view_matrix, color, surface.tess_level);
+                        surface_c2_drawer.draw(&mut target, &surface, &perspective, &view_matrix, color, surface.tess_level, &draw_params);
                     }
 
                     for surface in drawing_storage.borrow().surfaces_c2.values().filter(|s| s.draw_polygon) {
-                        polygon_drawer.draw(&mut target, &surface.vertex_buffer, &surface.polygon_index_buffer, &perspective, &view_matrix, color);
+                        polygon_drawer.draw(&mut target, &surface.vertex_buffer, &surface.polygon_index_buffer, &perspective, &view_matrix, color, &draw_params);
                     }
 
-                    cursor_drawer.draw(&mut target, &display, &app_state.storage.cursor, &perspective, &view_matrix, [0.0, 1.0, 0.0, 1.0]);
+                    cursor_drawer.draw(&mut target, &display, &app_state.storage.cursor, &perspective, &view_matrix, [0.0, 1.0, 0.0, 1.0], &draw_params);
 
-                    infinite_grid_drawer.draw(&mut target, &perspective.data, &view_matrix.data, color);
+                    infinite_grid_drawer.draw(&mut target, &perspective.data, &view_matrix.data, color, &draw_params);
                 }
 
                 egui_glium.paint(&display, &mut target);

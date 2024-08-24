@@ -5,7 +5,6 @@ use backend::domain::vertex::Vertex;
 
 pub struct PointsDrawer {
     program: Program,
-    drawing_parameters: DrawParameters<'static>,
 }
 
 impl PointsDrawer {
@@ -44,29 +43,8 @@ impl PointsDrawer {
         let program =
             Program::from_source(display, vertex_shader_src, fragment_shader_src, None).unwrap();
 
-        let mut drawing_parameters = DrawParameters::default();
-        drawing_parameters.polygon_mode = glium::draw_parameters::PolygonMode::Point;
-        drawing_parameters.point_size = Some(6.0);
-        drawing_parameters.depth = glium::Depth {
-            test: glium::draw_parameters::DepthTest::IfLess,
-            write: true,
-            ..Default::default()
-        };
-        drawing_parameters.blend = glium::Blend {
-            color: BlendingFunction::Addition {
-                source: LinearBlendingFactor::SourceAlpha,
-                destination: LinearBlendingFactor::DestinationAlpha,
-            },
-            alpha: BlendingFunction::Addition {
-                source: LinearBlendingFactor::SourceAlpha,
-                destination: LinearBlendingFactor::DestinationAlpha
-            },
-            constant_value: (0.0, 0.0, 0.0, 0.0)
-        };
-
         Self {
             program,
-            drawing_parameters,
         }
     }
 
@@ -80,7 +58,11 @@ impl PointsDrawer {
         color: [f32; 4],
         selected_color: [f32; 4],
         selected_index: Option<usize>,
+        drawing_parameters: &DrawParameters,
     ) {
+        let mut drawing_parameters = drawing_parameters.clone();
+        drawing_parameters.point_size = Some(6.0);
+        
         target
             .draw(
                 vertex_buffer,
@@ -93,7 +75,7 @@ impl PointsDrawer {
                     selected_index: if let Some(x) = selected_index { x as i32 } else { -1 },
                     selected_color: selected_color,
                 },
-                &self.drawing_parameters,
+                &drawing_parameters,
             )
             .unwrap();
     }

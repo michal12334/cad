@@ -1,5 +1,5 @@
 use glium::glutin::surface::WindowSurface;
-use glium::{Blend, BlendingFunction, Display, IndexBuffer, LinearBlendingFactor, Program, Surface, VertexBuffer};
+use glium::{Blend, BlendingFunction, Display, DrawParameters, IndexBuffer, LinearBlendingFactor, Program, Surface, VertexBuffer};
 
 use backend::domain::vertex::Vertex;
 
@@ -134,27 +134,11 @@ impl InfiniteGridDrawer {
         perspective: &[[f32; 4]; 4],
         view: &[[f32; 4]; 4],
         color_mask: [f32; 4],
+        drawing_parameters: &DrawParameters,
     ) {
-        let draw_params = glium::DrawParameters {
-            depth: glium::Depth {
-                test: glium::draw_parameters::DepthTest::IfLess,
-                write: true,
-                ..Default::default()
-            },
-            blend: Blend {
-                color: BlendingFunction::Addition {
-                    source: LinearBlendingFactor::SourceAlpha,
-                    destination: LinearBlendingFactor::DestinationAlpha,
-                },
-                alpha: BlendingFunction::Addition {
-                    source: LinearBlendingFactor::SourceAlpha,
-                    destination: LinearBlendingFactor::DestinationAlpha
-                },
-                constant_value: (0.0, 0.0, 0.0, 0.0)
-            },
-            ..Default::default()
-        };
-
+        let mut drawing_parameters = drawing_parameters.clone();
+        drawing_parameters.polygon_mode = glium::draw_parameters::PolygonMode::Fill;
+        
         target
             .draw(
                 &self.vertex_buffer,
@@ -165,7 +149,7 @@ impl InfiniteGridDrawer {
                     view: *view,
                     color_mask: color_mask,
                 },
-                &draw_params,
+                &drawing_parameters,
             )
             .unwrap();
     }

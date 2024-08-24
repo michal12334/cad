@@ -7,7 +7,6 @@ use crate::drawing::domain::bezier_c0::BezierC0;
 
 pub struct BezierC0Drawer {
     program: Program,
-    drawing_parameters: DrawParameters<'static>,
 }
 
 impl BezierC0Drawer {
@@ -107,29 +106,8 @@ impl BezierC0Drawer {
         )
         .unwrap();
 
-        let mut drawing_parameters = DrawParameters::default();
-        drawing_parameters.polygon_mode = glium::draw_parameters::PolygonMode::Line;
-        drawing_parameters.line_width = Some(1.0);
-        drawing_parameters.depth = glium::Depth {
-            test: glium::draw_parameters::DepthTest::IfLess,
-            write: true,
-            ..Default::default()
-        };
-        drawing_parameters.blend = glium::Blend {
-            color: BlendingFunction::Addition {
-                source: LinearBlendingFactor::SourceAlpha,
-                destination: LinearBlendingFactor::DestinationAlpha,
-            },
-            alpha: BlendingFunction::Addition {
-                source: LinearBlendingFactor::SourceAlpha,
-                destination: LinearBlendingFactor::DestinationAlpha
-            },
-            constant_value: (0.0, 0.0, 0.0, 0.0)
-        };
-
         Self {
             program,
-            drawing_parameters,
         }
     }
 
@@ -142,6 +120,7 @@ impl BezierC0Drawer {
         color: [f32; 4],
         width: u32,
         height: u32,
+        drawing_parameters: &DrawParameters,
     ) {
         if bezier.points.len() < 2 {
             return;
@@ -185,7 +164,7 @@ impl BezierC0Drawer {
                         t_min: i as f32 / number_of_draw_calls as f32,
                         t_max: (i + 1) as f32 / number_of_draw_calls as f32,
                     },
-                    &self.drawing_parameters,
+                    drawing_parameters,
                 )
                 .unwrap();
         }

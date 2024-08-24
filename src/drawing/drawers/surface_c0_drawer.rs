@@ -9,7 +9,6 @@ use crate::drawing::domain::surface_c0::SurfaceC0;
 
 pub struct SurfaceC0Drawer {
     program: Program,
-    drawing_parameters: DrawParameters<'static>,
 }
 
 impl SurfaceC0Drawer {
@@ -119,29 +118,8 @@ impl SurfaceC0Drawer {
         )
             .unwrap();
 
-        let mut drawing_parameters = DrawParameters::default();
-        drawing_parameters.polygon_mode = glium::draw_parameters::PolygonMode::Line;
-        drawing_parameters.line_width = Some(1.0);
-        drawing_parameters.depth = glium::Depth {
-            test: glium::draw_parameters::DepthTest::IfLess,
-            write: true,
-            ..Default::default()
-        };
-        drawing_parameters.blend = glium::Blend {
-            color: BlendingFunction::Addition {
-                source: LinearBlendingFactor::SourceAlpha,
-                destination: LinearBlendingFactor::DestinationAlpha,
-            },
-            alpha: BlendingFunction::Addition {
-                source: LinearBlendingFactor::SourceAlpha,
-                destination: LinearBlendingFactor::DestinationAlpha
-            },
-            constant_value: (0.0, 0.0, 0.0, 0.0)
-        };
-
         Self {
             program,
-            drawing_parameters,
         }
     }
 
@@ -153,6 +131,7 @@ impl SurfaceC0Drawer {
         view_matrix: &math::matrix4::Matrix4,
         color: [f32; 4],
         tess_level: u8,
+        drawing_parameters: &DrawParameters,
     ) {
         target
             .draw(
@@ -165,7 +144,7 @@ impl SurfaceC0Drawer {
                     obj_color: color,
                     tess_level: tess_level as i32,
                 },
-                &self.drawing_parameters,
+                &drawing_parameters,
             )
             .unwrap();
     }
