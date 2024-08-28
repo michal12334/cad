@@ -152,6 +152,7 @@ pub fn load_scene(storage: &mut Storage, file_path: &str) {
                 surface_c0.name.clone(),
                 points,
                 (surface_c0.size.x, surface_c0.size.y),
+                false,
             ),
         );
     }
@@ -193,6 +194,7 @@ pub fn load_scene(storage: &mut Storage, file_path: &str) {
                 surface_c2.name.clone(),
                 points,
                 (surface_c2.size.x, surface_c2.size.y),
+                false,
             ),
         );
     }

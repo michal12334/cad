@@ -21,6 +21,7 @@ impl Consumer<SurfaceC0Created> for SurfaceC0CreatedPublisher {
             backend_events::surfaces_c0::surface_c0_created::SurfaceC0Created::new(
                 message.id,
                 message.size,
+                message.is_cylinder,
             ),
         );
         backend.services.event_publisher.publish(event);

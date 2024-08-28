@@ -20,6 +20,7 @@ impl Query<AllSurfacesC2, Vec<SurfaceC2DTO>> for AllSurfacesC2 {
                 draw_polygon: surface_c2.draw_polygon,
                 tess_level: surface_c2.tess_level,
                 size: surface_c2.size,
+                is_cylinder: surface_c2.is_cylinder,
             })
             .collect()
     }

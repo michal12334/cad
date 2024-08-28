@@ -21,6 +21,7 @@ impl Consumer<SurfaceC2Created> for SurfaceC2CreatedPublisher {
             backend_events::surfaces_c2::surface_c2_created::SurfaceC2Created::new(
                 message.id,
                 message.size,
+                message.is_cylinder,
             ),
         );
         backend.services.event_publisher.publish(event);

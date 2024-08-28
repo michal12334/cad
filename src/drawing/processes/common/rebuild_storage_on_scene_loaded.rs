@@ -78,7 +78,13 @@ impl Consumer<SceneLoaded> for RebuildStorageOnSceneLoaded {
             let points = self.cqrs.get(&SurfaceC0Points { id: surface_c0.id });
             drawing_storage.surfaces_c0.insert(
                 surface_c0.id,
-                SurfaceC0::new(surface_c0.id, &points, surface_c0.size, &self.display),
+                SurfaceC0::new(
+                    surface_c0.id,
+                    &points,
+                    surface_c0.size,
+                    &self.display,
+                    surface_c0.is_cylinder,
+                ),
             );
         }
 
@@ -86,7 +92,13 @@ impl Consumer<SceneLoaded> for RebuildStorageOnSceneLoaded {
             let points = self.cqrs.get(&SurfaceC2Points { id: surface_c2.id });
             drawing_storage.surfaces_c2.insert(
                 surface_c2.id,
-                SurfaceC2::new(surface_c2.id, &points, surface_c2.size, &self.display),
+                SurfaceC2::new(
+                    surface_c2.id,
+                    &points,
+                    surface_c2.size,
+                    &self.display,
+                    surface_c2.is_cylinder,
+                ),
             );
         }
     }

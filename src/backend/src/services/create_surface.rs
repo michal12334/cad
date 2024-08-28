@@ -40,7 +40,7 @@ pub fn create_surface_c0(
             .chain(points.iter().take(size_y as usize))
             .map(|point| SurfaceC0Point { id: point.id })
             .collect();
-        let surface = SurfaceC0::new(id, surface_points, create_surface_info.size);
+        let surface = SurfaceC0::new(id, surface_points, create_surface_info.size, true);
         (surface, points)
     } else {
         let width = create_surface_info.width.unwrap();
@@ -72,7 +72,7 @@ pub fn create_surface_c0(
             .iter()
             .map(|point| SurfaceC0Point { id: point.id })
             .collect();
-        let surface = SurfaceC0::new(id, surface_points, create_surface_info.size);
+        let surface = SurfaceC0::new(id, surface_points, create_surface_info.size, false);
         (surface, points)
     }
 }
@@ -112,7 +112,7 @@ pub fn create_surface_c2(
             .chain(points.iter().take(3 * size_y as usize))
             .map(|point| SurfaceC2Point { id: point.id })
             .collect();
-        let surface = SurfaceC2::new(id, surface_points, create_surface_info.size);
+        let surface = SurfaceC2::new(id, surface_points, create_surface_info.size, true);
         (surface, points)
     } else {
         let width = create_surface_info.width.unwrap();
@@ -144,7 +144,7 @@ pub fn create_surface_c2(
             .iter()
             .map(|point| SurfaceC2Point { id: point.id })
             .collect();
-        let surface = SurfaceC2::new(id, surface_points, create_surface_info.size);
+        let surface = SurfaceC2::new(id, surface_points, create_surface_info.size, false);
         (surface, points)
     }
 }

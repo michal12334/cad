@@ -55,6 +55,9 @@ impl SurfaceC2Drawer {
 
             layout(isolines, equal_spacing) in;
 
+            uniform bool swap_xy;
+            uniform bool is_cylinder;
+
             vec4 get_bernstein_value(float x, float y, vec4 positions[16]) {
                 vec4 v11 = positions[0];
                 vec4 v21 = positions[1];
@@ -100,8 +103,20 @@ impl SurfaceC2Drawer {
                 for (int i = 0; i < 16; i++) {
                     positions[i] = gl_in[i].gl_Position;
                 }
+
+                float x = gl_TessCoord.x;
                 float y = gl_TessCoord.y * float(gl_TessLevelOuter[0]) / float(gl_TessLevelOuter[0] - 1);
-                gl_Position = get_bernstein_value(gl_TessCoord.x, y, positions);
+
+                if (swap_xy && !is_cylinder) {
+                    float temp = x;
+                    x = y;
+                    y = temp;
+                } else if (swap_xy && is_cylinder) {
+                    y = gl_TessCoord.x;
+                    x = gl_TessCoord.y;
+                }
+
+                gl_Position = get_bernstein_value(x, y, positions);
             }
         "#;
 
@@ -140,6 +155,24 @@ impl SurfaceC2Drawer {
                     view: view_matrix.data,
                     obj_color: color,
                     tess_level: tess_level as i32,
+                    swap_xy: false,
+                    is_cylinder: surface.is_cylinder,
+                },
+                &drawing_parameters,
+            )
+            .unwrap();
+        target
+            .draw(
+                &surface.vertex_buffer,
+                &surface.surface_index_buffer,
+                &self.program,
+                &uniform! {
+                    perspective: perspective.data,
+                    view: view_matrix.data,
+                    obj_color: color,
+                    tess_level: tess_level as i32,
+                    swap_xy: true,
+                    is_cylinder: surface.is_cylinder,
                 },
                 &drawing_parameters,
             )

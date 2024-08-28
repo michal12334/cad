@@ -25,7 +25,13 @@ impl Consumer<SurfaceC2Created> for AddSurfaceC2OnSurfaceC2Created {
         let points = self.cqrs.get(&SurfaceC2Points { id: event.id });
         drawing_storage.surfaces_c2.insert(
             event.id,
-            SurfaceC2::new(event.id, &points, event.size, &self.display),
+            SurfaceC2::new(
+                event.id,
+                &points,
+                event.size,
+                &self.display,
+                event.is_cylinder,
+            ),
         );
     }
 }

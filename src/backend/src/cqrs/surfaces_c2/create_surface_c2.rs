@@ -43,6 +43,7 @@ impl Command<CreateSurfaceC2> for CreateSurfaceC2 {
             .publish(Rc::new(SurfaceC2Created::new(
                 command.id,
                 command.create_surface_info.size,
+                command.create_surface_info.is_cylinder,
             )));
     }
 }

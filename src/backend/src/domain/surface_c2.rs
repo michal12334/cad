@@ -5,6 +5,7 @@ pub struct SurfaceC2 {
     pub tess_level: u8,
     pub points: Vec<SurfaceC2Point>,
     pub size: (u32, u32),
+    pub is_cylinder: bool,
 }
 
 #[derive(Clone)]
@@ -13,7 +14,7 @@ pub struct SurfaceC2Point {
 }
 
 impl SurfaceC2 {
-    pub fn new(id: u64, points: Vec<SurfaceC2Point>, size: (u32, u32)) -> Self {
+    pub fn new(id: u64, points: Vec<SurfaceC2Point>, size: (u32, u32), is_cylinder: bool) -> Self {
         Self {
             id,
             name: format!("SurfaceC2 {}", id),
@@ -21,6 +22,7 @@ impl SurfaceC2 {
             tess_level: 4,
             points,
             size,
+            is_cylinder,
         }
     }
 
@@ -29,6 +31,7 @@ impl SurfaceC2 {
         name: String,
         points: Vec<SurfaceC2Point>,
         size: (u32, u32),
+        is_cylinder: bool,
     ) -> Self {
         Self {
             id,
@@ -37,6 +40,7 @@ impl SurfaceC2 {
             tess_level: 4,
             points,
             size,
+            is_cylinder,
         }
     }
 

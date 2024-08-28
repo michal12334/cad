@@ -15,6 +15,7 @@ pub struct SurfaceC2DTO {
     pub draw_polygon: bool,
     pub tess_level: u8,
     pub size: (u32, u32),
+    pub is_cylinder: bool,
 }
 
 impl Query<SurfaceC2Details, SurfaceC2DTO> for SurfaceC2Details {
@@ -27,6 +28,7 @@ impl Query<SurfaceC2Details, SurfaceC2DTO> for SurfaceC2Details {
             draw_polygon: surface_c2.draw_polygon,
             tess_level: surface_c2.tess_level,
             size: surface_c2.size,
+            is_cylinder: surface_c2.is_cylinder,
         }
     }
 }
