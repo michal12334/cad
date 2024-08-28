@@ -1,4 +1,5 @@
 use backend::cqrs::cqrs::CQRS;
+
 use crate::object::Object;
 
 pub trait Popup {

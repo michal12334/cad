@@ -5,7 +5,12 @@ use crate::domain::surface_c2::{SurfaceC2, SurfaceC2Point};
 use crate::domain::transformer::LittleTransformer;
 use crate::services::id_generator::IdGenerator;
 
-pub fn create_surface_c0(id: u64, create_surface_info: &CreateSurfaceInfoDTO, id_generator: &mut IdGenerator, cursor_position: &LittleTransformer) -> (SurfaceC0, Vec<Point>) {
+pub fn create_surface_c0(
+    id: u64,
+    create_surface_info: &CreateSurfaceInfoDTO,
+    id_generator: &mut IdGenerator,
+    cursor_position: &LittleTransformer,
+) -> (SurfaceC0, Vec<Point>) {
     if create_surface_info.is_cylinder {
         let radius = create_surface_info.radius.unwrap();
         let height = create_surface_info.height.unwrap();
@@ -21,12 +26,17 @@ pub fn create_surface_c0(id: u64, create_surface_info: &CreateSurfaceInfoDTO, id
                 let height = height * y / (size_y - 1) as f64;
                 let position = (radius * angle.cos(), radius * angle.sin(), height);
                 let position = LittleTransformer {
-                    position: (position.0 + cursor_position.position.0, position.1 + cursor_position.position.1, position.2 + cursor_position.position.2),
+                    position: (
+                        position.0 + cursor_position.position.0,
+                        position.1 + cursor_position.position.1,
+                        position.2 + cursor_position.position.2,
+                    ),
                 };
                 Point::new(id_generator.next(), position)
             })
             .collect::<Vec<_>>();
-        let surface_points = points.iter()
+        let surface_points = points
+            .iter()
             .chain(points.iter().take(size_y as usize))
             .map(|point| SurfaceC0Point { id: point.id })
             .collect();
@@ -43,14 +53,23 @@ pub fn create_surface_c0(id: u64, create_surface_info: &CreateSurfaceInfoDTO, id
             .map(|(x, y)| {
                 let x = x as f64;
                 let y = y as f64;
-                let position = (width * x / (size_x - 1) as f64, 0.0, length * y / (size_y - 1) as f64);
+                let position = (
+                    width * x / (size_x - 1) as f64,
+                    0.0,
+                    length * y / (size_y - 1) as f64,
+                );
                 let position = LittleTransformer {
-                    position: (position.0 + cursor_position.position.0, position.1 + cursor_position.position.1, position.2 + cursor_position.position.2),
+                    position: (
+                        position.0 + cursor_position.position.0,
+                        position.1 + cursor_position.position.1,
+                        position.2 + cursor_position.position.2,
+                    ),
                 };
                 Point::new(id_generator.next(), position)
             })
             .collect::<Vec<_>>();
-        let surface_points = points.iter()
+        let surface_points = points
+            .iter()
             .map(|point| SurfaceC0Point { id: point.id })
             .collect();
         let surface = SurfaceC0::new(id, surface_points, create_surface_info.size);
@@ -58,7 +77,12 @@ pub fn create_surface_c0(id: u64, create_surface_info: &CreateSurfaceInfoDTO, id
     }
 }
 
-pub fn create_surface_c2(id: u64, create_surface_info: &CreateSurfaceInfoDTO, id_generator: &mut IdGenerator, cursor_position: &LittleTransformer) -> (SurfaceC2, Vec<Point>) {
+pub fn create_surface_c2(
+    id: u64,
+    create_surface_info: &CreateSurfaceInfoDTO,
+    id_generator: &mut IdGenerator,
+    cursor_position: &LittleTransformer,
+) -> (SurfaceC2, Vec<Point>) {
     if create_surface_info.is_cylinder {
         let radius = create_surface_info.radius.unwrap();
         let height = create_surface_info.height.unwrap();
@@ -74,12 +98,17 @@ pub fn create_surface_c2(id: u64, create_surface_info: &CreateSurfaceInfoDTO, id
                 let height = height * y / (size_y - 1) as f64;
                 let position = (radius * angle.cos(), radius * angle.sin(), height);
                 let position = LittleTransformer {
-                    position: (position.0 + cursor_position.position.0, position.1 + cursor_position.position.1, position.2 + cursor_position.position.2),
+                    position: (
+                        position.0 + cursor_position.position.0,
+                        position.1 + cursor_position.position.1,
+                        position.2 + cursor_position.position.2,
+                    ),
                 };
                 Point::new(id_generator.next(), position)
             })
             .collect::<Vec<_>>();
-        let surface_points = points.iter()
+        let surface_points = points
+            .iter()
             .chain(points.iter().take(3 * size_y as usize))
             .map(|point| SurfaceC2Point { id: point.id })
             .collect();
@@ -96,14 +125,23 @@ pub fn create_surface_c2(id: u64, create_surface_info: &CreateSurfaceInfoDTO, id
             .map(|(x, y)| {
                 let x = x as f64;
                 let y = y as f64;
-                let position = (width * x / (size_x - 1) as f64, 0.0, length * y / (size_y - 1) as f64);
+                let position = (
+                    width * x / (size_x - 1) as f64,
+                    0.0,
+                    length * y / (size_y - 1) as f64,
+                );
                 let position = LittleTransformer {
-                    position: (position.0 + cursor_position.position.0, position.1 + cursor_position.position.1, position.2 + cursor_position.position.2),
+                    position: (
+                        position.0 + cursor_position.position.0,
+                        position.1 + cursor_position.position.1,
+                        position.2 + cursor_position.position.2,
+                    ),
                 };
                 Point::new(id_generator.next(), position)
             })
             .collect::<Vec<_>>();
-        let surface_points = points.iter()
+        let surface_points = points
+            .iter()
             .map(|point| SurfaceC2Point { id: point.id })
             .collect();
         let surface = SurfaceC2::new(id, surface_points, create_surface_info.size);

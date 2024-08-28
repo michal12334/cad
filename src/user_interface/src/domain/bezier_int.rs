@@ -1,4 +1,4 @@
-use backend::cqrs::beziers_int::bezier_int_details::{BezierIntDTO, BezierIntPointDTO};
+use backend::cqrs::beziers_int::bezier_int_details::BezierIntDTO;
 
 pub struct BezierInt {
     pub id: u64,

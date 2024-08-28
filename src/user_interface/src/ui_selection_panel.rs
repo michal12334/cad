@@ -14,7 +14,7 @@ impl Ui {
             .show(ui, |ui| {
                 ScrollArea::vertical().id_source("a").show(ui, |ui| {
                     ui.text_edit_singleline(&mut self.filter);
-                    
+
                     let cursor = self.cursor.as_ref().unwrap();
                     if ui
                         .selectable_label(self.cursor_selected, &cursor.name)
@@ -25,7 +25,11 @@ impl Ui {
                         self.cursor_selected = !self.cursor_selected;
                     }
 
-                    for object in self.objects.iter_mut().filter(|o| o.get_name().to_lowercase().contains(&self.filter.to_lowercase())) {
+                    for object in self.objects.iter_mut().filter(|o| {
+                        o.get_name()
+                            .to_lowercase()
+                            .contains(&self.filter.to_lowercase())
+                    }) {
                         let object_id = object.get_id();
                         let object_type = object.get_type();
                         let is_selected = self

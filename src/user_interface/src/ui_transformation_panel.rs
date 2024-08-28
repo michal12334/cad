@@ -25,7 +25,6 @@ use backend::cqrs::points::transform_point::TransformPoint;
 use backend::cqrs::surfaces_c0::rename_surface_c0::RenameSurfaceC0;
 use backend::cqrs::surfaces_c0::select_surface_c0_points::SelectSurfaceC0Points;
 use backend::cqrs::surfaces_c0::surface_c0_details::SurfaceC0DTO;
-use backend::cqrs::surfaces_c0::surface_c0_points::SurfaceC0Points;
 use backend::cqrs::surfaces_c0::update_surface_c0::UpdateSurfaceC0;
 use backend::cqrs::surfaces_c2::rename_surface_c2::RenameSurfaceC2;
 use backend::cqrs::surfaces_c2::select_surface_c2_points::SelectSurfaceC2Points;
@@ -792,23 +791,31 @@ impl Ui {
         }
     }
 
-    fn build_surface_c0_transformation_panel(ui: &mut egui::Ui, cqrs: &mut CQRS, surface: &mut SurfaceC0DTO) {
+    fn build_surface_c0_transformation_panel(
+        ui: &mut egui::Ui,
+        cqrs: &mut CQRS,
+        surface: &mut SurfaceC0DTO,
+    ) {
         if ui.text_edit_singleline(&mut surface.name).lost_focus() {
             cqrs.execute(&RenameSurfaceC0 {
                 id: surface.id,
                 name: surface.name.clone(),
             });
         }
-        
-        if ui.button("Select points").clicked() { 
-            cqrs.execute(&SelectSurfaceC0Points { surface_id: surface.id, });
+
+        if ui.button("Select points").clicked() {
+            cqrs.execute(&SelectSurfaceC0Points {
+                surface_id: surface.id,
+            });
         }
-        
+
         ui.horizontal(|ui| {
             ui.label("Tessellation level");
             if DragValue::new(&mut surface.tess_level)
                 .clamp_range(2..=64)
-                .ui(ui).changed() {
+                .ui(ui)
+                .changed()
+            {
                 cqrs.execute(&UpdateSurfaceC0 {
                     id: surface.id,
                     tess_level: surface.tess_level,
@@ -816,8 +823,11 @@ impl Ui {
                 });
             }
         });
-        
-        if ui.checkbox(&mut surface.draw_polygon, "Draw Polygon").changed() {
+
+        if ui
+            .checkbox(&mut surface.draw_polygon, "Draw Polygon")
+            .changed()
+        {
             cqrs.execute(&UpdateSurfaceC0 {
                 id: surface.id,
                 tess_level: surface.tess_level,
@@ -826,7 +836,11 @@ impl Ui {
         }
     }
 
-    fn build_surface_c2_transformation_panel(ui: &mut egui::Ui, cqrs: &mut CQRS, surface: &mut SurfaceC2DTO) {
+    fn build_surface_c2_transformation_panel(
+        ui: &mut egui::Ui,
+        cqrs: &mut CQRS,
+        surface: &mut SurfaceC2DTO,
+    ) {
         if ui.text_edit_singleline(&mut surface.name).lost_focus() {
             cqrs.execute(&RenameSurfaceC2 {
                 id: surface.id,
@@ -835,14 +849,18 @@ impl Ui {
         }
 
         if ui.button("Select points").clicked() {
-            cqrs.execute(&SelectSurfaceC2Points { surface_id: surface.id, });
+            cqrs.execute(&SelectSurfaceC2Points {
+                surface_id: surface.id,
+            });
         }
 
         ui.horizontal(|ui| {
             ui.label("Tessellation level");
             if DragValue::new(&mut surface.tess_level)
                 .clamp_range(2..=64)
-                .ui(ui).changed() {
+                .ui(ui)
+                .changed()
+            {
                 cqrs.execute(&UpdateSurfaceC2 {
                     id: surface.id,
                     tess_level: surface.tess_level,
@@ -851,7 +869,10 @@ impl Ui {
             }
         });
 
-        if ui.checkbox(&mut surface.draw_polygon, "Draw Polygon").changed() {
+        if ui
+            .checkbox(&mut surface.draw_polygon, "Draw Polygon")
+            .changed()
+        {
             cqrs.execute(&UpdateSurfaceC2 {
                 id: surface.id,
                 tess_level: surface.tess_level,
@@ -859,7 +880,7 @@ impl Ui {
             });
         }
     }
-    
+
     fn build_stereoscopy_settings_panel(&mut self, ui: &mut egui::Ui) {
         ui.checkbox(&mut self.stereoscopy, "Stereoscopy");
         Slider::new(&mut self.stereoscopy_eye_distance, 0.01..=10.0)

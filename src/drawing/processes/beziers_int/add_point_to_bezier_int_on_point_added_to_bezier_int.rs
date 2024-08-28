@@ -1,13 +1,16 @@
-use crate::drawing::drawing_storage::DrawingStorage;
-use backend::cqrs::beziers_int::bezier_int_bernstein_points::BezierIntBernsteinPoints;
-use backend::cqrs::cqrs::CQRS;
-use backend_events::points::point_added_to_bezier_int::PointAddedToBezierInt;
-use glium::glutin::surface::WindowSurface;
-use glium::Display;
-use infrastructure::consumer::{AnyConsumer, Consumer};
 use std::any::Any;
 use std::cell::RefCell;
 use std::rc::Rc;
+
+use glium::glutin::surface::WindowSurface;
+use glium::Display;
+
+use backend::cqrs::beziers_int::bezier_int_bernstein_points::BezierIntBernsteinPoints;
+use backend::cqrs::cqrs::CQRS;
+use backend_events::points::point_added_to_bezier_int::PointAddedToBezierInt;
+use infrastructure::consumer::{AnyConsumer, Consumer};
+
+use crate::drawing::drawing_storage::DrawingStorage;
 
 pub struct AddPointToBezierIntOnPointAddedToBezierInt {
     pub drawing_storage: Rc<RefCell<DrawingStorage>>,

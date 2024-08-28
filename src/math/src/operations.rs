@@ -20,20 +20,20 @@ fn normalize_quaternion(q: (f64, f64, f64, f64)) -> (f64, f64, f64, f64) {
 pub fn quaternion_to_euler(q: (f64, f64, f64, f64)) -> (f64, f64, f64) {
     let (x, y, z, w) = normalize_quaternion(q);
     let ysqr = y * y;
-    
+
     let t0 = 2.0 * (w * x + y * z);
     let t1 = 1.0 - 2.0 * (x * x + ysqr);
     let roll = t0.atan2(t1);
-    
+
     let t2 = 2.0 * (w * y - z * x);
     let t2 = if t2 > 1.0 { 1.0 } else { t2 };
     let t2 = if t2 < -1.0 { -1.0 } else { t2 };
     let pitch = t2.asin();
-    
+
     let t3 = 2.0 * (w * z + x * y);
     let t4 = 1.0 - 2.0 * (ysqr + z * z);
     let yaw = t3.atan2(t4);
-    
+
     (-roll, -pitch, yaw)
 }
 

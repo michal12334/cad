@@ -1,16 +1,17 @@
-use crate::domain::bezier_c2::BezierC2BSplinePoint;
-use crate::object::Object;
-use crate::ui::Ui;
-use backend::cqrs::beziers_c2::bezier_c2_b_spline_points::BezierC2BSplinePoints;
+use std::any::Any;
+use std::cell::RefCell;
+use std::rc::Rc;
+
 use backend::cqrs::beziers_c2::bezier_c2_bernstein_points::BezierC2BernsteinPoints;
 use backend::cqrs::cqrs::CQRS;
 use backend_events::beziers_c2::bezier_c2_point_moved::BezierC2PointMoved;
 use backend_events::beziers_c2::bezier_c2_points_deleted::BezierC2PointsDeleted;
 use backend_events::points::point_added_to_bezier_c2::PointAddedToBezierC2;
 use infrastructure::consumer::{AnyConsumer, Consumer};
-use std::any::Any;
-use std::cell::RefCell;
-use std::rc::Rc;
+
+use crate::domain::bezier_c2::BezierC2BSplinePoint;
+use crate::object::Object;
+use crate::ui::Ui;
 
 pub struct SyncBezierC2AddedPointsWithBackend {
     pub ui: Rc<RefCell<Ui>>,

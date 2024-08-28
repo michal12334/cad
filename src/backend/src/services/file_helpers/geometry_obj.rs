@@ -1,5 +1,6 @@
-use serde::{Deserialize, Serialize, Serializer};
 use serde::ser::SerializeStruct;
+use serde::{Deserialize, Serialize, Serializer};
+
 use crate::services::file_helpers::bezier_c0::BezierC0;
 use crate::services::file_helpers::bezier_c2::BezierC2;
 use crate::services::file_helpers::bezier_int::BezierInt;

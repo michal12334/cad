@@ -68,7 +68,7 @@ impl SelectedObject {
             surface_c2_id: None,
         }
     }
-    
+
     pub fn new_surface_c0(surface_c0_id: u64) -> Self {
         Self {
             torus_id: None,
@@ -80,7 +80,7 @@ impl SelectedObject {
             surface_c2_id: None,
         }
     }
-    
+
     pub fn new_surface_c2(surface_c2_id: u64) -> Self {
         Self {
             torus_id: None,

@@ -111,14 +111,14 @@ impl Command<DeleteSelectedObjects> for DeleteSelectedObjects {
             .iter()
             .filter_map(|object| object.bezier_int_id)
             .collect::<Vec<_>>();
-        
+
         let deleted_surfaces_c0 = backend
             .storage
             .selected_objects
             .iter()
             .filter_map(|object| object.surface_c0_id)
             .collect::<Vec<_>>();
-        
+
         let deleted_surfaces_c2 = backend
             .storage
             .selected_objects

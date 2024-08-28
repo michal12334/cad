@@ -1,8 +1,10 @@
 use std::any::Any;
 use std::cell::RefCell;
 use std::rc::Rc;
+
 use backend_events::surfaces_c2::surface_c2_deleted::SurfaceC2Deleted;
 use infrastructure::consumer::{AnyConsumer, Consumer};
+
 use crate::drawing::drawing_storage::DrawingStorage;
 
 pub struct DeleteSurfaceC2OnSurfaceC2Deleted {

@@ -1,7 +1,9 @@
 use std::any::Any;
 use std::cell::RefCell;
 use std::rc::Rc;
+
 use infrastructure::consumer::{AnyConsumer, Consumer};
+
 use crate::backend::Backend;
 use crate::domain::events::surfaces_c0::surface_c0_created::SurfaceC0Created;
 use crate::domain::events::surfaces_c0::surface_c0_deleted::SurfaceC0Deleted;
@@ -16,7 +18,10 @@ impl Consumer<SurfaceC0Created> for SurfaceC0CreatedPublisher {
     fn consume(&self, message: &SurfaceC0Created) {
         let backend = self.backend.borrow();
         let event = Rc::new(
-            backend_events::surfaces_c0::surface_c0_created::SurfaceC0Created::new(message.id, message.size),
+            backend_events::surfaces_c0::surface_c0_created::SurfaceC0Created::new(
+                message.id,
+                message.size,
+            ),
         );
         backend.services.event_publisher.publish(event);
     }
@@ -36,7 +41,9 @@ impl Consumer<SurfaceC0PointsSelected> for SurfaceC0PointsSelectedPublisher {
     fn consume(&self, message: &SurfaceC0PointsSelected) {
         let backend = self.backend.borrow();
         let event = Rc::new(
-            backend_events::surfaces_c0::surface_c0_points_selected::SurfaceC0PointsSelected::new(message.surface_id),
+            backend_events::surfaces_c0::surface_c0_points_selected::SurfaceC0PointsSelected::new(
+                message.surface_id,
+            ),
         );
         backend.services.event_publisher.publish(event);
     }
@@ -56,7 +63,11 @@ impl Consumer<SurfaceC0Updated> for SurfaceC0UpdatedPublisher {
     fn consume(&self, message: &SurfaceC0Updated) {
         let backend = self.backend.borrow();
         let event = Rc::new(
-            backend_events::surfaces_c0::surface_c0_updated::SurfaceC0Updated::new(message.id, message.draw_polygon, message.tess_level),
+            backend_events::surfaces_c0::surface_c0_updated::SurfaceC0Updated::new(
+                message.id,
+                message.draw_polygon,
+                message.tess_level,
+            ),
         );
         backend.services.event_publisher.publish(event);
     }

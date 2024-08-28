@@ -1,5 +1,6 @@
 use std::cell::RefCell;
 use std::rc::Rc;
+
 use crate::backend::Backend;
 use crate::cqrs::cqrs::Command;
 use crate::domain::events::surfaces_c0::surface_c0_updated::SurfaceC0Updated;
@@ -18,6 +19,13 @@ impl Command<UpdateSurfaceC0> for UpdateSurfaceC0 {
         surface_c0.set_tess_level(command.tess_level);
         drop(backend);
         let backend = app_state.borrow();
-        backend.services.event_publisher.publish(Rc::new(SurfaceC0Updated::new(command.id, command.draw_polygon, command.tess_level)));
+        backend
+            .services
+            .event_publisher
+            .publish(Rc::new(SurfaceC0Updated::new(
+                command.id,
+                command.draw_polygon,
+                command.tess_level,
+            )));
     }
 }

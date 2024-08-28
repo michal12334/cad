@@ -1,13 +1,14 @@
-use crate::domain::bezier_int::BezierIntPoint;
-use crate::object::Object;
-use crate::ui::Ui;
-use backend::cqrs::cqrs::CQRS;
-use backend_events::beziers_int::bezier_int_points_deleted::BezierIntPointsDeleted;
-use backend_events::points::point_added_to_bezier_int::PointAddedToBezierInt;
-use infrastructure::consumer::{AnyConsumer, Consumer};
 use std::any::Any;
 use std::cell::RefCell;
 use std::rc::Rc;
+
+use backend_events::beziers_int::bezier_int_points_deleted::BezierIntPointsDeleted;
+use backend_events::points::point_added_to_bezier_int::PointAddedToBezierInt;
+use infrastructure::consumer::{AnyConsumer, Consumer};
+
+use crate::domain::bezier_int::BezierIntPoint;
+use crate::object::Object;
+use crate::ui::Ui;
 
 pub struct SyncBezierIntAddedPointWithBackend {
     pub ui: Rc<RefCell<Ui>>,

@@ -1,8 +1,10 @@
 use std::any::Any;
 use std::cell::RefCell;
 use std::rc::Rc;
+
 use backend_events::surfaces_c2::surface_c2_point_moved::SurfaceC2PointMoved;
 use infrastructure::consumer::{AnyConsumer, Consumer};
+
 use crate::backend::Backend;
 use crate::domain::events::points::point_moved::PointMoved;
 

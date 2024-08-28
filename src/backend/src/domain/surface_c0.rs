@@ -24,7 +24,12 @@ impl SurfaceC0 {
         }
     }
 
-    pub fn new_with_name(id: u64, name: String, points: Vec<SurfaceC0Point>, size: (u32, u32)) -> Self {
+    pub fn new_with_name(
+        id: u64,
+        name: String,
+        points: Vec<SurfaceC0Point>,
+        size: (u32, u32),
+    ) -> Self {
         Self {
             id,
             name,
@@ -42,7 +47,7 @@ impl SurfaceC0 {
     pub fn set_draw_polygon(&mut self, draw_polygon: bool) {
         self.draw_polygon = draw_polygon;
     }
-    
+
     pub fn set_tess_level(&mut self, tess_level: u8) {
         self.tess_level = tess_level;
     }

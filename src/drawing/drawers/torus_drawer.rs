@@ -1,5 +1,5 @@
 use glium::glutin::surface::WindowSurface;
-use glium::{BlendingFunction, Display, DrawParameters, Frame, LinearBlendingFactor, Program, Surface};
+use glium::{Display, DrawParameters, Frame, Program, Surface};
 
 use backend::domain::torus::Torus;
 
@@ -38,9 +38,7 @@ impl TorusDrawer {
         let program =
             Program::from_source(display, vertex_shader_src, fragment_shader_src, None).unwrap();
 
-        Self {
-            program,
-        }
+        Self { program }
     }
 
     pub fn draw(

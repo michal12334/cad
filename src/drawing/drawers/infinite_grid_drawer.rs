@@ -1,5 +1,5 @@
 use glium::glutin::surface::WindowSurface;
-use glium::{Blend, BlendingFunction, Display, DrawParameters, IndexBuffer, LinearBlendingFactor, Program, Surface, VertexBuffer};
+use glium::{Display, DrawParameters, IndexBuffer, Program, Surface, VertexBuffer};
 
 use backend::domain::vertex::Vertex;
 
@@ -138,7 +138,7 @@ impl InfiniteGridDrawer {
     ) {
         let mut drawing_parameters = drawing_parameters.clone();
         drawing_parameters.polygon_mode = glium::draw_parameters::PolygonMode::Fill;
-        
+
         target
             .draw(
                 &self.vertex_buffer,

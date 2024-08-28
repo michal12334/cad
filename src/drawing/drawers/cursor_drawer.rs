@@ -1,5 +1,5 @@
 use glium::glutin::surface::WindowSurface;
-use glium::{BlendingFunction, Display, DrawParameters, Frame, LinearBlendingFactor, Program, Surface};
+use glium::{Display, DrawParameters, Frame, Program, Surface};
 
 use backend::domain::cursor::Cursor;
 
@@ -38,9 +38,7 @@ impl CursorDrawer {
         let program =
             Program::from_source(display, vertex_shader_src, fragment_shader_src, None).unwrap();
 
-        Self {
-            program,
-        }
+        Self { program }
     }
 
     pub fn draw(
@@ -55,7 +53,7 @@ impl CursorDrawer {
     ) {
         let mut drawing_parameters = drawing_parameters.clone();
         drawing_parameters.line_width = Some(4.0);
-        
+
         let vertex_buffer = glium::VertexBuffer::new(display, &cursor.mesh.vertices).unwrap();
         let indices = glium::IndexBuffer::new(
             display,

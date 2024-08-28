@@ -1,5 +1,5 @@
 use glium::glutin::surface::WindowSurface;
-use glium::{BlendingFunction, Display, DrawParameters, Frame, LinearBlendingFactor, Program, Surface};
+use glium::{Display, DrawParameters, Frame, Program, Surface};
 
 use math::vector4::Vector4;
 
@@ -74,9 +74,7 @@ impl BezierIntDrawer {
         )
         .unwrap();
 
-        Self {
-            program,
-        }
+        Self { program }
     }
 
     pub fn draw(

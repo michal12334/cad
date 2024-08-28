@@ -1,5 +1,5 @@
 use glium::glutin::surface::WindowSurface;
-use glium::{BlendingFunction, Display, DrawParameters, Frame, IndexBuffer, LinearBlendingFactor, Program, Surface, VertexBuffer};
+use glium::{Display, DrawParameters, Frame, IndexBuffer, Program, Surface, VertexBuffer};
 
 use backend::domain::vertex::Vertex;
 
@@ -43,9 +43,7 @@ impl PointsDrawer {
         let program =
             Program::from_source(display, vertex_shader_src, fragment_shader_src, None).unwrap();
 
-        Self {
-            program,
-        }
+        Self { program }
     }
 
     pub fn draw(
@@ -62,7 +60,7 @@ impl PointsDrawer {
     ) {
         let mut drawing_parameters = drawing_parameters.clone();
         drawing_parameters.point_size = Some(6.0);
-        
+
         target
             .draw(
                 vertex_buffer,

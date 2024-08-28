@@ -1,8 +1,6 @@
 use glium::glutin::surface::WindowSurface;
-use glium::{BlendingFunction, Display, DrawParameters, Frame, LinearBlendingFactor, Program, Surface};
 use glium::program::SourceCode;
-
-use math::vector4::Vector4;
+use glium::{Display, DrawParameters, Frame, Program, Surface};
 
 use crate::drawing::domain::surface_c2::SurfaceC2;
 
@@ -36,7 +34,7 @@ impl SurfaceC2Drawer {
                 color = obj_color;
             }
         "#;
-        
+
         let tessellation_control_shader = r#"
             #version 460 core
 
@@ -117,11 +115,9 @@ impl SurfaceC2Drawer {
                 geometry_shader: None,
             },
         )
-            .unwrap();
+        .unwrap();
 
-        Self {
-            program,
-        }
+        Self { program }
     }
 
     pub fn draw(

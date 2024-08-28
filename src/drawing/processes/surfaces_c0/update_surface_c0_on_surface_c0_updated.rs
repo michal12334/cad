@@ -1,8 +1,10 @@
 use std::any::Any;
 use std::cell::RefCell;
 use std::rc::Rc;
+
 use backend_events::surfaces_c0::surface_c0_updated::SurfaceC0Updated;
 use infrastructure::consumer::{AnyConsumer, Consumer};
+
 use crate::drawing::drawing_storage::DrawingStorage;
 
 pub struct UpdateSurfaceC0OnSurfaceC0Updated {

@@ -1,7 +1,9 @@
 use std::any::Any;
 use std::cell::RefCell;
 use std::rc::Rc;
+
 use infrastructure::consumer::{AnyConsumer, Consumer};
+
 use crate::backend::Backend;
 use crate::domain::events::common::scene_loaded::SceneLoaded;
 
@@ -21,4 +23,3 @@ impl AnyConsumer for SceneLoadedPublisher {
         self.consume_any_impl(message);
     }
 }
-

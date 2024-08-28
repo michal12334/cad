@@ -1,9 +1,11 @@
 use std::any::Any;
 use std::cell::RefCell;
 use std::rc::Rc;
+
 use backend::cqrs::cqrs::CQRS;
 use backend_events::common::scene_loaded::SceneLoaded;
 use infrastructure::consumer::{AnyConsumer, Consumer};
+
 use crate::ui::Ui;
 
 pub struct FetchObjectsOnSceneLoaded {

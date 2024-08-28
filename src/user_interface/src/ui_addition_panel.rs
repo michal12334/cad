@@ -1,5 +1,5 @@
 use rfd::FileDialog;
-use crate::object::Object;
+
 use backend::cqrs::beziers_c0::add_bezier_c0::AddBezierC0;
 use backend::cqrs::beziers_c0::bezier_c0_details::BezierC0Details;
 use backend::cqrs::beziers_c2::add_bezier_c2::AddBezierC2;
@@ -15,6 +15,7 @@ use backend::cqrs::points::point_details::PointDetails;
 use backend::cqrs::toruses::add_torus::AddTorus;
 use backend::cqrs::toruses::torus_details::TorusDetails;
 
+use crate::object::Object;
 use crate::object::Object::{BezierC0, Point, Torus};
 use crate::popups::add_surface_c0_popup::AddSurfaceC0Popup;
 use crate::popups::add_surface_c2_popup::AddSurfaceC2Popup;

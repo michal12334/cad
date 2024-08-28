@@ -7,7 +7,6 @@ use std::ops::Deref;
 use std::rc::Rc;
 
 use egui::Color32;
-use egui_winit::State;
 use glium::{Blend, BlendingFunction, LinearBlendingFactor, PolygonMode, Surface};
 use winit::event::ElementState::Pressed;
 use winit::event::MouseButton;
@@ -23,21 +22,38 @@ use backend::domain::point::Point;
 use backend::domain::transformer::LittleTransformer;
 use backend::processes::beziers_c0::add_point_to_selected_beziers_c0_on_point_created::AddPointToSelectedBeziersC0OnPointCreated;
 use backend::processes::beziers_c0::move_bezier_c0_points_on_point_moved::MoveBezierC0PointsOnPointMoved;
-use backend::processes::beziers_c0::publishers::{BezierC0CreatedPublisher, BezierC0DeletedPublisher, BezierC0DrawPolygonSetPublisher, BezierC0PointMovedPublisher, BezierC0PointsDeletedPublisher, BezierC0RenamedPublisher, PointAddedToBezierC0Publisher};
+use backend::processes::beziers_c0::publishers::{
+    BezierC0CreatedPublisher, BezierC0DeletedPublisher, BezierC0DrawPolygonSetPublisher,
+    BezierC0PointMovedPublisher, BezierC0PointsDeletedPublisher, BezierC0RenamedPublisher,
+    PointAddedToBezierC0Publisher,
+};
 use backend::processes::beziers_c2::add_point_to_selected_beziers_c2_on_point_created::AddPointToSelectedBeziersC2OnPointCreated;
 use backend::processes::beziers_c2::move_bezier_c2_points_on_point_moved::MoveBezierC2PointsOnPointMoved;
-use backend::processes::beziers_c2::publishers::{BezierC2CreatedPublisher, BezierC2DeletedPublisher, BezierC2DrawBernsteinPointsSetPublisher, BezierC2DrawBernsteinPolygonSetPublisher, BezierC2DrawBSplinePolygonSetPublisher, BezierC2PointMovedPublisher, BezierC2PointsDeletedPublisher, BezierC2SelectedBernsteinPointSetPublisher, PointAddedToBezierC2Publisher};
+use backend::processes::beziers_c2::publishers::{
+    BezierC2CreatedPublisher, BezierC2DeletedPublisher, BezierC2DrawBSplinePolygonSetPublisher,
+    BezierC2DrawBernsteinPointsSetPublisher, BezierC2DrawBernsteinPolygonSetPublisher,
+    BezierC2PointMovedPublisher, BezierC2PointsDeletedPublisher,
+    BezierC2SelectedBernsteinPointSetPublisher, PointAddedToBezierC2Publisher,
+};
 use backend::processes::beziers_int::add_point_to_selected_bezier_int_on_point_created::AddPointToSelectedBezierIntOnPointCreated;
-use backend::processes::beziers_int::publishers::{BezierIntBernsteinPointMovedPublisher, BezierIntCreatedPublisher, BezierIntDeletedPublisher, BezierIntPointsDeletedPublisher, PointAddedToBezierIntPublisher};
+use backend::processes::beziers_int::publishers::{
+    BezierIntBernsteinPointMovedPublisher, BezierIntCreatedPublisher, BezierIntDeletedPublisher,
+    BezierIntPointsDeletedPublisher, PointAddedToBezierIntPublisher,
+};
 use backend::processes::beziers_int::update_bezier_int_points_on_point_moved::UpdateBezierIntPointsOnPointMoved;
 use backend::processes::common::publishers::SceneLoadedPublisher;
 use backend::processes::points::publishers::PointMovedPublisher;
 use backend::processes::surfaces_c0::move_surface_c0_point_on_point_moved::MoveSurfaceC0PointOnPointMoved;
-use backend::processes::surfaces_c0::publishers::{SurfaceC0CreatedPublisher, SurfaceC0DeletedPublisher, SurfaceC0PointsSelectedPublisher, SurfaceC0UpdatedPublisher};
+use backend::processes::surfaces_c0::publishers::{
+    SurfaceC0CreatedPublisher, SurfaceC0DeletedPublisher, SurfaceC0PointsSelectedPublisher,
+    SurfaceC0UpdatedPublisher,
+};
 use backend::processes::surfaces_c2::move_surface_c2_point_on_point_moved::MoveSurfaceC2PointOnPointMoved;
-use backend::processes::surfaces_c2::publishers::{SurfaceC2CreatedPublisher, SurfaceC2DeletedPublisher, SurfaceC2PointsSelectedPublisher, SurfaceC2UpdatedPublisher};
+use backend::processes::surfaces_c2::publishers::{
+    SurfaceC2CreatedPublisher, SurfaceC2DeletedPublisher, SurfaceC2PointsSelectedPublisher,
+    SurfaceC2UpdatedPublisher,
+};
 use infrastructure::event_bus::EventBus;
-use math::vector3::Vector3;
 use math::vector4::Vector4;
 use user_interface::processes::fetch_objects_on_scene_loaded::FetchObjectsOnSceneLoaded;
 use user_interface::processes::selected_surface_c0_points_on_surface_c0_points_selected::SelectedSurfaceC0PointsOnSurfaceC0PointsSelected;
@@ -46,10 +62,16 @@ use user_interface::processes::sync_bezier_c0_with_backend::{
     SyncBezierC0AddedPointsWithBackend, SyncBezierC0DeletedPointsWithBackend,
     SyncBezierC0NameWithBackend,
 };
-use user_interface::processes::sync_bezier_c2_with_backend::{SyncBezierC2AddedPointsWithBackend, SyncBezierC2DeletedPointsWithBackend, SyncBezierC2PointPositionsWithBackend};
-use user_interface::processes::sync_bezier_int_with_backend::{SyncBezierIntAddedPointWithBackend, SyncBezierIntPointsDeletedWithBackend};
+use user_interface::processes::sync_bezier_c2_with_backend::{
+    SyncBezierC2AddedPointsWithBackend, SyncBezierC2DeletedPointsWithBackend,
+    SyncBezierC2PointPositionsWithBackend,
+};
+use user_interface::processes::sync_bezier_int_with_backend::{
+    SyncBezierIntAddedPointWithBackend, SyncBezierIntPointsDeletedWithBackend,
+};
 use user_interface::processes::sync_point_with_backend::SyncPointPositionWithBackend;
 use user_interface::ui::Ui;
+
 use crate::drawing::drawers::bezier_c0_drawer::BezierC0Drawer;
 use crate::drawing::drawers::bezier_c2_drawer::BezierC2Drawer;
 use crate::drawing::drawers::bezier_int_drawer::BezierIntDrawer;
@@ -303,11 +325,9 @@ fn main() {
         .add_consumer(SurfaceC2DeletedPublisher {
             backend: app_state.clone(),
         });
-    event_bus
-        .borrow_mut()
-        .add_consumer(SceneLoadedPublisher {
-            backend: app_state.clone(),
-        });
+    event_bus.borrow_mut().add_consumer(SceneLoadedPublisher {
+        backend: app_state.clone(),
+    });
 
     event_bus
         .borrow_mut()
@@ -597,11 +617,11 @@ fn main() {
             },
             alpha: BlendingFunction::Addition {
                 source: LinearBlendingFactor::SourceAlpha,
-                destination: LinearBlendingFactor::DestinationAlpha
+                destination: LinearBlendingFactor::DestinationAlpha,
             },
-            constant_value: (0.0, 0.0, 0.0, 0.0)
+            constant_value: (0.0, 0.0, 0.0, 0.0),
         };
-        
+
         draw_params
     };
 
@@ -633,12 +653,12 @@ fn main() {
                 let cqrs = CQRS::new(app_state.clone());
 
                 let app_state = app_state.borrow();
-                
+
                 if ui.borrow().stereoscopy {
                     let eye_distance = ui.borrow().stereoscopy_eye_distance;
                     let perspective = math::matrix4::Matrix4::perspective_stereoscopy(std::f32::consts::PI / 3.0, width as f32 / height as f32, 0.1, 1024.0, -100.0 - eye_distance / 2.0, 100.0 - eye_distance / 2.0);
                     let view_matrix = math::matrix4::Matrix4::view(camera_direction * camera_distant * (-1.0) - (math::matrix4::Matrix4::rotation_y(camera_angle.y) * math::matrix4::Matrix4::rotation_x(camera_angle.x) * Vector4::new(1.0, 0.0, 0.0, 0.0)).xyz() * (eye_distance / 2.0), camera_direction, camera_up);
-                    
+
                     for torus in app_state.storage.toruses.iter() {
                         torus_drawer.draw(&mut target, &display, &torus.1, &perspective, &view_matrix, right_eye_color, &draw_params_stereo);
                     }
@@ -770,7 +790,7 @@ fn main() {
                     infinite_grid_drawer.draw(&mut target, &perspective.data, &view_matrix.data, left_eye_color, &draw_params_stereo);
                 } else {
                     let perspective = math::matrix4::Matrix4::perspective(std::f32::consts::PI / 3.0, width as f32 / height as f32, 0.1, 1024.0);
-                    
+
                     for torus in app_state.storage.toruses.iter() {
                         let color = if app_state.storage.selected_objects.iter().any(|so| so.torus_id == Some(*torus.0)) { selected_color } else { color };
                         torus_drawer.draw(&mut target, &display, &torus.1, &perspective, &view_matrix, color, &draw_params);
@@ -911,7 +931,7 @@ fn main() {
                             let mut cqrs = CQRS::new(app_state.clone());
                             cqrs.execute(&backend::cqrs::common::delete_selected_objects::DeleteSelectedObjects);
                             ui.borrow_mut().fetch_objects(&cqrs);
-                        } else if input.virtual_keycode == Some(event::VirtualKeyCode::C) && input.state == Pressed { 
+                        } else if input.virtual_keycode == Some(event::VirtualKeyCode::C) && input.state == Pressed {
                             mouse_middle_button_pressed = !mouse_middle_button_pressed;
                         }
                     }

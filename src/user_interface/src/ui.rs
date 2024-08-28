@@ -1,10 +1,10 @@
-use backend::cqrs::beziers_c0::all_beziers_c0::AllBeziersC0;
-use backend::cqrs::beziers_c2::all_beziers_c2::AllBeziersC2;
-use backend::cqrs::beziers_int::all_beziers_int::AllBeziersInt;
 use chrono::{DateTime, Local};
 use egui::ScrollArea;
 use itertools::Itertools;
 
+use backend::cqrs::beziers_c0::all_beziers_c0::AllBeziersC0;
+use backend::cqrs::beziers_c2::all_beziers_c2::AllBeziersC2;
+use backend::cqrs::beziers_int::all_beziers_int::AllBeziersInt;
 use backend::cqrs::common::select_objects::{SelectObjects, SelectionObjectDTO};
 use backend::cqrs::cqrs::CQRS;
 use backend::cqrs::cursors::cursor_details::CursorDTO;
@@ -15,14 +15,14 @@ use backend::cqrs::surfaces_c2::all_surfaces_c2::AllSurfacesC2;
 use backend::cqrs::toruses::all_toruses::AllToruses;
 use backend::cqrs::toruses::torus_details::TransformerDTO;
 
-type DomainBezierC0 = crate::domain::bezier_c0::BezierC0;
-type DomainBezierC2 = crate::domain::bezier_c2::BezierC2;
-type DomainBezierInt = crate::domain::bezier_int::BezierInt;
-
 use crate::object::Object;
 use crate::object::Object::{BezierC0, BezierC2, BezierInt, Point, SurfaceC0, SurfaceC2, Torus};
 use crate::object_id::ObjectId;
 use crate::popups::popup::Popup;
+
+type DomainBezierC0 = crate::domain::bezier_c0::BezierC0;
+type DomainBezierC2 = crate::domain::bezier_c2::BezierC2;
+type DomainBezierInt = crate::domain::bezier_int::BezierInt;
 
 pub struct Ui {
     pub objects: Vec<Object>,
@@ -171,7 +171,7 @@ impl Ui {
                         self.build_fps_counter(ui);
                     });
                 });
-            
+
             if let Some(popup) = &mut self.popup {
                 let added_objects = popup.build(cqrs, egui_ctx);
                 self.objects.extend(added_objects);
