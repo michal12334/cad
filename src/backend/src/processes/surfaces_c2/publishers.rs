@@ -4,6 +4,7 @@ use std::rc::Rc;
 use infrastructure::consumer::{AnyConsumer, Consumer};
 use crate::backend::Backend;
 use crate::domain::events::surfaces_c2::surface_c2_created::SurfaceC2Created;
+use crate::domain::events::surfaces_c2::surface_c2_deleted::SurfaceC2Deleted;
 use crate::domain::events::surfaces_c2::surface_c2_points_selected::SurfaceC2PointsSelected;
 use crate::domain::events::surfaces_c2::surface_c2_updated::SurfaceC2Updated;
 
@@ -62,6 +63,26 @@ impl Consumer<SurfaceC2Updated> for SurfaceC2UpdatedPublisher {
 }
 
 impl AnyConsumer for SurfaceC2UpdatedPublisher {
+    fn consume_any(&self, message: Rc<dyn Any>) {
+        self.consume_any_impl(message);
+    }
+}
+
+pub struct SurfaceC2DeletedPublisher {
+    pub backend: Rc<RefCell<Backend>>,
+}
+
+impl Consumer<SurfaceC2Deleted> for SurfaceC2DeletedPublisher {
+    fn consume(&self, message: &SurfaceC2Deleted) {
+        let backend = self.backend.borrow();
+        let event = Rc::new(
+            backend_events::surfaces_c2::surface_c2_deleted::SurfaceC2Deleted::new(message.id),
+        );
+        backend.services.event_publisher.publish(event);
+    }
+}
+
+impl AnyConsumer for SurfaceC2DeletedPublisher {
     fn consume_any(&self, message: Rc<dyn Any>) {
         self.consume_any_impl(message);
     }

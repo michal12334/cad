@@ -33,9 +33,9 @@ use backend::processes::beziers_int::update_bezier_int_points_on_point_moved::Up
 use backend::processes::common::publishers::SceneLoadedPublisher;
 use backend::processes::points::publishers::PointMovedPublisher;
 use backend::processes::surfaces_c0::move_surface_c0_point_on_point_moved::MoveSurfaceC0PointOnPointMoved;
-use backend::processes::surfaces_c0::publishers::{SurfaceC0CreatedPublisher, SurfaceC0PointsSelectedPublisher, SurfaceC0UpdatedPublisher};
+use backend::processes::surfaces_c0::publishers::{SurfaceC0CreatedPublisher, SurfaceC0DeletedPublisher, SurfaceC0PointsSelectedPublisher, SurfaceC0UpdatedPublisher};
 use backend::processes::surfaces_c2::move_surface_c2_point_on_point_moved::MoveSurfaceC2PointOnPointMoved;
-use backend::processes::surfaces_c2::publishers::{SurfaceC2CreatedPublisher, SurfaceC2PointsSelectedPublisher, SurfaceC2UpdatedPublisher};
+use backend::processes::surfaces_c2::publishers::{SurfaceC2CreatedPublisher, SurfaceC2DeletedPublisher, SurfaceC2PointsSelectedPublisher, SurfaceC2UpdatedPublisher};
 use infrastructure::event_bus::EventBus;
 use math::vector3::Vector3;
 use math::vector4::Vector4;
@@ -84,9 +84,11 @@ use crate::drawing::processes::beziers_int::delete_bezier_int_points_on_bezier_i
 use crate::drawing::processes::beziers_int::update_bezier_int_points_on_bezier_int_bernstein_point_moved::UpdateBezierIntPointsOnBezierIntBernsteinPointMoved;
 use crate::drawing::processes::common::rebuild_storage_on_scene_loaded::RebuildStorageOnSceneLoaded;
 use crate::drawing::processes::surfaces_c0::add_surface_c0_on_surface_c0_created::AddSurfaceC0OnSurfaceC0Created;
+use crate::drawing::processes::surfaces_c0::delete_surface_c0_on_surface_c0_deleted::DeleteSurfaceC0OnSurfaceC0Deleted;
 use crate::drawing::processes::surfaces_c0::update_surface_c0_on_surface_c0_updated::UpdateSurfaceC0OnSurfaceC0Updated;
 use crate::drawing::processes::surfaces_c0::update_surface_c0_points_on_surface_c0_point_moved::UpdateSurfaceC0PointsOnSurfaceC0PointMoved;
 use crate::drawing::processes::surfaces_c2::add_surface_c2_on_surface_c2_created::AddSurfaceC2OnSurfaceC2Created;
+use crate::drawing::processes::surfaces_c2::delete_surface_c2_on_surface_c2_deleted::DeleteSurfaceC2OnSurfaceC2Deleted;
 use crate::drawing::processes::surfaces_c2::update_surface_c2_on_surface_c2_updated::UpdateSurfaceC2OnSurfaceC2Updated;
 use crate::drawing::processes::surfaces_c2::update_surface_c2_points_on_surface_c2_point_moved::UpdateSurfaceC2PointsOnSurfaceC2PointMoved;
 
@@ -273,6 +275,11 @@ fn main() {
         });
     event_bus
         .borrow_mut()
+        .add_consumer(SurfaceC0DeletedPublisher {
+            backend: app_state.clone(),
+        });
+    event_bus
+        .borrow_mut()
         .add_consumer(SurfaceC2CreatedPublisher {
             backend: app_state.clone(),
         });
@@ -289,6 +296,11 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(SurfaceC2UpdatedPublisher {
+            backend: app_state.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(SurfaceC2DeletedPublisher {
             backend: app_state.clone(),
         });
     event_bus
@@ -497,6 +509,11 @@ fn main() {
         });
     event_bus
         .borrow_mut()
+        .add_consumer(DeleteSurfaceC0OnSurfaceC0Deleted {
+            drawing_storage: drawing_storage.clone(),
+        });
+    event_bus
+        .borrow_mut()
         .add_consumer(AddSurfaceC2OnSurfaceC2Created {
             drawing_storage: drawing_storage.clone(),
             cqrs: CQRS::new(app_state.clone()),
@@ -512,6 +529,11 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(UpdateSurfaceC2OnSurfaceC2Updated {
+            drawing_storage: drawing_storage.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(DeleteSurfaceC2OnSurfaceC2Deleted {
             drawing_storage: drawing_storage.clone(),
         });
     event_bus

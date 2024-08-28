@@ -1,3 +1,4 @@
 pub mod surface_c0_created;
 pub mod surface_c0_points_selected;
 pub mod surface_c0_updated;
+pub mod surface_c0_deleted;
