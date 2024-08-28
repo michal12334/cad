@@ -18,7 +18,7 @@ impl SurfaceC2 {
             id,
             name: format!("SurfaceC2 {}", id),
             draw_polygon: false,
-            tess_level: 8,
+            tess_level: 4,
             points,
             size
         }
@@ -29,7 +29,7 @@ impl SurfaceC2 {
             id,
             name,
             draw_polygon: false,
-            tess_level: 8,
+            tess_level: 4,
             points,
             size
         }

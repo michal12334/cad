@@ -104,7 +104,7 @@ impl SurfaceC2 {
         Self {
             id,
             draw_polygon: false,
-            tess_level: 8,
+            tess_level: 4,
             vertex_buffer,
             surface_index_buffer,
             polygon_index_buffer,
