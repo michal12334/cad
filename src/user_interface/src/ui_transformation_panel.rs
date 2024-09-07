@@ -1,3 +1,4 @@
+use std::f32::consts::PI;
 use egui::{ComboBox, DragValue, Resize, ScrollArea, Slider, Widget};
 
 use backend::cqrs::beziers_c0::add_point_to_bezier_c0::AddPointToBezierC0;
@@ -886,6 +887,10 @@ impl Ui {
         Slider::new(&mut self.stereoscopy_eye_distance, 0.01..=10.0)
             .step_by(0.01)
             .text("Eye distance")
+            .ui(ui);
+        Slider::new(&mut self.stereoscopy_fov, 0.01..=PI)
+            .step_by(0.01)
+            .text("Fov")
             .ui(ui);
     }
 }

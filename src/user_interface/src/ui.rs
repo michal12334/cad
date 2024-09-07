@@ -1,3 +1,4 @@
+use std::f32::consts::PI;
 use chrono::{DateTime, Local};
 use egui::ScrollArea;
 use itertools::Itertools;
@@ -38,6 +39,7 @@ pub struct Ui {
     pub filter: String,
     pub stereoscopy: bool,
     pub stereoscopy_eye_distance: f32,
+    pub stereoscopy_fov: f32,
 }
 
 impl Ui {
@@ -56,6 +58,7 @@ impl Ui {
             filter: String::new(),
             stereoscopy: false,
             stereoscopy_eye_distance: 1f32,
+            stereoscopy_fov: PI / 3.0,
         }
     }
 

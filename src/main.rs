@@ -656,7 +656,8 @@ fn main() {
 
                 if ui.borrow().stereoscopy {
                     let eye_distance = ui.borrow().stereoscopy_eye_distance;
-                    let perspective = math::matrix4::Matrix4::perspective_stereoscopy(std::f32::consts::PI / 3.0, width as f32 / height as f32, 0.1, 1024.0, -100.0 - eye_distance / 2.0, 100.0 - eye_distance / 2.0);
+                    let fov = ui.borrow().stereoscopy_fov;
+                    let perspective = math::matrix4::Matrix4::perspective_stereoscopy(fov, width as f32 / height as f32, 0.1, 1024.0, -100.0 - eye_distance / 2.0, 100.0 - eye_distance / 2.0);
                     let view_matrix = math::matrix4::Matrix4::view(camera_direction * camera_distant * (-1.0) - (math::matrix4::Matrix4::rotation_y(camera_angle.y) * math::matrix4::Matrix4::rotation_x(camera_angle.x) * Vector4::new(1.0, 0.0, 0.0, 0.0)).xyz() * (eye_distance / 2.0), camera_direction, camera_up);
 
                     for torus in app_state.storage.toruses.iter() {
@@ -721,7 +722,7 @@ fn main() {
                     cursor_drawer.draw(&mut target, &display, &app_state.storage.cursor, &perspective, &view_matrix, right_eye_color, &draw_params_stereo);
                     infinite_grid_drawer.draw(&mut target, &perspective.data, &view_matrix.data, right_eye_color, &draw_params_stereo);
 
-                    let perspective = math::matrix4::Matrix4::perspective_stereoscopy(std::f32::consts::PI / 3.0, width as f32 / height as f32, 0.1, 1024.0, -100.0 + eye_distance / 2.0, 100.0 + eye_distance / 2.0);
+                    let perspective = math::matrix4::Matrix4::perspective_stereoscopy(fov, width as f32 / height as f32, 0.1, 1024.0, -100.0 + eye_distance / 2.0, 100.0 + eye_distance / 2.0);
                     let view_matrix = math::matrix4::Matrix4::view(camera_direction * camera_distant * (-1.0) + (math::matrix4::Matrix4::rotation_y(camera_angle.y) * math::matrix4::Matrix4::rotation_x(camera_angle.x) * Vector4::new(1.0, 0.0, 0.0, 0.0)).xyz() * (eye_distance / 2.0), camera_direction, camera_up);
 
                     target.clear_depth(1.0);
