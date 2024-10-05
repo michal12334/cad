@@ -12,7 +12,7 @@ pub struct InfiniteGridDrawer {
 impl InfiniteGridDrawer {
     pub fn new(display: &Display<WindowSurface>) -> Self {
         let vertex_shader_src = r#"
-            #version 460 core
+            #version 410 core
             
             in vec3 position;
             
@@ -41,7 +41,7 @@ impl InfiniteGridDrawer {
         "#;
 
         let fragment_shader_src = r#"
-            #version 460 core
+            #version 410 core
             
             float near = 0.01;
             float far = 100;

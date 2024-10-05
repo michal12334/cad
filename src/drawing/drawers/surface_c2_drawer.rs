@@ -11,7 +11,7 @@ pub struct SurfaceC2Drawer {
 impl SurfaceC2Drawer {
     pub fn new(display: &Display<WindowSurface>) -> Self {
         let vertex_shader = r#"
-            #version 460 core
+            #version 410 core
     
             in vec3 position;
             
@@ -24,7 +24,7 @@ impl SurfaceC2Drawer {
         "#;
 
         let fragment_shader = r#"
-            #version 460 core
+            #version 410 core
     
             out vec4 color;
             
@@ -36,7 +36,7 @@ impl SurfaceC2Drawer {
         "#;
 
         let tessellation_control_shader = r#"
-            #version 460 core
+            #version 410 core
 
             layout(vertices = 16) out;
 
@@ -51,7 +51,7 @@ impl SurfaceC2Drawer {
         "#;
 
         let tessellation_evaluation_shader = r#"
-            #version 460 core
+            #version 410 core
 
             layout(isolines, equal_spacing) in;
 

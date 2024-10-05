@@ -12,7 +12,7 @@ pub struct BezierC0Drawer {
 impl BezierC0Drawer {
     pub fn new(display: &Display<WindowSurface>) -> Self {
         let vertex_shader_src = r#"
-            #version 460 core
+            #version 410 core
     
             in vec3 position;
             
@@ -25,7 +25,7 @@ impl BezierC0Drawer {
         "#;
 
         let geometry_shader_src = r#"
-            #version 460 core
+            #version 410 core
             
             layout(lines_adjacency) in;
             layout(line_strip, max_vertices = 101) out;
@@ -87,7 +87,7 @@ impl BezierC0Drawer {
         "#;
 
         let fragment_shader_src = r#"
-            #version 460 core
+            #version 410 core
     
             out vec4 color;
             

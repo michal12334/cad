@@ -10,7 +10,7 @@ pub struct PointsDrawer {
 impl PointsDrawer {
     pub fn new(display: &Display<WindowSurface>) -> Self {
         let vertex_shader_src = r#"
-            #version 460 core
+            #version 410 core
     
             in vec3 position;
             
@@ -23,7 +23,7 @@ impl PointsDrawer {
         "#;
 
         let fragment_shader_src = r#"
-            #version 460 core
+            #version 410 core
     
             out vec4 color;
             
