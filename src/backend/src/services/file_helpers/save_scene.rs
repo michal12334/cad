@@ -17,7 +17,7 @@ use crate::services::file_helpers::xyz::{Xyu32, Xyz};
 use crate::services::id_generator::IdGenerator;
 
 pub fn save_scene(storage: &Storage, file_path: &str, id_generator: &mut IdGenerator) {
-    let mut id_generator = Rc::new(RefCell::new(id_generator));
+    let id_generator = Rc::new(RefCell::new(id_generator));
     let scene = Scene {
         points: storage
             .points

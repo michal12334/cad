@@ -34,7 +34,7 @@ pub struct RebuildStorageOnSceneLoaded {
 }
 
 impl Consumer<SceneLoaded> for RebuildStorageOnSceneLoaded {
-    fn consume(&self, event: &SceneLoaded) {
+    fn consume(&self, _: &SceneLoaded) {
         let mut drawing_storage = self.drawing_storage.borrow_mut();
         drawing_storage.beziers_c0.clear();
         drawing_storage.beziers_c2.clear();

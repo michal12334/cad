@@ -8,10 +8,6 @@ pub struct Xyz {
 }
 
 impl Xyz {
-    pub fn new(x: f64, y: f64, z: f64) -> Self {
-        Self { x, y, z }
-    }
-
     pub fn from_tuple(tuple: (f64, f64, f64)) -> Self {
         Self {
             x: tuple.0,

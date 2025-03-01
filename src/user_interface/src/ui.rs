@@ -1,7 +1,7 @@
-use std::f32::consts::PI;
 use chrono::{DateTime, Local};
 use egui::ScrollArea;
 use itertools::Itertools;
+use std::f32::consts::PI;
 
 use backend::cqrs::beziers_c0::all_beziers_c0::AllBeziersC0;
 use backend::cqrs::beziers_c2::all_beziers_c2::AllBeziersC2;
@@ -155,7 +155,7 @@ impl Ui {
         }
     }
 
-    pub fn build<'a>(&'a mut self, cqrs: &'a mut CQRS) -> impl FnMut(&egui::Context) + '_ {
+    pub fn build<'a>(&'a mut self, cqrs: &'a mut CQRS) -> impl FnMut(&egui::Context) + 'a {
         self.cursor = Some(cqrs.get(&CursorDetails {}));
         move |egui_ctx| {
             egui::Window::new("panel")

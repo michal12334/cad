@@ -12,7 +12,7 @@ pub struct SceneLoadedPublisher {
 }
 
 impl Consumer<SceneLoaded> for SceneLoadedPublisher {
-    fn consume(&self, message: &SceneLoaded) {
+    fn consume(&self, _: &SceneLoaded) {
         let backend = self.backend.borrow();
         let event = Rc::new(backend_events::common::scene_loaded::SceneLoaded {});
         backend.services.event_publisher.publish(event);

@@ -3,7 +3,6 @@ extern crate glium;
 extern crate user_interface;
 
 use std::cell::RefCell;
-use std::ops::Deref;
 use std::rc::Rc;
 
 use egui::Color32;

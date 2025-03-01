@@ -14,7 +14,7 @@ pub struct FetchObjectsOnSceneLoaded {
 }
 
 impl Consumer<SceneLoaded> for FetchObjectsOnSceneLoaded {
-    fn consume(&self, event: &SceneLoaded) {
+    fn consume(&self, _: &SceneLoaded) {
         self.ui.borrow_mut().fetch_objects(&self.cqrs);
     }
 }

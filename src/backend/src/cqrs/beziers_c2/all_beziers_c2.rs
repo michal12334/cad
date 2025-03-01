@@ -10,7 +10,7 @@ use crate::cqrs::points::point_details::LittleTransformerDTO;
 pub struct AllBeziersC2;
 
 impl Query<AllBeziersC2, Vec<BezierC2DTO>> for AllBeziersC2 {
-    fn get(query: &AllBeziersC2, app_state: Rc<RefCell<Backend>>) -> Vec<BezierC2DTO> {
+    fn get(_: &AllBeziersC2, app_state: Rc<RefCell<Backend>>) -> Vec<BezierC2DTO> {
         let app_state = app_state.borrow();
         app_state
             .storage

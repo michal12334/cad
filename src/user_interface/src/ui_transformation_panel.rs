@@ -1,5 +1,5 @@
-use std::f32::consts::PI;
 use egui::{ComboBox, DragValue, Resize, ScrollArea, Slider, Widget};
+use std::f32::consts::PI;
 
 use backend::cqrs::beziers_c0::add_point_to_bezier_c0::AddPointToBezierC0;
 use backend::cqrs::beziers_c0::delete_bezier_c0_points::DeleteBezierC0Points;

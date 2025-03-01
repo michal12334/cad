@@ -218,7 +218,7 @@ impl BezierInt {
                         ),
                     )
                 })
-                .flat_map(|(a, b, c, d)| {
+                .flat_map(|(a, b, c, _)| {
                     let p1 = BezierIntBernsteinPoint {
                         transformer: a.transformer.clone(),
                     };

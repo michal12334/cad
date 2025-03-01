@@ -8,7 +8,7 @@ use crate::cqrs::cqrs::Query;
 pub struct AllBeziersInt;
 
 impl Query<AllBeziersInt, Vec<BezierIntDTO>> for AllBeziersInt {
-    fn get(query: &AllBeziersInt, app_state: Rc<RefCell<Backend>>) -> Vec<BezierIntDTO> {
+    fn get(_: &AllBeziersInt, app_state: Rc<RefCell<Backend>>) -> Vec<BezierIntDTO> {
         let app_state = app_state.borrow();
         app_state
             .storage
