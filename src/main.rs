@@ -924,6 +924,12 @@ fn main() {
                             }
                         }
                     }
+                    WindowEvent::TouchpadMagnify { delta, .. } => {
+                        if !ui.borrow().is_pointer_over_area() {
+                            camera_distant += -delta as f32;
+                                    view_matrix = math::matrix4::Matrix4::view(camera_direction * camera_distant * (-1.0), camera_direction, camera_up);
+                        }
+                    }
                     WindowEvent::KeyboardInput { input, .. } => {
                         if input.virtual_keycode == Some(event::VirtualKeyCode::LControl) {
                             ui.borrow_mut().set_control_pressed(input.state == Pressed);
