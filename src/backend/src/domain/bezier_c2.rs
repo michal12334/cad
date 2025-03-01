@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::domain::point::Point;
 use crate::domain::transformer::LittleTransformer;
 
@@ -163,5 +165,26 @@ impl BezierC2 {
         }
 
         return None;
+    }
+
+    pub fn replace_point(
+        &mut self,
+        old_point: u64,
+        new_point: u64,
+        all_points: &HashMap<u64, Point>,
+    ) {
+        for i in 0..self.b_spline_points.len() {
+            if self.b_spline_points[i].id == old_point {
+                self.b_spline_points[i] = BezierC2BSplinePoint { id: new_point };
+            }
+        }
+
+        let b_spline_points = self
+            .b_spline_points
+            .iter()
+            .map(|p| all_points[&p.id].clone())
+            .collect::<Vec<_>>();
+
+        self.bernstein_points = Self::get_bernstein_points(&b_spline_points);
     }
 }

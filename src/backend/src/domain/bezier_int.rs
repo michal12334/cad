@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use itertools::{multizip, Itertools};
 
 use crate::domain::point::Point;
@@ -247,5 +249,26 @@ impl BezierInt {
                 }])
                 .collect()
         }
+    }
+
+    pub fn replace_point(
+        &mut self,
+        old_point: u64,
+        new_point: u64,
+        all_points: &HashMap<u64, Point>,
+    ) {
+        for i in 0..self.points.len() {
+            if self.points[i].id == old_point {
+                self.points[i] = BezierIntPoint { id: new_point };
+            }
+        }
+
+        let points = self
+            .points
+            .iter()
+            .map(|p| all_points[&p.id].clone())
+            .collect::<Vec<_>>();
+
+        self.bernstein_points = Self::get_bernstein_points(&points);
     }
 }

@@ -1,4 +1,5 @@
 pub mod fetch_objects_on_scene_loaded;
+pub mod fetch_objects_on_selected_points_merged;
 pub mod selected_surface_c0_points_on_surface_c0_points_selected;
 pub mod selected_surface_c2_points_on_surface_c2_points_selected;
 pub mod sync_bezier_c0_with_backend;

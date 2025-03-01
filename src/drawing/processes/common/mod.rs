@@ -1,1 +1,2 @@
 pub mod rebuild_storage_on_scene_loaded;
+pub mod rebuild_storage_on_selected_points_merged;

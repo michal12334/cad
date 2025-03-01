@@ -5,8 +5,10 @@ extern crate user_interface;
 use std::cell::RefCell;
 use std::rc::Rc;
 
+use drawing::processes::common::rebuild_storage_on_selected_points_merged::RebuildStorageOnSelectedPointsMerged;
 use egui::Color32;
 use glium::{Blend, BlendingFunction, LinearBlendingFactor, PolygonMode, Surface};
+use user_interface::processes::fetch_objects_on_selected_points_merged::FetchObjectsOnSelectedPointsMerged;
 use winit::event::ElementState::Pressed;
 use winit::event::MouseButton;
 use winit::{event, event_loop};
@@ -382,6 +384,12 @@ fn main() {
             ui: ui.clone(),
             cqrs: CQRS::new(app_state.clone()),
         });
+    event_bus
+        .borrow_mut()
+        .add_consumer(FetchObjectsOnSelectedPointsMerged {
+            ui: ui.clone(),
+            cqrs: CQRS::new(app_state.clone()),
+        });
 
     event_bus
         .borrow_mut()
@@ -558,6 +566,13 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(RebuildStorageOnSceneLoaded {
+            drawing_storage: drawing_storage.clone(),
+            cqrs: CQRS::new(app_state.clone()),
+            display: display.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(RebuildStorageOnSelectedPointsMerged {
             drawing_storage: drawing_storage.clone(),
             cqrs: CQRS::new(app_state.clone()),
             display: display.clone(),

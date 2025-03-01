@@ -55,4 +55,12 @@ impl SurfaceC2 {
     pub fn set_tess_level(&mut self, tess_level: u8) {
         self.tess_level = tess_level;
     }
+
+    pub fn replace_point(&mut self, old_point: u64, new_point: u64) {
+        for i in 0..self.points.len() {
+            if self.points[i].id == old_point {
+                self.points[i] = SurfaceC2Point { id: new_point };
+            }
+        }
+    }
 }

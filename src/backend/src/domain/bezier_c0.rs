@@ -43,4 +43,12 @@ impl BezierC0 {
     pub fn set_draw_polygon(&mut self, draw_polygon: bool) {
         self.draw_polygon = draw_polygon;
     }
+
+    pub fn replace_point(&mut self, old_point: u64, new_point: u64) {
+        for i in 0..self.points.len() {
+            if self.points[i].id == old_point {
+                self.points[i] = BezierC0Point { id: new_point };
+            }
+        }
+    }
 }

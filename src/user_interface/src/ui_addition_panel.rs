@@ -1,3 +1,4 @@
+use backend::cqrs::points::merge_selected_points::MergeSelectedPoints;
 use rfd::FileDialog;
 
 use backend::cqrs::beziers_c0::add_bezier_c0::AddBezierC0;
@@ -43,6 +44,9 @@ impl Ui {
                 let id = cqrs.handle(&NewId {});
                 cqrs.execute(&AddPoint { id });
                 self.objects.push(Point(cqrs.get(&PointDetails { id })));
+            }
+            if ui.button("Merge Points").clicked() {
+                cqrs.execute(&MergeSelectedPoints);
             }
         });
         ui.horizontal(|ui| {
