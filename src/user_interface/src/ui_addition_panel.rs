@@ -1,3 +1,4 @@
+use backend::cqrs::gregories::calculate_gregories::CalculateGregories;
 use backend::cqrs::points::merge_selected_points::MergeSelectedPoints;
 use rfd::FileDialog;
 
@@ -79,6 +80,9 @@ impl Ui {
             }
             if ui.button("Add Surface C2").clicked() {
                 self.popup = Some(Box::new(AddSurfaceC2Popup::new()));
+            }
+            if ui.button("Add Gregory").clicked() {
+                cqrs.execute(&CalculateGregories);
             }
         });
         ui.horizontal(|ui| {
