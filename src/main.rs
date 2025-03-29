@@ -5,6 +5,7 @@ extern crate user_interface;
 use std::cell::RefCell;
 use std::rc::Rc;
 
+use drawing::drawers::gregory_drawer::GregoryDrawer;
 use drawing::processes::common::rebuild_storage_on_selected_points_merged::RebuildStorageOnSelectedPointsMerged;
 use egui::Color32;
 use glium::{Blend, BlendingFunction, LinearBlendingFactor, PolygonMode, Surface};
@@ -589,6 +590,7 @@ fn main() {
     let points_drawer = PointsDrawer::new(&display);
     let surface_c0_drawer = SurfaceC0Drawer::new(&display);
     let surface_c2_drawer = SurfaceC2Drawer::new(&display);
+    let gregory_drawer = GregoryDrawer::new(&display);
 
     let mut mouse_position = (0.0, 0.0);
     let mut camera_direction = math::vector3::Vector3::new(0.0f32, 0.0, 1.0);
@@ -814,6 +816,10 @@ fn main() {
                     for point in app_state.storage.points.iter() {
                         let color = if app_state.storage.selected_objects.iter().any(|so| so.point_id == Some(*point.0)) { selected_color } else { color };
                         point_drawer.draw(&mut target, &display, &point.1, &perspective, &view_matrix, color, &draw_params);
+                    }
+
+                    for gregory in app_state.storage.gregories.iter() {
+                        gregory_drawer.draw(&mut target, gregory.1, &perspective, &view_matrix, color, 20, &draw_params, &display);
                     }
 
                     let center_point = cqrs.get(&SelectedObjectsCenter);

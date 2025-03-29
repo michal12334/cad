@@ -13,4 +13,8 @@ impl Vector3 {
     pub fn length(&self) -> f32 {
         (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
     }
+
+    pub fn zero() -> Self {
+        Self::new(0.0, 0.0, 0.0)
+    }
 }

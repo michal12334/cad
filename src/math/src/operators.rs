@@ -1,4 +1,4 @@
-use std::ops::{Add, Mul, Sub};
+use std::ops::{Add, Div, Mul, Neg, Sub};
 
 use crate::matrix4::Matrix4;
 use crate::vector3::Vector3;
@@ -182,5 +182,21 @@ impl Mul<Vector4> for f32 {
             z: self * rhs.z,
             w: self * rhs.w,
         }
+    }
+}
+
+impl Neg for Vector3 {
+    type Output = Vector3;
+
+    fn neg(self) -> Self::Output {
+        (-1.0) * self
+    }
+}
+
+impl Div<f32> for Vector3 {
+    type Output = Vector3;
+
+    fn div(self, rhs: f32) -> Self::Output {
+        Vector3::new(self.x / rhs, self.y / rhs, self.z / rhs)
     }
 }

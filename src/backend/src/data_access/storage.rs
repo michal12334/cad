@@ -4,6 +4,7 @@ use crate::domain::bezier_c0::BezierC0;
 use crate::domain::bezier_c2::BezierC2;
 use crate::domain::bezier_int::BezierInt;
 use crate::domain::cursor::Cursor;
+use crate::domain::gregory::Gregory;
 use crate::domain::point::Point;
 use crate::domain::selected_object::SelectedObject;
 use crate::domain::surface_c0::SurfaceC0;
@@ -18,6 +19,7 @@ pub struct Storage {
     pub beziers_int: HashMap<u64, BezierInt>,
     pub surfaces_c0: HashMap<u64, SurfaceC0>,
     pub surfaces_c2: HashMap<u64, SurfaceC2>,
+    pub gregories: HashMap<u64, Gregory>,
     pub selected_objects: Vec<SelectedObject>,
     pub cursor: Cursor,
 }
@@ -32,6 +34,7 @@ impl Storage {
             beziers_int: HashMap::new(),
             surfaces_c0: HashMap::new(),
             surfaces_c2: HashMap::new(),
+            gregories: HashMap::new(),
             selected_objects: Vec::new(),
             cursor: Cursor::new(),
         }

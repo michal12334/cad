@@ -3,6 +3,7 @@ pub mod bezier_c2;
 pub mod bezier_int;
 pub mod cursor;
 pub mod events;
+pub mod gregory;
 pub mod mesh;
 pub mod point;
 pub mod selected_object;
