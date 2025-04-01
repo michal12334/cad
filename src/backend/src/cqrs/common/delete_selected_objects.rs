@@ -89,6 +89,11 @@ impl Command<DeleteSelectedObjects> for DeleteSelectedObjects {
                     .surfaces_c2
                     .values()
                     .any(|s| s.points.iter().any(|p| p.id == point.id))
+                || backend
+                    .storage
+                    .gregories
+                    .values()
+                    .any(|g| g.related_points().contains(&point.id))
         });
 
         let deleted_beziers_c0 = backend
