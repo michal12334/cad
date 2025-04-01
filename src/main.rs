@@ -6,6 +6,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use backend::processes::gregories::publishers::{GregoryCreatedPublisher, GregoryRenamedPublisher};
+use backend::processes::gregories::recalculate_gregories_on_point_moved::RecalculateGregoriesOnPointMoved;
 use drawing::drawers::gregory_drawer::GregoryDrawer;
 use drawing::processes::common::rebuild_storage_on_selected_points_merged::RebuildStorageOnSelectedPointsMerged;
 use egui::Color32;
@@ -340,6 +341,11 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(GregoryRenamedPublisher {
+            backend: app_state.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(RecalculateGregoriesOnPointMoved {
             backend: app_state.clone(),
         });
 
