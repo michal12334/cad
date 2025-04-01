@@ -9,6 +9,7 @@ use backend::processes::gregories::publishers::{GregoryCreatedPublisher, Gregory
 use backend::processes::gregories::recalculate_gregories_on_point_moved::RecalculateGregoriesOnPointMoved;
 use drawing::drawers::gregory_drawer::GregoryDrawer;
 use drawing::processes::common::rebuild_storage_on_selected_points_merged::RebuildStorageOnSelectedPointsMerged;
+use drawing::processes::gregories::add_gregory_on_gregory_created::AddGregoryOnGregoryCreated;
 use egui::Color32;
 use glium::{Blend, BlendingFunction, LinearBlendingFactor, PolygonMode, Surface};
 use user_interface::processes::fetch_objects_on_selected_points_merged::FetchObjectsOnSelectedPointsMerged;
@@ -602,6 +603,13 @@ fn main() {
             cqrs: CQRS::new(app_state.clone()),
             display: display.clone(),
         });
+    event_bus
+        .borrow_mut()
+        .add_consumer(AddGregoryOnGregoryCreated {
+            drawing_storage: drawing_storage.clone(),
+            cqrs: CQRS::new(app_state.clone()),
+            display: display.clone(),
+        });
 
     let torus_drawer = TorusDrawer::new(&display);
     let point_drawer = PointDrawer::new(&display);
@@ -842,8 +850,8 @@ fn main() {
                         point_drawer.draw(&mut target, &display, &point.1, &perspective, &view_matrix, color, &draw_params);
                     }
 
-                    for gregory in app_state.storage.gregories.iter() {
-                        gregory_drawer.draw(&mut target, gregory.1, &perspective, &view_matrix, color, 20, &draw_params, &display);
+                    for gregory in drawing_storage.borrow().gregories.values() {
+                        gregory_drawer.draw(&mut target, gregory, &perspective, &view_matrix, color, &draw_params);
                     }
 
                     let center_point = cqrs.get(&SelectedObjectsCenter);

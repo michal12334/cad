@@ -1,9 +1,8 @@
-use backend::domain::gregory::Gregory;
-use backend::domain::vertex::Vertex;
 use glium::glutin::surface::WindowSurface;
-use glium::index::PrimitiveType;
 use glium::program::SourceCode;
-use glium::{Display, DrawParameters, Frame, IndexBuffer, Program, Surface, VertexBuffer};
+use glium::{Display, DrawParameters, Frame, Program, Surface};
+
+use crate::drawing::domain::gregory::Gregory;
 
 pub struct GregoryDrawer {
     program: Program,
@@ -129,52 +128,18 @@ impl GregoryDrawer {
         perspective: &math::matrix4::Matrix4,
         view_matrix: &math::matrix4::Matrix4,
         color: [f32; 4],
-        tess_level: u8,
         drawing_parameters: &DrawParameters,
-        display: &Display<WindowSurface>,
     ) {
-        let vertex_buffer = VertexBuffer::new(
-            display,
-            &gregory
-                .patches
-                .iter()
-                .flat_map(|p| {
-                    p.top
-                        .iter()
-                        .chain(p.top_sides.iter())
-                        .chain(p.bottom_sides.iter())
-                        .chain(p.bottom.iter())
-                        .chain(p.u_inner.iter())
-                        .chain(p.v_inner.iter())
-                })
-                .map(|p| Vertex {
-                    position: [p.x, p.y, p.z],
-                })
-                .collect::<Vec<Vertex>>(),
-        )
-        .unwrap();
-
-        let index_buffer = IndexBuffer::new(
-            display,
-            PrimitiveType::Patches {
-                vertices_per_patch: 20,
-            },
-            &(0..(20 * gregory.patches.len()))
-                .map(|x| x as u16)
-                .collect::<Vec<_>>(),
-        )
-        .unwrap();
-
         target
             .draw(
-                &vertex_buffer,
-                &index_buffer,
+                &gregory.vertex_buffer,
+                &gregory.index_buffer,
                 &self.program,
                 &uniform! {
                     perspective: perspective.data,
                     view: view_matrix.data,
                     obj_color: color,
-                    tess_level: tess_level as i32,
+                    tess_level: gregory.tess_level as i32,
                     swap_xy: false,
                 },
                 &drawing_parameters,
@@ -183,14 +148,14 @@ impl GregoryDrawer {
 
         target
             .draw(
-                &vertex_buffer,
-                &index_buffer,
+                &gregory.vertex_buffer,
+                &gregory.index_buffer,
                 &self.program,
                 &uniform! {
                     perspective: perspective.data,
                     view: view_matrix.data,
                     obj_color: color,
-                    tess_level: tess_level as i32,
+                    tess_level: gregory.tess_level as i32,
                     swap_xy: true,
                 },
                 &drawing_parameters,
