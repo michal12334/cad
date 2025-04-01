@@ -5,13 +5,13 @@ extern crate user_interface;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use backend::processes::gregories::publishers::GregoryCreatedPublisher;
+use backend::processes::gregories::publishers::{GregoryCreatedPublisher, GregoryRenamedPublisher};
 use drawing::drawers::gregory_drawer::GregoryDrawer;
 use drawing::processes::common::rebuild_storage_on_selected_points_merged::RebuildStorageOnSelectedPointsMerged;
 use egui::Color32;
 use glium::{Blend, BlendingFunction, LinearBlendingFactor, PolygonMode, Surface};
 use user_interface::processes::fetch_objects_on_selected_points_merged::FetchObjectsOnSelectedPointsMerged;
-use user_interface::processes::sync_greogry_with_backend::SyncGregoryCreation;
+use user_interface::processes::sync_greogry_with_backend::{SyncGregoryCreation, SyncGregoryName};
 use winit::event::ElementState::Pressed;
 use winit::event::MouseButton;
 use winit::{event, event_loop};
@@ -311,11 +311,6 @@ fn main() {
         });
     event_bus
         .borrow_mut()
-        .add_consumer(GregoryCreatedPublisher {
-            backend: app_state.clone(),
-        });
-    event_bus
-        .borrow_mut()
         .add_consumer(MoveSurfaceC2PointOnPointMoved {
             backend: app_state.clone(),
         });
@@ -337,6 +332,16 @@ fn main() {
     event_bus.borrow_mut().add_consumer(SceneLoadedPublisher {
         backend: app_state.clone(),
     });
+    event_bus
+        .borrow_mut()
+        .add_consumer(GregoryCreatedPublisher {
+            backend: app_state.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(GregoryRenamedPublisher {
+            backend: app_state.clone(),
+        });
 
     event_bus
         .borrow_mut()
@@ -377,6 +382,9 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(SyncGregoryCreation { ui: ui.clone() });
+    event_bus
+        .borrow_mut()
+        .add_consumer(SyncGregoryName { ui: ui.clone() });
     event_bus
         .borrow_mut()
         .add_consumer(SelectedSurfaceC0PointsOnSurfaceC0PointsSelected {

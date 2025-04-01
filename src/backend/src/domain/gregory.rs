@@ -16,3 +16,9 @@ pub struct GregoryPatch {
     pub u_inner: [Vector3; 4],
     pub v_inner: [Vector3; 4],
 }
+
+impl Gregory {
+    pub fn rename(&mut self, name: &str) {
+        self.name = name.to_string();
+    }
+}

@@ -1,3 +1,4 @@
+use backend::cqrs::gregories::rename_gregory::RenameGregory;
 use egui::{ComboBox, DragValue, Resize, ScrollArea, Slider, Widget};
 use std::f32::consts::PI;
 
@@ -891,12 +892,12 @@ impl Ui {
         cqrs: &mut CQRS,
         gregory: &mut Gregory,
     ) {
-        // if ui.text_edit_singleline(&mut surface.name).lost_focus() {
-        //     cqrs.execute(&RenameSurfaceC2 {
-        //         id: surface.id,
-        //         name: surface.name.clone(),
-        //     });
-        // }
+        if ui.text_edit_singleline(&mut gregory.name).lost_focus() {
+            cqrs.execute(&RenameGregory {
+                id: gregory.id,
+                name: gregory.name.clone(),
+            });
+        }
 
         ui.horizontal(|ui| {
             ui.label("Tessellation level");
