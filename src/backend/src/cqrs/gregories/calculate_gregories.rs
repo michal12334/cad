@@ -203,7 +203,7 @@ impl Command<CalculateGregories> for CalculateGregories {
         let mut events = vec![];
 
         for t in triangles {
-            let gregory = Gregory::new(backend.services.id_generator.next(), &t, &points);
+            let gregory = Gregory::new(backend.services.id_generator.next(), t, &points);
 
             events.push(GregoryCreated::new(gregory.id, gregory.name.clone(), 4));
 

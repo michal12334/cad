@@ -12,6 +12,7 @@ pub struct Gregory {
     pub id: u64,
     pub name: String,
     pub patches: Vec<GregoryPatch>,
+    pub triangle: Triangle,
 }
 
 #[derive(Debug, Clone, new)]
@@ -25,91 +26,192 @@ pub struct GregoryPatch {
 }
 
 impl Gregory {
-    pub fn new(id: u64, triangle: &Triangle, points: &HashMap<u64, Point>) -> Self {
+    pub fn new(id: u64, triangle: Triangle, points: &HashMap<u64, Point>) -> Self {
         let p0 = BorderPatch::new([
             [
-                points[&triangle.edges[0].patch_points[0][0]].transformer.to_vec3(),
-                points[&triangle.edges[0].patch_points[0][1]].transformer.to_vec3(),
-                points[&triangle.edges[0].patch_points[0][2]].transformer.to_vec3(),
-                points[&triangle.edges[0].patch_points[0][3]].transformer.to_vec3(),
+                points[&triangle.edges[0].patch_points[0][0]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[0].patch_points[0][1]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[0].patch_points[0][2]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[0].patch_points[0][3]]
+                    .transformer
+                    .to_vec3(),
             ],
             [
-                points[&triangle.edges[0].patch_points[1][0]].transformer.to_vec3(),
-                points[&triangle.edges[0].patch_points[1][1]].transformer.to_vec3(),
-                points[&triangle.edges[0].patch_points[1][2]].transformer.to_vec3(),
-                points[&triangle.edges[0].patch_points[1][3]].transformer.to_vec3(),
+                points[&triangle.edges[0].patch_points[1][0]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[0].patch_points[1][1]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[0].patch_points[1][2]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[0].patch_points[1][3]]
+                    .transformer
+                    .to_vec3(),
             ],
             [
-                points[&triangle.edges[0].patch_points[2][0]].transformer.to_vec3(),
-                points[&triangle.edges[0].patch_points[2][1]].transformer.to_vec3(),
-                points[&triangle.edges[0].patch_points[2][2]].transformer.to_vec3(),
-                points[&triangle.edges[0].patch_points[2][3]].transformer.to_vec3(),
+                points[&triangle.edges[0].patch_points[2][0]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[0].patch_points[2][1]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[0].patch_points[2][2]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[0].patch_points[2][3]]
+                    .transformer
+                    .to_vec3(),
             ],
             [
-                points[&triangle.edges[0].patch_points[3][0]].transformer.to_vec3(),
-                points[&triangle.edges[0].patch_points[3][1]].transformer.to_vec3(),
-                points[&triangle.edges[0].patch_points[3][2]].transformer.to_vec3(),
-                points[&triangle.edges[0].patch_points[3][3]].transformer.to_vec3(),
+                points[&triangle.edges[0].patch_points[3][0]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[0].patch_points[3][1]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[0].patch_points[3][2]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[0].patch_points[3][3]]
+                    .transformer
+                    .to_vec3(),
             ],
         ]);
 
         let p1 = BorderPatch::new([
             [
-                points[&triangle.edges[1].patch_points[0][0]].transformer.to_vec3(),
-                points[&triangle.edges[1].patch_points[0][1]].transformer.to_vec3(),
-                points[&triangle.edges[1].patch_points[0][2]].transformer.to_vec3(),
-                points[&triangle.edges[1].patch_points[0][3]].transformer.to_vec3(),
+                points[&triangle.edges[1].patch_points[0][0]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[1].patch_points[0][1]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[1].patch_points[0][2]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[1].patch_points[0][3]]
+                    .transformer
+                    .to_vec3(),
             ],
             [
-                points[&triangle.edges[1].patch_points[1][0]].transformer.to_vec3(),
-                points[&triangle.edges[1].patch_points[1][1]].transformer.to_vec3(),
-                points[&triangle.edges[1].patch_points[1][2]].transformer.to_vec3(),
-                points[&triangle.edges[1].patch_points[1][3]].transformer.to_vec3(),
+                points[&triangle.edges[1].patch_points[1][0]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[1].patch_points[1][1]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[1].patch_points[1][2]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[1].patch_points[1][3]]
+                    .transformer
+                    .to_vec3(),
             ],
             [
-                points[&triangle.edges[1].patch_points[2][0]].transformer.to_vec3(),
-                points[&triangle.edges[1].patch_points[2][1]].transformer.to_vec3(),
-                points[&triangle.edges[1].patch_points[2][2]].transformer.to_vec3(),
-                points[&triangle.edges[1].patch_points[2][3]].transformer.to_vec3(),
+                points[&triangle.edges[1].patch_points[2][0]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[1].patch_points[2][1]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[1].patch_points[2][2]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[1].patch_points[2][3]]
+                    .transformer
+                    .to_vec3(),
             ],
             [
-                points[&triangle.edges[1].patch_points[3][0]].transformer.to_vec3(),
-                points[&triangle.edges[1].patch_points[3][1]].transformer.to_vec3(),
-                points[&triangle.edges[1].patch_points[3][2]].transformer.to_vec3(),
-                points[&triangle.edges[1].patch_points[3][3]].transformer.to_vec3(),
+                points[&triangle.edges[1].patch_points[3][0]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[1].patch_points[3][1]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[1].patch_points[3][2]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[1].patch_points[3][3]]
+                    .transformer
+                    .to_vec3(),
             ],
         ]);
 
         let p2 = BorderPatch::new([
             [
-                points[&triangle.edges[2].patch_points[0][0]].transformer.to_vec3(),
-                points[&triangle.edges[2].patch_points[0][1]].transformer.to_vec3(),
-                points[&triangle.edges[2].patch_points[0][2]].transformer.to_vec3(),
-                points[&triangle.edges[2].patch_points[0][3]].transformer.to_vec3(),
+                points[&triangle.edges[2].patch_points[0][0]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[2].patch_points[0][1]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[2].patch_points[0][2]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[2].patch_points[0][3]]
+                    .transformer
+                    .to_vec3(),
             ],
             [
-                points[&triangle.edges[2].patch_points[1][0]].transformer.to_vec3(),
-                points[&triangle.edges[2].patch_points[1][1]].transformer.to_vec3(),
-                points[&triangle.edges[2].patch_points[1][2]].transformer.to_vec3(),
-                points[&triangle.edges[2].patch_points[1][3]].transformer.to_vec3(),
+                points[&triangle.edges[2].patch_points[1][0]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[2].patch_points[1][1]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[2].patch_points[1][2]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[2].patch_points[1][3]]
+                    .transformer
+                    .to_vec3(),
             ],
             [
-                points[&triangle.edges[2].patch_points[2][0]].transformer.to_vec3(),
-                points[&triangle.edges[2].patch_points[2][1]].transformer.to_vec3(),
-                points[&triangle.edges[2].patch_points[2][2]].transformer.to_vec3(),
-                points[&triangle.edges[2].patch_points[2][3]].transformer.to_vec3(),
+                points[&triangle.edges[2].patch_points[2][0]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[2].patch_points[2][1]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[2].patch_points[2][2]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[2].patch_points[2][3]]
+                    .transformer
+                    .to_vec3(),
             ],
             [
-                points[&triangle.edges[2].patch_points[3][0]].transformer.to_vec3(),
-                points[&triangle.edges[2].patch_points[3][1]].transformer.to_vec3(),
-                points[&triangle.edges[2].patch_points[3][2]].transformer.to_vec3(),
-                points[&triangle.edges[2].patch_points[3][3]].transformer.to_vec3(),
+                points[&triangle.edges[2].patch_points[3][0]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[2].patch_points[3][1]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[2].patch_points[3][2]]
+                    .transformer
+                    .to_vec3(),
+                points[&triangle.edges[2].patch_points[3][3]]
+                    .transformer
+                    .to_vec3(),
             ],
         ]);
 
-        let triangle = GregoryTriangle::new([p0, p1, p2]);
+        let t = GregoryTriangle::new([p0, p1, p2]);
 
-        Self { id, name: format!("Gregory {}", id), patches: triangle.patches.iter().cloned().collect(), }
+        Self {
+            id,
+            name: format!("Gregory {}", id),
+            patches: t.patches.iter().cloned().collect(),
+            triangle,
+        }
     }
 
     pub fn rename(&mut self, name: &str) {
