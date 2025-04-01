@@ -7,6 +7,7 @@ use backend::cqrs::toruses::torus_details::TorusDTO;
 use crate::domain::bezier_c0::BezierC0;
 use crate::domain::bezier_c2::BezierC2;
 use crate::domain::bezier_int::BezierInt;
+use crate::domain::gregory::Gregory;
 
 pub enum Object {
     Torus(TorusDTO),
@@ -16,6 +17,7 @@ pub enum Object {
     BezierInt(BezierInt),
     SurfaceC0(SurfaceC0DTO),
     SurfaceC2(SurfaceC2DTO),
+    Gregory(Gregory),
 }
 
 impl Object {
@@ -28,6 +30,7 @@ impl Object {
             Object::BezierInt(bezier_int) => bezier_int.id,
             Object::SurfaceC0(surface_c0) => surface_c0.id,
             Object::SurfaceC2(surface_c2) => surface_c2.id,
+            Object::Gregory(gregory) => gregory.id,
         }
     }
 
@@ -40,6 +43,7 @@ impl Object {
             Object::BezierInt(bezier_int) => bezier_int.name.clone(),
             Object::SurfaceC0(surface_c0) => surface_c0.name.clone(),
             Object::SurfaceC2(surface_c2) => surface_c2.name.clone(),
+            Object::Gregory(gregory) => gregory.name.clone(),
         }
     }
 
@@ -52,6 +56,7 @@ impl Object {
             Object::BezierInt(_) => ObjectTypeDTO::BezierInt,
             Object::SurfaceC0(_) => ObjectTypeDTO::SurfaceC0,
             Object::SurfaceC2(_) => ObjectTypeDTO::SurfaceC2,
+            Object::Gregory(_) => ObjectTypeDTO::Gregory,
         }
     }
 }

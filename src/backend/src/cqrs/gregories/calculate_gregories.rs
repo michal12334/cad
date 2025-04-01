@@ -7,7 +7,10 @@ use math::vector3::Vector3;
 use crate::{
     backend::Backend,
     cqrs::cqrs::Command,
-    domain::gregory::{Gregory, GregoryPatch},
+    domain::{
+        events::gregories::gregory_created::GregoryCreated,
+        gregory::{Gregory, GregoryPatch},
+    },
 };
 
 pub struct CalculateGregories;
@@ -199,6 +202,8 @@ impl Command<CalculateGregories> for CalculateGregories {
 
         let points = backend.storage.points.clone();
 
+        let mut events = vec![];
+
         for t in triangles {
             let p0 = BorderPatch::new([
                 [
@@ -289,7 +294,17 @@ impl Command<CalculateGregories> for CalculateGregories {
                 patches: triangle.patches.iter().cloned().collect(),
             };
 
+            events.push(GregoryCreated::new(gregory.id, gregory.name.clone(), 4));
+
             backend.storage.gregories.insert(gregory.id, gregory);
+        }
+
+        drop(backend);
+
+        let backend = app_state.borrow();
+
+        for e in events {
+            backend.services.event_publisher.publish(Rc::new(e));
         }
     }
 }

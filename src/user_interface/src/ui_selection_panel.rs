@@ -76,6 +76,7 @@ impl Ui {
                                         ObjectTypeDTO::BezierInt => ObjectId::BezierInt(object_id),
                                         ObjectTypeDTO::SurfaceC0 => ObjectId::SurfaceC0(object_id),
                                         ObjectTypeDTO::SurfaceC2 => ObjectId::SurfaceC2(object_id),
+                                        ObjectTypeDTO::Gregory => ObjectId::Gregory(object_id),
                                     });
                                     cqrs.execute(&SelectObjects {
                                         objects: self

@@ -24,6 +24,7 @@ pub enum ObjectTypeDTO {
     BezierInt,
     SurfaceC0,
     SurfaceC2,
+    Gregory,
 }
 
 impl Command<SelectObjects> for SelectObjects {
@@ -40,6 +41,7 @@ impl Command<SelectObjects> for SelectObjects {
                 ObjectTypeDTO::BezierInt => SelectedObject::new_bezier_int(obj.id),
                 ObjectTypeDTO::SurfaceC0 => SelectedObject::new_surface_c0(obj.id),
                 ObjectTypeDTO::SurfaceC2 => SelectedObject::new_surface_c2(obj.id),
+                ObjectTypeDTO::Gregory => SelectedObject::new_gregory(obj.id),
             })
             .collect();
     }

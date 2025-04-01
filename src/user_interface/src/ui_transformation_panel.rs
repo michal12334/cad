@@ -40,6 +40,7 @@ use math::operations::multiply_quaternions;
 use crate::domain::bezier_c0::BezierC0;
 use crate::domain::bezier_c2::BezierC2;
 use crate::domain::bezier_int::BezierInt;
+use crate::domain::gregory::Gregory;
 use crate::object::Object;
 use crate::object_id::ObjectId;
 use crate::ui::Ui;
@@ -137,6 +138,9 @@ impl Ui {
             }
             Object::SurfaceC2(surface) => {
                 Ui::build_surface_c2_transformation_panel(ui, cqrs, surface);
+            }
+            Object::Gregory(gregory) => {
+                Ui::build_gregory_transformation_panel(ui, cqrs, gregory);
             }
         }
     }
@@ -880,6 +884,34 @@ impl Ui {
                 draw_polygon: surface.draw_polygon,
             });
         }
+    }
+
+    fn build_gregory_transformation_panel(
+        ui: &mut egui::Ui,
+        cqrs: &mut CQRS,
+        gregory: &mut Gregory,
+    ) {
+        // if ui.text_edit_singleline(&mut surface.name).lost_focus() {
+        //     cqrs.execute(&RenameSurfaceC2 {
+        //         id: surface.id,
+        //         name: surface.name.clone(),
+        //     });
+        // }
+
+        ui.horizontal(|ui| {
+            ui.label("Tessellation level");
+            if DragValue::new(&mut gregory.tess_level)
+                .clamp_range(2..=64)
+                .ui(ui)
+                .changed()
+            {
+                // cqrs.execute(&UpdateSurfaceC2 {
+                //     id: surface.id,
+                //     tess_level: surface.tess_level,
+                //     draw_polygon: surface.draw_polygon,
+                // });
+            }
+        });
     }
 
     fn build_stereoscopy_settings_panel(&mut self, ui: &mut egui::Ui) {

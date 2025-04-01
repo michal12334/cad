@@ -181,6 +181,9 @@ dependencies = [
 [[package]]
 name = "backend_events"
 version = "0.1.0"
+dependencies = [
+ "derive-new",
+]
 
 [[package]]
 name = "backtrace"

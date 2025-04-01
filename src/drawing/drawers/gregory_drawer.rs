@@ -181,7 +181,7 @@ impl GregoryDrawer {
             )
             .unwrap();
 
-            target
+        target
             .draw(
                 &vertex_buffer,
                 &index_buffer,
