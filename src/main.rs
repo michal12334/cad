@@ -1013,7 +1013,7 @@ fn main() {
                     WindowEvent::KeyboardInput { input, .. } => {
                         if input.virtual_keycode == Some(event::VirtualKeyCode::LControl) {
                             ui.borrow_mut().set_control_pressed(input.state == Pressed);
-                        } else if input.virtual_keycode == Some(event::VirtualKeyCode::Delete) && input.state == Pressed {
+                        } else if (input.virtual_keycode == Some(event::VirtualKeyCode::Delete) || input.virtual_keycode == Some(event::VirtualKeyCode::D)) && input.state == Pressed {
                             let mut cqrs = CQRS::new(app_state.clone());
                             cqrs.execute(&backend::cqrs::common::delete_selected_objects::DeleteSelectedObjects);
                             ui.borrow_mut().fetch_objects(&cqrs);
