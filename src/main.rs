@@ -6,13 +6,14 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use backend::processes::gregories::publishers::{
-    GregoryCreatedPublisher, GregoryMeshRecalculatedPublisher, GregoryRenamedPublisher,
-    GregorySettingsUpdatedPublisher,
+    GregoryCreatedPublisher, GregoryDeletedPublisher, GregoryMeshRecalculatedPublisher,
+    GregoryRenamedPublisher, GregorySettingsUpdatedPublisher,
 };
 use backend::processes::gregories::recalculate_gregories_on_point_moved::RecalculateGregoriesOnPointMoved;
 use drawing::drawers::gregory_drawer::GregoryDrawer;
 use drawing::processes::common::rebuild_storage_on_selected_points_merged::RebuildStorageOnSelectedPointsMerged;
 use drawing::processes::gregories::add_gregory_on_gregory_created::AddGregoryOnGregoryCreated;
+use drawing::processes::gregories::delete_gregory_on_gregory_deleted::DeleteGregoryOnGregoryDeleted;
 use drawing::processes::gregories::update_gregory_on_gregory_mesh_recalculated::UpdateGregoryOnGregoryMeshRecalculated;
 use drawing::processes::gregories::update_greogry_settings_on_gregory_settings_updated::UpdateGreogrySettingsOnGregorySettingsUpdated;
 use egui::Color32;
@@ -361,6 +362,11 @@ fn main() {
         });
     event_bus
         .borrow_mut()
+        .add_consumer(GregoryDeletedPublisher {
+            backend: app_state.clone(),
+        });
+    event_bus
+        .borrow_mut()
         .add_consumer(RecalculateGregoriesOnPointMoved {
             backend: app_state.clone(),
         });
@@ -635,6 +641,11 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(UpdateGreogrySettingsOnGregorySettingsUpdated {
+            drawing_storage: drawing_storage.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(DeleteGregoryOnGregoryDeleted {
             drawing_storage: drawing_storage.clone(),
         });
 

@@ -5,8 +5,9 @@ use infrastructure::consumer::{AnyConsumer, Consumer};
 use crate::{
     backend::Backend,
     domain::events::gregories::{
-        gregory_created::GregoryCreated, gregory_mesh_recalculated::GregoryMeshRecalculated,
-        gregory_renamed::GregoryRenamed, gregory_settings_updated::GregorySettingsUpdated,
+        gregory_created::GregoryCreated, gregory_deleted::GregoryDeleted,
+        gregory_mesh_recalculated::GregoryMeshRecalculated, gregory_renamed::GregoryRenamed,
+        gregory_settings_updated::GregorySettingsUpdated,
     },
 };
 
@@ -97,6 +98,26 @@ impl Consumer<GregorySettingsUpdated> for GregorySettingsUpdatedPublisher {
 }
 
 impl AnyConsumer for GregorySettingsUpdatedPublisher {
+    fn consume_any(&self, message: Rc<dyn Any>) {
+        self.consume_any_impl(message);
+    }
+}
+
+pub struct GregoryDeletedPublisher {
+    pub backend: Rc<RefCell<Backend>>,
+}
+
+impl Consumer<GregoryDeleted> for GregoryDeletedPublisher {
+    fn consume(&self, event: &GregoryDeleted) {
+        let backend = self.backend.borrow();
+        let event = Rc::new(
+            backend_events::gregories::gregory_deleted::GregoryDeleted::new(event.gregory_id),
+        );
+        backend.services.event_publisher.publish(event);
+    }
+}
+
+impl AnyConsumer for GregoryDeletedPublisher {
     fn consume_any(&self, message: Rc<dyn Any>) {
         self.consume_any_impl(message);
     }
