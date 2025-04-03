@@ -2,6 +2,7 @@ use std::any::Any;
 use std::cell::RefCell;
 use std::rc::Rc;
 
+use backend::cqrs::gregories::all_gregories::AllGregories;
 use backend_events::points::selected_points_merged::SelectedPointsMerged;
 use glium::glutin::surface::WindowSurface;
 use glium::Display;
@@ -23,6 +24,7 @@ use infrastructure::consumer::{AnyConsumer, Consumer};
 use crate::drawing::domain::bezier_c0::BezierC0;
 use crate::drawing::domain::bezier_c2::BezierC2;
 use crate::drawing::domain::bezier_int::BezierInt;
+use crate::drawing::domain::gregory::Gregory;
 use crate::drawing::domain::surface_c0::SurfaceC0;
 use crate::drawing::domain::surface_c2::SurfaceC2;
 use crate::drawing::drawing_storage::DrawingStorage;
@@ -98,6 +100,18 @@ impl Consumer<SelectedPointsMerged> for RebuildStorageOnSelectedPointsMerged {
                     surface_c2.size,
                     &self.display,
                     surface_c2.is_cylinder,
+                ),
+            );
+        }
+
+        for gregory in self.cqrs.get(&AllGregories {}) {
+            drawing_storage.gregories.insert(
+                gregory.id,
+                Gregory::new(
+                    gregory.id,
+                    gregory.tess_level,
+                    &gregory.points,
+                    &self.display,
                 ),
             );
         }

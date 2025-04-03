@@ -1,3 +1,4 @@
+use backend::cqrs::gregories::all_gregories::AllGregories;
 use chrono::{DateTime, Local};
 use egui::ScrollArea;
 use itertools::Itertools;
@@ -16,6 +17,7 @@ use backend::cqrs::surfaces_c2::all_surfaces_c2::AllSurfacesC2;
 use backend::cqrs::toruses::all_toruses::AllToruses;
 use backend::cqrs::toruses::torus_details::TransformerDTO;
 
+use crate::domain::gregory::Gregory;
 use crate::object::Object;
 use crate::object::Object::{BezierC0, BezierC2, BezierInt, Point, SurfaceC0, SurfaceC2, Torus};
 use crate::object_id::ObjectId;
@@ -105,6 +107,13 @@ impl Ui {
                     .iter()
                     .map(|surface| SurfaceC2(surface.clone())),
             )
+            .chain(cqrs.get(&AllGregories).iter().map(|g| {
+                Object::Gregory(Gregory {
+                    id: g.id,
+                    name: g.name.clone(),
+                    tess_level: g.tess_level,
+                })
+            }))
             .sorted_by_key(|object| object.get_id())
             .collect();
         self.selected_objects.clear();
