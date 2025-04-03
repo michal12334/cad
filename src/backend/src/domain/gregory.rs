@@ -13,6 +13,7 @@ pub struct Gregory {
     pub name: String,
     pub patches: Vec<GregoryPatch>,
     pub triangle: Triangle,
+    pub tess_level: u8,
 }
 
 #[derive(Debug, Clone, new)]
@@ -34,6 +35,7 @@ impl Gregory {
             name: format!("Gregory {}", id),
             patches: t.patches.iter().cloned().collect(),
             triangle,
+            tess_level: 4,
         }
     }
 
@@ -53,6 +55,10 @@ impl Gregory {
             .flat_map(|e| e.patch_points.iter().flat_map(|p| p))
             .copied()
             .collect()
+    }
+
+    pub fn update_settings(&mut self, tess_level: u8) {
+        self.tess_level = tess_level;
     }
 }
 

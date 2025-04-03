@@ -1,4 +1,5 @@
 use backend::cqrs::gregories::rename_gregory::RenameGregory;
+use backend::cqrs::gregories::update_gregory_settings::UpdateGregorySettings;
 use egui::{ComboBox, DragValue, Resize, ScrollArea, Slider, Widget};
 use std::f32::consts::PI;
 
@@ -906,11 +907,10 @@ impl Ui {
                 .ui(ui)
                 .changed()
             {
-                // cqrs.execute(&UpdateSurfaceC2 {
-                //     id: surface.id,
-                //     tess_level: surface.tess_level,
-                //     draw_polygon: surface.draw_polygon,
-                // });
+                cqrs.execute(&UpdateGregorySettings {
+                    id: gregory.id,
+                    tess_level: gregory.tess_level,
+                });
             }
         });
     }

@@ -1,2 +1,3 @@
 pub mod add_gregory_on_gregory_created;
 pub mod update_gregory_on_gregory_mesh_recalculated;
+pub mod update_greogry_settings_on_gregory_settings_updated;

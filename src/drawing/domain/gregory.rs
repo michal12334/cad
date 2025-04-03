@@ -71,4 +71,8 @@ impl Gregory {
         self.vertex_buffer = vertex_buffer;
         self.index_buffer = index_buffer;
     }
+
+    pub fn update_settings(&mut self, tess_level: u8) {
+        self.tess_level = tess_level;
+    }
 }

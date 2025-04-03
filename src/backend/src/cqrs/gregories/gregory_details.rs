@@ -22,7 +22,7 @@ impl Query<GregoryDetails, GregoryDTO> for GregoryDetails {
         GregoryDTO {
             id: gregory.id,
             name: gregory.name.clone(),
-            tess_level: 4,
+            tess_level: gregory.tess_level,
             points: gregory
                 .patches
                 .iter()

@@ -7,12 +7,14 @@ use std::rc::Rc;
 
 use backend::processes::gregories::publishers::{
     GregoryCreatedPublisher, GregoryMeshRecalculatedPublisher, GregoryRenamedPublisher,
+    GregorySettingsUpdatedPublisher,
 };
 use backend::processes::gregories::recalculate_gregories_on_point_moved::RecalculateGregoriesOnPointMoved;
 use drawing::drawers::gregory_drawer::GregoryDrawer;
 use drawing::processes::common::rebuild_storage_on_selected_points_merged::RebuildStorageOnSelectedPointsMerged;
 use drawing::processes::gregories::add_gregory_on_gregory_created::AddGregoryOnGregoryCreated;
 use drawing::processes::gregories::update_gregory_on_gregory_mesh_recalculated::UpdateGregoryOnGregoryMeshRecalculated;
+use drawing::processes::gregories::update_greogry_settings_on_gregory_settings_updated::UpdateGreogrySettingsOnGregorySettingsUpdated;
 use egui::Color32;
 use glium::{Blend, BlendingFunction, LinearBlendingFactor, PolygonMode, Surface};
 use user_interface::processes::fetch_objects_on_selected_points_merged::FetchObjectsOnSelectedPointsMerged;
@@ -354,6 +356,11 @@ fn main() {
         });
     event_bus
         .borrow_mut()
+        .add_consumer(GregorySettingsUpdatedPublisher {
+            backend: app_state.clone(),
+        });
+    event_bus
+        .borrow_mut()
         .add_consumer(RecalculateGregoriesOnPointMoved {
             backend: app_state.clone(),
         });
@@ -624,6 +631,11 @@ fn main() {
             drawing_storage: drawing_storage.clone(),
             cqrs: CQRS::new(app_state.clone()),
             display: display.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(UpdateGreogrySettingsOnGregorySettingsUpdated {
+            drawing_storage: drawing_storage.clone(),
         });
 
     let torus_drawer = TorusDrawer::new(&display);
