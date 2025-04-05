@@ -28,7 +28,9 @@ impl Consumer<GregoryMeshRecalculated> for UpdateGregoryOnGregoryMeshRecalculate
             .gregories
             .iter_mut()
             .filter(|g| g.0 == &event.gregory_id)
-            .for_each(|g| g.1.update_mesh(&gregory.points, &self.display));
+            .for_each(|g| {
+                g.1.update_mesh(&gregory.points, &gregory.vectors, &self.display)
+            });
     }
 }
 

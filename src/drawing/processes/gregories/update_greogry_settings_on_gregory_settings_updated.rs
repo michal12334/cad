@@ -16,7 +16,9 @@ impl Consumer<GregorySettingsUpdated> for UpdateGreogrySettingsOnGregorySettings
             .gregories
             .iter_mut()
             .filter(|g| g.0 == &message.gregory_id)
-            .for_each(|g| g.1.update_settings(message.tess_level));
+            .for_each(|g| {
+                g.1.update_settings(message.tess_level, message.draw_vectors)
+            });
     }
 }
 

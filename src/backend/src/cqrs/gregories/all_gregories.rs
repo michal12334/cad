@@ -2,7 +2,7 @@ use std::{cell::RefCell, rc::Rc};
 
 use crate::{backend::Backend, cqrs::cqrs::Query};
 
-use super::gregory_details::GregoryDTO;
+use super::gregory_details::{GregoryDTO, GregoryVectorDTO};
 
 pub struct AllGregories;
 
@@ -31,6 +31,12 @@ impl Query<AllGregories, Vec<GregoryDTO>> for AllGregories {
                     })
                     .cloned()
                     .collect(),
+                vectors: g
+                    .vectors
+                    .iter()
+                    .map(|v| GregoryVectorDTO { points: v.points })
+                    .collect(),
+                draw_vectors: g.draw_vectors,
             })
             .collect()
     }

@@ -14,6 +14,8 @@ pub struct Gregory {
     pub patches: Vec<GregoryPatch>,
     pub triangle: Triangle,
     pub tess_level: u8,
+    pub vectors: Vec<GregoryVector>,
+    pub draw_vectors: bool,
 }
 
 #[derive(Debug, Clone, new)]
@@ -26,6 +28,11 @@ pub struct GregoryPatch {
     pub v_inner: [Vector3; 4],
 }
 
+#[derive(Debug, Clone, new)]
+pub struct GregoryVector {
+    pub points: [Vector3; 2],
+}
+
 impl Gregory {
     pub fn new(id: u64, triangle: Triangle, points: &HashMap<u64, Point>) -> Self {
         let t = GregoryTriangle::from_triangle(&triangle, points);
@@ -36,6 +43,8 @@ impl Gregory {
             patches: t.patches.iter().cloned().collect(),
             triangle,
             tess_level: 4,
+            draw_vectors: false,
+            vectors: Self::get_vectors(&t),
         }
     }
 
@@ -46,6 +55,7 @@ impl Gregory {
     pub fn recalculate_mesh(&mut self, points: &HashMap<u64, Point>) {
         let t = GregoryTriangle::from_triangle(&self.triangle, points);
         self.patches = t.patches.iter().cloned().collect();
+        self.vectors = Self::get_vectors(&t);
     }
 
     pub fn related_points(&self) -> HashSet<u64> {
@@ -57,8 +67,36 @@ impl Gregory {
             .collect()
     }
 
-    pub fn update_settings(&mut self, tess_level: u8) {
+    pub fn update_settings(&mut self, tess_level: u8, draw_vectors: bool) {
         self.tess_level = tess_level;
+        self.draw_vectors = draw_vectors;
+    }
+
+    fn get_vectors(triangle: &GregoryTriangle) -> Vec<GregoryVector> {
+        triangle
+            .u_diff
+            .iter()
+            .flatten()
+            .zip(triangle.twist_u_p.iter().flatten())
+            .map(|(v, p)| GregoryVector::new([*p, *p - v.get_normalized()]))
+            .chain(
+                triangle
+                    .v_diff
+                    .iter()
+                    .flatten()
+                    .flatten()
+                    .zip(triangle.v_diff_p.iter().flatten().flatten())
+                    .map(|(v, p)| GregoryVector::new([*p, *p + v.get_normalized()])),
+            )
+            .chain(
+                triangle
+                    .twist
+                    .iter()
+                    .flatten()
+                    .zip(triangle.twist_u_p.iter().flatten())
+                    .map(|(v, p)| GregoryVector::new([*p, *p + v.get_normalized()])),
+            )
+            .collect()
     }
 }
 
@@ -322,10 +360,8 @@ impl BorderPatch {
 
 pub struct GregoryTriangle {
     patches: [GregoryPatch; 3],
-    // indexed as [patch][subpatch][point]
     v_diff: [[[Vector3; 4]; 2]; 3],
     v_diff_p: [[[Vector3; 4]; 2]; 3],
-    // indexed as [patch][point]
     u_diff: [[Vector3; 3]; 3],
     twist: [[Vector3; 3]; 3],
     twist_u_p: [[Vector3; 3]; 3],

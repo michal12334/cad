@@ -23,6 +23,7 @@ impl Consumer<GregoryCreated> for GregoryCreatedPublisher {
                 event.gregory_id,
                 event.name.clone(),
                 event.tess_level,
+                event.draw_vectors,
             ),
         );
         backend.services.event_publisher.publish(event);
@@ -91,6 +92,7 @@ impl Consumer<GregorySettingsUpdated> for GregorySettingsUpdatedPublisher {
             backend_events::gregories::gregory_settings_updated::GregorySettingsUpdated::new(
                 event.gregory_id,
                 event.tess_level,
+                event.draw_vectors,
             ),
         );
         backend.services.event_publisher.publish(event);

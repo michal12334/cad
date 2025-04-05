@@ -111,6 +111,8 @@ impl Consumer<SelectedPointsMerged> for RebuildStorageOnSelectedPointsMerged {
                     gregory.id,
                     gregory.tess_level,
                     &gregory.points,
+                    &gregory.vectors,
+                    gregory.draw_vectors,
                     &self.display,
                 ),
             );

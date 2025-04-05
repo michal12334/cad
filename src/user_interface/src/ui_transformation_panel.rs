@@ -1,6 +1,6 @@
 use backend::cqrs::gregories::rename_gregory::RenameGregory;
 use backend::cqrs::gregories::update_gregory_settings::UpdateGregorySettings;
-use egui::{ComboBox, DragValue, Resize, ScrollArea, Slider, Widget};
+use egui::{Checkbox, ComboBox, DragValue, Resize, ScrollArea, Slider, Widget};
 use std::f32::consts::PI;
 
 use backend::cqrs::beziers_c0::add_point_to_bezier_c0::AddPointToBezierC0;
@@ -910,9 +910,21 @@ impl Ui {
                 cqrs.execute(&UpdateGregorySettings {
                     id: gregory.id,
                     tess_level: gregory.tess_level,
+                    draw_vectors: gregory.draw_vectors,
                 });
             }
         });
+
+        if Checkbox::new(&mut gregory.draw_vectors, "Draw vectors")
+            .ui(ui)
+            .changed()
+        {
+            cqrs.execute(&UpdateGregorySettings {
+                id: gregory.id,
+                tess_level: gregory.tess_level,
+                draw_vectors: gregory.draw_vectors,
+            });
+        }
     }
 
     fn build_stereoscopy_settings_panel(&mut self, ui: &mut egui::Ui) {

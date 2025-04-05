@@ -13,6 +13,12 @@ pub struct GregoryDTO {
     pub name: String,
     pub tess_level: u8,
     pub points: Vec<Vector3>,
+    pub vectors: Vec<GregoryVectorDTO>,
+    pub draw_vectors: bool,
+}
+
+pub struct GregoryVectorDTO {
+    pub points: [Vector3; 2],
 }
 
 impl Query<GregoryDetails, GregoryDTO> for GregoryDetails {
@@ -37,6 +43,12 @@ impl Query<GregoryDetails, GregoryDTO> for GregoryDetails {
                 })
                 .cloned()
                 .collect(),
+            vectors: gregory
+                .vectors
+                .iter()
+                .map(|v| GregoryVectorDTO { points: v.points })
+                .collect(),
+            draw_vectors: gregory.draw_vectors,
         }
     }
 }

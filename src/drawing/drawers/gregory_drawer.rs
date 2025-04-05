@@ -5,12 +5,13 @@ use glium::{Display, DrawParameters, Frame, Program, Surface};
 use crate::drawing::domain::gregory::Gregory;
 
 pub struct GregoryDrawer {
-    program: Program,
+    surface_program: Program,
+    vectors_program: Program,
 }
 
 impl GregoryDrawer {
     pub fn new(display: &Display<WindowSurface>) -> Self {
-        let vertex_shader = r#"
+        let surface_vertex_shader = r#"
             #version 410 core
 
             in vec3 position;
@@ -20,7 +21,7 @@ impl GregoryDrawer {
             }
         "#;
 
-        let fragment_shader = r#"
+        let surface_fragment_shader = r#"
             #version 410 core
     
             out vec4 color;
@@ -32,7 +33,7 @@ impl GregoryDrawer {
             }
         "#;
 
-        let tessellation_control_shader = r#"
+        let surface_tessellation_control_shader = r#"
             #version 410 core
 
             layout(vertices = 20) out;
@@ -47,7 +48,7 @@ impl GregoryDrawer {
             }
         "#;
 
-        let tessellation_evaluation_shader = r#"
+        let surface_tessellation_evaluation_shader = r#"
             #version 410 core
 
             layout(isolines, equal_spacing) in;
@@ -106,22 +107,58 @@ impl GregoryDrawer {
             }
         "#;
 
-        let program = Program::new(
+        let surface_program = Program::new(
             display,
             SourceCode {
-                vertex_shader,
-                fragment_shader,
-                tessellation_control_shader: Some(tessellation_control_shader),
-                tessellation_evaluation_shader: Some(tessellation_evaluation_shader),
+                vertex_shader: surface_vertex_shader,
+                fragment_shader: surface_fragment_shader,
+                tessellation_control_shader: Some(surface_tessellation_control_shader),
+                tessellation_evaluation_shader: Some(surface_tessellation_evaluation_shader),
                 geometry_shader: None,
             },
         )
         .unwrap();
 
-        Self { program }
+        let vectors_vertex_shader_src = r#"
+            #version 140
+
+            in vec3 position;
+
+            uniform mat4 perspective;
+            uniform mat4 view;
+
+            void main() {
+                gl_Position = perspective * view * vec4(position, 1.0);
+            }
+        "#;
+
+        let vectors_fragment_shader_src = r#"
+            #version 140
+
+            out vec4 color;
+
+            uniform vec4 obj_color;
+
+            void main() {
+                color = obj_color;
+            }
+        "#;
+
+        let vectors_program = Program::from_source(
+            display,
+            vectors_vertex_shader_src,
+            vectors_fragment_shader_src,
+            None,
+        )
+        .unwrap();
+
+        Self {
+            surface_program,
+            vectors_program,
+        }
     }
 
-    pub fn draw(
+    pub fn draw_surface(
         &self,
         target: &mut Frame,
         gregory: &Gregory,
@@ -134,7 +171,7 @@ impl GregoryDrawer {
             .draw(
                 &gregory.vertex_buffer,
                 &gregory.index_buffer,
-                &self.program,
+                &self.surface_program,
                 &uniform! {
                     perspective: perspective.data,
                     view: view_matrix.data,
@@ -150,13 +187,37 @@ impl GregoryDrawer {
             .draw(
                 &gregory.vertex_buffer,
                 &gregory.index_buffer,
-                &self.program,
+                &self.surface_program,
                 &uniform! {
                     perspective: perspective.data,
                     view: view_matrix.data,
                     obj_color: color,
                     tess_level: gregory.tess_level as i32,
                     swap_xy: true,
+                },
+                &drawing_parameters,
+            )
+            .unwrap();
+    }
+
+    pub fn draw_vectors(
+        &self,
+        target: &mut Frame,
+        gregory: &Gregory,
+        perspective: &math::matrix4::Matrix4,
+        view_matrix: &math::matrix4::Matrix4,
+        color: [f32; 4],
+        drawing_parameters: &DrawParameters,
+    ) {
+        target
+            .draw(
+                &gregory.vectors_vertex_buffer,
+                &gregory.vectors_index_buffer,
+                &self.vectors_program,
+                &uniform! {
+                    perspective: perspective.data,
+                    view: view_matrix.data,
+                    obj_color: color,
                 },
                 &drawing_parameters,
             )

@@ -112,6 +112,7 @@ impl Ui {
                     id: g.id,
                     name: g.name.clone(),
                     tess_level: g.tess_level,
+                    draw_vectors: g.draw_vectors,
                 })
             }))
             .sorted_by_key(|object| object.get_id())

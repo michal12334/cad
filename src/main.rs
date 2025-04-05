@@ -889,7 +889,11 @@ fn main() {
                     }
 
                     for gregory in drawing_storage.borrow().gregories.values() {
-                        gregory_drawer.draw(&mut target, gregory, &perspective, &view_matrix, color, &draw_params);
+                        gregory_drawer.draw_surface(&mut target, gregory, &perspective, &view_matrix, color, &draw_params);
+                    }
+
+                    for gregory in drawing_storage.borrow().gregories.values().filter(|g| g.draw_vectors) {
+                        gregory_drawer.draw_vectors(&mut target, gregory, &perspective, &view_matrix, Color32::LIGHT_GREEN.to_normalized_gamma_f32(), &draw_params);
                     }
 
                     let center_point = cqrs.get(&SelectedObjectsCenter);

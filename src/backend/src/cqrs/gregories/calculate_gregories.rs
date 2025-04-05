@@ -205,7 +205,12 @@ impl Command<CalculateGregories> for CalculateGregories {
         for t in triangles {
             let gregory = Gregory::new(backend.services.id_generator.next(), t, &points);
 
-            events.push(GregoryCreated::new(gregory.id, gregory.name.clone(), 4));
+            events.push(GregoryCreated::new(
+                gregory.id,
+                gregory.name.clone(),
+                4,
+                gregory.draw_vectors,
+            ));
 
             backend.storage.gregories.insert(gregory.id, gregory);
         }

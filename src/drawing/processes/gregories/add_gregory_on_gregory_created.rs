@@ -31,6 +31,8 @@ impl Consumer<GregoryCreated> for AddGregoryOnGregoryCreated {
                 event.gregory_id,
                 gregory.tess_level,
                 &gregory.points,
+                &gregory.vectors,
+                gregory.draw_vectors,
                 &self.display,
             ),
         );

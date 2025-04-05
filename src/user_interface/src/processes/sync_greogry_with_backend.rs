@@ -16,6 +16,7 @@ impl Consumer<GregoryCreated> for SyncGregoryCreation {
             id: event.gregory_id,
             name: event.name.clone(),
             tess_level: event.tess_level,
+            draw_vectors: event.draw_vectors,
         }));
     }
 }

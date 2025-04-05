@@ -17,4 +17,13 @@ impl Vector3 {
     pub fn zero() -> Self {
         Self::new(0.0, 0.0, 0.0)
     }
+
+    pub fn get_normalized(&self) -> Self {
+        let length = self.length();
+        Self {
+            x: self.x / length,
+            y: self.y / length,
+            z: self.z / length,
+        }
+    }
 }
