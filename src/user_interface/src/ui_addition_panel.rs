@@ -1,4 +1,5 @@
 use backend::cqrs::gregories::calculate_gregories::CalculateGregories;
+use backend::cqrs::intersections::find_intersection::FindIntersection;
 use backend::cqrs::points::merge_selected_points::MergeSelectedPoints;
 use rfd::FileDialog;
 
@@ -83,6 +84,22 @@ impl Ui {
             }
             if ui.button("Add Gregory").clicked() {
                 cqrs.execute(&CalculateGregories);
+            }
+            if ui.button("Find Intesection").clicked() {
+                let ids = self
+                    .selected_objects
+                    .iter()
+                    .filter_map(|x| x.get_intersection_object_id())
+                    .take(2)
+                    .collect::<Vec<_>>();
+                if ids.len() == 2 {
+                    let id = cqrs.handle(&NewId {});
+                    cqrs.execute(&FindIntersection {
+                        id1: ids[0],
+                        id2: ids[1],
+                        intersection_id: id,
+                    });
+                }
             }
         });
         ui.horizontal(|ui| {

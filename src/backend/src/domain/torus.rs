@@ -1,5 +1,12 @@
+use std::f32::consts::PI;
+
+use math::vector3::Vector3;
+use math::vector4::Vector4;
+
 use crate::domain::mesh::Mesh;
 use crate::domain::transformer::Transformer;
+
+use super::intersection_object::IntersectionObject;
 
 pub struct Torus {
     pub id: u64,
@@ -87,5 +94,27 @@ impl Torus {
 
     pub fn rename(&mut self, name: &str) {
         self.name = name.to_string();
+    }
+
+    pub fn get_intersection_object(&self) -> IntersectionObject {
+        let major_radius = self.major_radius as f32;
+        let minor_radius = self.minor_radius as f32;
+        let model_matrix = self.transformer.get_model_matrix();
+
+        IntersectionObject::new(
+            (2.0 * PI, 2.0 * PI),
+            move |u, v| {
+                let x = (major_radius + minor_radius * v.cos()) * u.cos();
+                let z = (major_radius + minor_radius * v.cos()) * u.sin();
+                let y = minor_radius * v.sin();
+
+                let p = Vector3::new(x, y, z);
+                let p = Vector4::from_vector3(p, 1.0);
+                let p = model_matrix * p;
+                p.to_vector3()
+            },
+            true,
+            true,
+        )
     }
 }

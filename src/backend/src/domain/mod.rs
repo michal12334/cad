@@ -4,6 +4,8 @@ pub mod bezier_int;
 pub mod cursor;
 pub mod events;
 pub mod gregory;
+pub mod intersection;
+pub mod intersection_object;
 pub mod mesh;
 pub mod point;
 pub mod selected_object;

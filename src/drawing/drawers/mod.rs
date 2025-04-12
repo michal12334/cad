@@ -4,6 +4,7 @@ pub mod bezier_int_drawer;
 pub mod cursor_drawer;
 pub mod gregory_drawer;
 pub mod infinite_grid_drawer;
+pub mod intersection_drawer;
 pub mod point_drawer;
 pub mod points_drawer;
 pub mod polygon_drawer;

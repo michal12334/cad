@@ -5,12 +5,14 @@ extern crate user_interface;
 use std::cell::RefCell;
 use std::rc::Rc;
 
+use backend::domain::intersection;
 use backend::processes::gregories::publishers::{
     GregoryCreatedPublisher, GregoryDeletedPublisher, GregoryMeshRecalculatedPublisher,
     GregoryRenamedPublisher, GregorySettingsUpdatedPublisher,
 };
 use backend::processes::gregories::recalculate_gregories_on_point_moved::RecalculateGregoriesOnPointMoved;
 use drawing::drawers::gregory_drawer::GregoryDrawer;
+use drawing::drawers::intersection_drawer::{self, IntersectionDrawer};
 use drawing::processes::common::rebuild_storage_on_selected_points_merged::RebuildStorageOnSelectedPointsMerged;
 use drawing::processes::gregories::add_gregory_on_gregory_created::AddGregoryOnGregoryCreated;
 use drawing::processes::gregories::delete_gregory_on_gregory_deleted::DeleteGregoryOnGregoryDeleted;
@@ -661,6 +663,7 @@ fn main() {
     let surface_c0_drawer = SurfaceC0Drawer::new(&display);
     let surface_c2_drawer = SurfaceC2Drawer::new(&display);
     let gregory_drawer = GregoryDrawer::new(&display);
+    let intersection_drawer = IntersectionDrawer::new(&display);
 
     let mut mouse_position = (0.0, 0.0);
     let mut camera_direction = math::vector3::Vector3::new(0.0f32, 0.0, 1.0);
@@ -894,6 +897,10 @@ fn main() {
 
                     for gregory in drawing_storage.borrow().gregories.values().filter(|g| g.draw_vectors) {
                         gregory_drawer.draw_vectors(&mut target, gregory, &perspective, &view_matrix, Color32::LIGHT_GREEN.to_normalized_gamma_f32(), &draw_params);
+                    }
+
+                    for intersection in app_state.storage.intersections.values() {
+                        intersection_drawer.draw(&mut target, &display, &intersection, &perspective, &view_matrix, color, &draw_params);
                     }
 
                     let center_point = cqrs.get(&SelectedObjectsCenter);

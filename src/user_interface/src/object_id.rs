@@ -1,4 +1,7 @@
-use backend::cqrs::common::select_objects::ObjectTypeDTO;
+use backend::cqrs::{
+    common::select_objects::ObjectTypeDTO,
+    intersections::find_intersection::IntersectionObjectIdDTO,
+};
 
 pub enum ObjectId {
     Torus(u64),
@@ -35,6 +38,19 @@ impl ObjectId {
             ObjectId::SurfaceC0(_) => ObjectTypeDTO::SurfaceC0,
             ObjectId::SurfaceC2(_) => ObjectTypeDTO::SurfaceC2,
             ObjectId::Gregory(_) => ObjectTypeDTO::Gregory,
+        }
+    }
+
+    pub fn get_intersection_object_id(&self) -> Option<IntersectionObjectIdDTO> {
+        match self {
+            ObjectId::Torus(id) => Some(IntersectionObjectIdDTO::Torus(*id)),
+            ObjectId::Point(_) => None,
+            ObjectId::BezierC0(_) => None,
+            ObjectId::BezierC2(_) => None,
+            ObjectId::BezierInt(_) => None,
+            ObjectId::SurfaceC0(id) => Some(IntersectionObjectIdDTO::SurfaceC0(*id)),
+            ObjectId::SurfaceC2(id) => Some(IntersectionObjectIdDTO::SurfaceC2(*id)),
+            ObjectId::Gregory(_) => None,
         }
     }
 }
