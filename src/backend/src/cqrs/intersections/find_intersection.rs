@@ -1,5 +1,7 @@
 use std::{cell::RefCell, rc::Rc};
 
+use math::vector3::Vector3;
+
 use crate::{
     backend::Backend,
     cqrs::cqrs::Command,
@@ -26,6 +28,12 @@ impl Command<FindIntersection> for FindIntersection {
             if let IntersectionObjectIdDTO::Torus(id2) = command.id2 {
                 let torus1 = &backend.storage.toruses[&id1];
                 let torus2 = &backend.storage.toruses[&id2];
+                let cursor_position = backend.storage.cursor.transformer.position;
+                let cursor_position = Vector3::new(
+                    cursor_position.0 as f32,
+                    cursor_position.1 as f32,
+                    cursor_position.2 as f32,
+                );
 
                 let intersection = Intersection::from_objects(
                     command.intersection_id,
@@ -34,6 +42,7 @@ impl Command<FindIntersection> for FindIntersection {
                     IntersectionObjectId::Torus(id2),
                     &torus1.get_intersection_object(),
                     &torus2.get_intersection_object(),
+                    &cursor_position,
                 );
                 backend
                     .storage
