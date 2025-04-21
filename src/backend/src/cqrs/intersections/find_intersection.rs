@@ -43,6 +43,7 @@ impl Command<FindIntersection> for FindIntersection {
                     &torus1.get_intersection_object(),
                     &torus2.get_intersection_object(),
                     &cursor_position,
+                    200,
                 );
                 backend
                     .storage

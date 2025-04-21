@@ -1,3 +1,4 @@
+use bit_vec::BitVec;
 use itertools::Itertools;
 use math::vector3::Vector3;
 use nalgebra::{Matrix4, Vector2, Vector4};
@@ -12,6 +13,9 @@ pub struct Intersection {
     pub intersection_points: Vec<Vector3>,
     pub uv_points: Vec<(f32, f32)>,
     pub st_points: Vec<(f32, f32)>,
+    pub texture_size: usize,
+    pub uv_texture: Vec<BitVec>,
+    pub st_texture: Vec<BitVec>,
 }
 
 pub enum IntersectionObjectId {
@@ -29,6 +33,7 @@ impl Intersection {
         object1: &IntersectionObject,
         object2: &IntersectionObject,
         cursor_position: &Vector3,
+        texture_size: usize,
     ) -> Self {
         let uvst = Self::find_starting_points(object1, object2, cursor_position);
 
@@ -42,6 +47,19 @@ impl Intersection {
             0.0000001,
             false,
         );
+
+        let uv_points = intersection
+            .0
+            .iter()
+            .map(|uv| (uv.x, uv.y))
+            .collect::<Vec<_>>();
+        let st_points = intersection
+            .1
+            .iter()
+            .map(|st| (st.x, st.y))
+            .collect::<Vec<_>>();
+        let uv_texture = Self::get_texture(texture_size, &uv_points, object1.value_range);
+        let st_texture = Self::get_texture(texture_size, &st_points, object2.value_range);
 
         Self {
             id,
@@ -59,8 +77,11 @@ impl Intersection {
                         .map(|st| object2.get_value(st.x, st.y)),
                 )
                 .collect(),
-            uv_points: intersection.0.iter().map(|uv| (uv.x, uv.y)).collect(),
-            st_points: intersection.1.iter().map(|st| (st.x, st.y)).collect(),
+            uv_points,
+            st_points,
+            texture_size,
+            uv_texture,
+            st_texture,
         }
     }
 
@@ -271,5 +292,22 @@ impl Intersection {
         }
 
         (uv_points, st_points)
+    }
+
+    fn get_texture(
+        texture_size: usize,
+        uv_points: &[(f32, f32)],
+        value_ranges: (f32, f32),
+    ) -> Vec<BitVec> {
+        let mut result = vec![BitVec::from_elem(texture_size, false); texture_size];
+        for (u, v) in uv_points {
+            let u = (u / value_ranges.0 * texture_size as f32).round() as usize;
+            let v = (v / value_ranges.1 * texture_size as f32).round() as usize;
+
+            if u < texture_size && v < texture_size {
+                result[u].set(v, true);
+            }
+        }
+        result
     }
 }
