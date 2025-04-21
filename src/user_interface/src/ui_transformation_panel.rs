@@ -1,7 +1,6 @@
 use backend::cqrs::gregories::rename_gregory::RenameGregory;
 use backend::cqrs::gregories::update_gregory_settings::UpdateGregorySettings;
-use backend::domain::intersection;
-use egui::{Checkbox, ComboBox, DragValue, Resize, ScrollArea, Slider, Widget};
+use egui::{Checkbox, ComboBox, DragValue, Resize, ScrollArea, Slider, TextureOptions, Widget};
 use std::f32::consts::PI;
 
 use backend::cqrs::beziers_c0::add_point_to_bezier_c0::AddPointToBezierC0;
@@ -48,6 +47,7 @@ use crate::domain::intersection::Intersection;
 use crate::object::Object;
 use crate::object_id::ObjectId;
 use crate::ui::Ui;
+use egui::ColorImage;
 
 impl Ui {
     pub fn build_selected_object_transformation_panel(
@@ -943,6 +943,12 @@ impl Ui {
             //     name: intersection.name.clone(),
             // });
         }
+
+        let white_texture = ColorImage::new([100, 100], egui::Color32::WHITE);
+        let texture =
+            ui.ctx()
+                .load_texture("white_texture", white_texture, TextureOptions::default());
+        ui.image((texture.id(), texture.size_vec2()));
     }
 
     fn build_stereoscopy_settings_panel(&mut self, ui: &mut egui::Ui) {
