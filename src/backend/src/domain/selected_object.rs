@@ -7,6 +7,7 @@ pub struct SelectedObject {
     pub surface_c0_id: Option<u64>,
     pub surface_c2_id: Option<u64>,
     pub gregory_id: Option<u64>,
+    pub intersection_id: Option<u64>,
 }
 
 impl SelectedObject {
@@ -20,6 +21,7 @@ impl SelectedObject {
             surface_c0_id: None,
             surface_c2_id: None,
             gregory_id: None,
+            intersection_id: None,
         }
     }
 
@@ -33,6 +35,7 @@ impl SelectedObject {
             surface_c0_id: None,
             surface_c2_id: None,
             gregory_id: None,
+            intersection_id: None,
         }
     }
 
@@ -46,6 +49,7 @@ impl SelectedObject {
             surface_c0_id: None,
             surface_c2_id: None,
             gregory_id: None,
+            intersection_id: None,
         }
     }
 
@@ -59,6 +63,7 @@ impl SelectedObject {
             surface_c0_id: None,
             surface_c2_id: None,
             gregory_id: None,
+            intersection_id: None,
         }
     }
 
@@ -72,6 +77,7 @@ impl SelectedObject {
             surface_c0_id: None,
             surface_c2_id: None,
             gregory_id: None,
+            intersection_id: None,
         }
     }
 
@@ -85,6 +91,7 @@ impl SelectedObject {
             surface_c0_id: Some(surface_c0_id),
             surface_c2_id: None,
             gregory_id: None,
+            intersection_id: None,
         }
     }
 
@@ -98,6 +105,7 @@ impl SelectedObject {
             surface_c0_id: None,
             surface_c2_id: Some(surface_c2_id),
             gregory_id: None,
+            intersection_id: None,
         }
     }
 
@@ -111,6 +119,21 @@ impl SelectedObject {
             surface_c0_id: None,
             surface_c2_id: None,
             gregory_id: Some(gregory_id),
+            intersection_id: None,
+        }
+    }
+
+    pub fn new_intersection(intersection_id: u64) -> Self {
+        Self {
+            torus_id: None,
+            point_id: None,
+            bezier_c0_id: None,
+            bezier_c2_id: None,
+            bezier_int_id: None,
+            surface_c0_id: None,
+            surface_c2_id: None,
+            gregory_id: None,
+            intersection_id: Some(intersection_id),
         }
     }
 }

@@ -1,5 +1,6 @@
 use backend::cqrs::gregories::rename_gregory::RenameGregory;
 use backend::cqrs::gregories::update_gregory_settings::UpdateGregorySettings;
+use backend::domain::intersection;
 use egui::{Checkbox, ComboBox, DragValue, Resize, ScrollArea, Slider, Widget};
 use std::f32::consts::PI;
 
@@ -43,6 +44,7 @@ use crate::domain::bezier_c0::BezierC0;
 use crate::domain::bezier_c2::BezierC2;
 use crate::domain::bezier_int::BezierInt;
 use crate::domain::gregory::Gregory;
+use crate::domain::intersection::Intersection;
 use crate::object::Object;
 use crate::object_id::ObjectId;
 use crate::ui::Ui;
@@ -143,6 +145,9 @@ impl Ui {
             }
             Object::Gregory(gregory) => {
                 Ui::build_gregory_transformation_panel(ui, cqrs, gregory);
+            }
+            Object::Intersection(intersection) => {
+                Ui::build_intersection_transformation_panel(ui, cqrs, intersection);
             }
         }
     }
@@ -924,6 +929,19 @@ impl Ui {
                 tess_level: gregory.tess_level,
                 draw_vectors: gregory.draw_vectors,
             });
+        }
+    }
+
+    fn build_intersection_transformation_panel(
+        ui: &mut egui::Ui,
+        cqrs: &mut CQRS,
+        intersection: &mut Intersection,
+    ) {
+        if ui.text_edit_singleline(&mut intersection.name).lost_focus() {
+            // cqrs.execute(&RenameIntersection {
+            //     id: intersection.id,
+            //     name: intersection.name.clone(),
+            // });
         }
     }
 

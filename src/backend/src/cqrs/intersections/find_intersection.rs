@@ -5,7 +5,10 @@ use math::vector3::Vector3;
 use crate::{
     backend::Backend,
     cqrs::cqrs::Command,
-    domain::intersection::{Intersection, IntersectionObjectId},
+    domain::{
+        events::intersections::intersection_created::IntersectionCreated,
+        intersection::{Intersection, IntersectionObjectId},
+    },
 };
 
 pub struct FindIntersection {
@@ -45,10 +48,19 @@ impl Command<FindIntersection> for FindIntersection {
                     &cursor_position,
                     200,
                 );
+
+                let event = IntersectionCreated::new(intersection.id, intersection.name.clone());
+
                 backend
                     .storage
                     .intersections
                     .insert(command.intersection_id, intersection);
+
+                drop(backend);
+
+                let backend = app_state.borrow();
+
+                backend.services.event_publisher.publish(Rc::new(event));
             }
         } else {
             // Handle other types of intersection objects

@@ -8,6 +8,7 @@ use crate::domain::bezier_c0::BezierC0;
 use crate::domain::bezier_c2::BezierC2;
 use crate::domain::bezier_int::BezierInt;
 use crate::domain::gregory::Gregory;
+use crate::domain::intersection::Intersection;
 
 pub enum Object {
     Torus(TorusDTO),
@@ -18,6 +19,7 @@ pub enum Object {
     SurfaceC0(SurfaceC0DTO),
     SurfaceC2(SurfaceC2DTO),
     Gregory(Gregory),
+    Intersection(Intersection),
 }
 
 impl Object {
@@ -31,6 +33,7 @@ impl Object {
             Object::SurfaceC0(surface_c0) => surface_c0.id,
             Object::SurfaceC2(surface_c2) => surface_c2.id,
             Object::Gregory(gregory) => gregory.id,
+            Object::Intersection(intersection) => intersection.id,
         }
     }
 
@@ -44,6 +47,7 @@ impl Object {
             Object::SurfaceC0(surface_c0) => surface_c0.name.clone(),
             Object::SurfaceC2(surface_c2) => surface_c2.name.clone(),
             Object::Gregory(gregory) => gregory.name.clone(),
+            Object::Intersection(intersection) => intersection.name.clone(),
         }
     }
 
@@ -57,6 +61,7 @@ impl Object {
             Object::SurfaceC0(_) => ObjectTypeDTO::SurfaceC0,
             Object::SurfaceC2(_) => ObjectTypeDTO::SurfaceC2,
             Object::Gregory(_) => ObjectTypeDTO::Gregory,
+            Object::Intersection(_) => ObjectTypeDTO::Intersection,
         }
     }
 }

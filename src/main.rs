@@ -5,14 +5,14 @@ extern crate user_interface;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use backend::domain::intersection;
 use backend::processes::gregories::publishers::{
     GregoryCreatedPublisher, GregoryDeletedPublisher, GregoryMeshRecalculatedPublisher,
     GregoryRenamedPublisher, GregorySettingsUpdatedPublisher,
 };
 use backend::processes::gregories::recalculate_gregories_on_point_moved::RecalculateGregoriesOnPointMoved;
+use backend::processes::intersections::publishers::IntersectionCreatedPublisher;
 use drawing::drawers::gregory_drawer::GregoryDrawer;
-use drawing::drawers::intersection_drawer::{self, IntersectionDrawer};
+use drawing::drawers::intersection_drawer::IntersectionDrawer;
 use drawing::processes::common::rebuild_storage_on_selected_points_merged::RebuildStorageOnSelectedPointsMerged;
 use drawing::processes::gregories::add_gregory_on_gregory_created::AddGregoryOnGregoryCreated;
 use drawing::processes::gregories::delete_gregory_on_gregory_deleted::DeleteGregoryOnGregoryDeleted;
@@ -22,6 +22,7 @@ use egui::Color32;
 use glium::{Blend, BlendingFunction, LinearBlendingFactor, PolygonMode, Surface};
 use user_interface::processes::fetch_objects_on_selected_points_merged::FetchObjectsOnSelectedPointsMerged;
 use user_interface::processes::sync_greogry_with_backend::{SyncGregoryCreation, SyncGregoryName};
+use user_interface::processes::sync_intersection_with_backend::SyncIntersectionCreation;
 use winit::event::ElementState::Pressed;
 use winit::event::MouseButton;
 use winit::{event, event_loop};
@@ -372,6 +373,11 @@ fn main() {
         .add_consumer(RecalculateGregoriesOnPointMoved {
             backend: app_state.clone(),
         });
+    event_bus
+        .borrow_mut()
+        .add_consumer(IntersectionCreatedPublisher {
+            backend: app_state.clone(),
+        });
 
     event_bus
         .borrow_mut()
@@ -415,6 +421,9 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(SyncGregoryName { ui: ui.clone() });
+    event_bus
+        .borrow_mut()
+        .add_consumer(SyncIntersectionCreation { ui: ui.clone() });
     event_bus
         .borrow_mut()
         .add_consumer(SelectedSurfaceC0PointsOnSurfaceC0PointsSelected {

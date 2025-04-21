@@ -12,6 +12,7 @@ pub enum ObjectId {
     SurfaceC0(u64),
     SurfaceC2(u64),
     Gregory(u64),
+    Intersection(u64),
 }
 
 impl ObjectId {
@@ -25,6 +26,7 @@ impl ObjectId {
             ObjectId::SurfaceC0(id) => *id,
             ObjectId::SurfaceC2(id) => *id,
             ObjectId::Gregory(id) => *id,
+            ObjectId::Intersection(id) => *id,
         }
     }
 
@@ -38,6 +40,7 @@ impl ObjectId {
             ObjectId::SurfaceC0(_) => ObjectTypeDTO::SurfaceC0,
             ObjectId::SurfaceC2(_) => ObjectTypeDTO::SurfaceC2,
             ObjectId::Gregory(_) => ObjectTypeDTO::Gregory,
+            ObjectId::Intersection(_) => ObjectTypeDTO::Intersection,
         }
     }
 
@@ -51,6 +54,7 @@ impl ObjectId {
             ObjectId::SurfaceC0(id) => Some(IntersectionObjectIdDTO::SurfaceC0(*id)),
             ObjectId::SurfaceC2(id) => Some(IntersectionObjectIdDTO::SurfaceC2(*id)),
             ObjectId::Gregory(_) => None,
+            ObjectId::Intersection(_) => None,
         }
     }
 }
