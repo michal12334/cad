@@ -64,7 +64,7 @@ impl IntersectionDrawer {
         .unwrap();
         let indices = glium::IndexBuffer::new(
             display,
-            glium::index::PrimitiveType::LinesList,
+            glium::index::PrimitiveType::Points,
             &(0..intersection.intersection_points.len() as u32).collect::<Vec<_>>(),
         )
         .unwrap();

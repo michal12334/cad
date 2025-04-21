@@ -26,4 +26,8 @@ impl Vector3 {
             z: self.z / length,
         }
     }
+
+    pub fn to_nalgebra(&self) -> nalgebra::Vector3<f32> {
+        nalgebra::Vector3::new(self.x, self.y, self.z)
+    }
 }

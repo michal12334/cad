@@ -313,4 +313,24 @@ impl Matrix4 {
         }
         Self { data: inv }
     }
+
+    pub fn from_nalgebra(matrix: nalgebra::Matrix4<f32>) -> Self {
+        let mut data = [[0.0; 4]; 4];
+        for i in 0..4 {
+            for j in 0..4 {
+                data[i][j] = matrix[(i, j)];
+            }
+        }
+        Self { data }
+    }
+
+    pub fn to_nalgebra(&self) -> nalgebra::Matrix4<f32> {
+        let mut matrix = nalgebra::Matrix4::zeros();
+        for i in 0..4 {
+            for j in 0..4 {
+                matrix[(i, j)] = self.data[i][j];
+            }
+        }
+        matrix
+    }
 }
