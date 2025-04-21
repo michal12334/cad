@@ -1,5 +1,6 @@
 use bit_vec::BitVec;
 use itertools::Itertools;
+use line_drawing::Bresenham;
 use math::vector3::Vector3;
 use nalgebra::{Matrix4, Vector2, Vector4};
 
@@ -300,14 +301,27 @@ impl Intersection {
         value_ranges: (f32, f32),
     ) -> Vec<BitVec> {
         let mut result = vec![BitVec::from_elem(texture_size, false); texture_size];
-        for (u, v) in uv_points {
-            let u = (u / value_ranges.0 * texture_size as f32).round() as usize;
-            let v = (v / value_ranges.1 * texture_size as f32).round() as usize;
 
-            if u < texture_size && v < texture_size {
-                result[u].set(v, true);
-            }
-        }
+        uv_points
+            .iter()
+            .map(|(u, v)| {
+                let u = (u / value_ranges.0 * texture_size as f32).round() as usize;
+                let v: usize = (v / value_ranges.1 * texture_size as f32).round() as usize;
+
+                (u as i64, v as i64)
+            })
+            .tuple_windows()
+            .for_each(|(p1, p2)| {
+                let b = Bresenham::new(p1, p2);
+                for (u, v) in b {
+                    let u = u as usize;
+                    let v = v as usize;
+                    if u < texture_size && v < texture_size {
+                        result[u].set(v, true);
+                    }
+                }
+            });
+
         result
     }
 }
