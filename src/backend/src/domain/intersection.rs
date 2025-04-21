@@ -59,8 +59,20 @@ impl Intersection {
             .iter()
             .map(|st| (st.x, st.y))
             .collect::<Vec<_>>();
-        let uv_texture = Self::get_texture(texture_size, &uv_points, object1.value_range);
-        let st_texture = Self::get_texture(texture_size, &st_points, object2.value_range);
+        let uv_texture = Self::get_texture(
+            texture_size,
+            &uv_points,
+            object1.value_range,
+            object1.wrap_u,
+            object1.wrap_v,
+        );
+        let st_texture = Self::get_texture(
+            texture_size,
+            &st_points,
+            object2.value_range,
+            object2.wrap_u,
+            object2.wrap_v,
+        );
 
         Self {
             id,
@@ -299,6 +311,8 @@ impl Intersection {
         texture_size: usize,
         uv_points: &[(f32, f32)],
         value_ranges: (f32, f32),
+        wrap_u: bool,
+        wrap_v: bool,
     ) -> Vec<BitVec> {
         let mut result = vec![BitVec::from_elem(texture_size, false); texture_size];
 
@@ -312,13 +326,78 @@ impl Intersection {
             })
             .tuple_windows()
             .for_each(|(p1, p2)| {
+                let (p1, p2) = [
+                    Some((p1, p2)),
+                    if wrap_u {
+                        Some(((p1.0 + texture_size as i64, p1.1), p2))
+                    } else {
+                        None
+                    },
+                    if wrap_u {
+                        Some(((p1.0 - texture_size as i64, p1.1), p2))
+                    } else {
+                        None
+                    },
+                    if wrap_v {
+                        Some(((p1.0, p1.1 + texture_size as i64), p2))
+                    } else {
+                        None
+                    },
+                    if wrap_v {
+                        Some(((p1.0, p1.1 - texture_size as i64), p2))
+                    } else {
+                        None
+                    },
+                    if wrap_u && wrap_v {
+                        Some(((p1.0 + texture_size as i64, p1.1 - texture_size as i64), p2))
+                    } else {
+                        None
+                    },
+                    if wrap_u && wrap_v {
+                        Some(((p1.0 - texture_size as i64, p1.1 + texture_size as i64), p2))
+                    } else {
+                        None
+                    },
+                    if wrap_u && wrap_v {
+                        Some(((p1.0 + texture_size as i64, p1.1 + texture_size as i64), p2))
+                    } else {
+                        None
+                    },
+                    if wrap_u && wrap_v {
+                        Some(((p1.0 - texture_size as i64, p1.1 - texture_size as i64), p2))
+                    } else {
+                        None
+                    },
+                ]
+                .into_iter()
+                .filter_map(|x| x)
+                .min_by(|a, b| {
+                    let a = (a.0 .0 - a.1 .0).abs() + (a.0 .1 - a.1 .1).abs();
+                    let b = (b.0 .0 - b.1 .0).abs() + (b.0 .1 - b.1 .1).abs();
+                    a.cmp(&b)
+                })
+                .unwrap();
+
                 let b = Bresenham::new(p1, p2);
+
                 for (u, v) in b {
+                    let u = if u < 0 {
+                        u + texture_size as i64
+                    } else if u >= texture_size as i64 {
+                        u - texture_size as i64
+                    } else {
+                        u
+                    };
+                    let v = if v < 0 {
+                        v + texture_size as i64
+                    } else if v >= texture_size as i64 {
+                        v - texture_size as i64
+                    } else {
+                        v
+                    };
                     let u = u as usize;
                     let v = v as usize;
-                    if u < texture_size && v < texture_size {
-                        result[u].set(v, true);
-                    }
+                    result[u].set(v, true);
                 }
             });
 
