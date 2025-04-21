@@ -15,6 +15,10 @@ impl Consumer<IntersectionCreated> for SyncIntersectionCreation {
         ui.objects.push(Object::Intersection(Intersection {
             id: event.id,
             name: event.name.clone(),
+            uv_texture_handle: None,
+            uv_texture: Intersection::get_texture(&event.uv_texture),
+            st_texture_handle: None,
+            st_texture: Intersection::get_texture(&event.st_texture),
         }));
     }
 }

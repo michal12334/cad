@@ -944,11 +944,37 @@ impl Ui {
             // });
         }
 
-        let white_texture = ColorImage::new([100, 100], egui::Color32::WHITE);
-        let texture =
-            ui.ctx()
-                .load_texture("white_texture", white_texture, TextureOptions::default());
-        ui.image((texture.id(), texture.size_vec2()));
+        ui.label("uv texture");
+
+        let uv_texture = if let Some(texture) = &intersection.uv_texture_handle {
+            texture
+        } else {
+            let texture = ui.ctx().load_texture(
+                "uv_texture",
+                intersection.uv_texture.clone(),
+                TextureOptions::default(),
+            );
+            intersection.uv_texture_handle = Some(texture);
+            &intersection.uv_texture_handle.as_ref().unwrap()
+        };
+
+        ui.image((uv_texture.id(), uv_texture.size_vec2()));
+
+        ui.label("st texture");
+
+        let st_texture = if let Some(texture) = &intersection.st_texture_handle {
+            texture
+        } else {
+            let texture = ui.ctx().load_texture(
+                "st_texture",
+                intersection.st_texture.clone(),
+                TextureOptions::default(),
+            );
+            intersection.st_texture_handle = Some(texture);
+            &intersection.st_texture_handle.as_ref().unwrap()
+        };
+
+        ui.image((st_texture.id(), st_texture.size_vec2()));
     }
 
     fn build_stereoscopy_settings_panel(&mut self, ui: &mut egui::Ui) {

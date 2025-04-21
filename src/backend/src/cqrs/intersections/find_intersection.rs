@@ -49,7 +49,12 @@ impl Command<FindIntersection> for FindIntersection {
                     200,
                 );
 
-                let event = IntersectionCreated::new(intersection.id, intersection.name.clone());
+                let event = IntersectionCreated::new(
+                    intersection.id,
+                    intersection.name.clone(),
+                    intersection.uv_texture.clone(),
+                    intersection.st_texture.clone(),
+                );
 
                 backend
                     .storage

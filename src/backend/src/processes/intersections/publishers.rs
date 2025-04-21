@@ -17,6 +17,8 @@ impl Consumer<IntersectionCreated> for IntersectionCreatedPublisher {
             backend_events::intersections::intersection_created::IntersectionCreated::new(
                 event.id,
                 event.name.clone(),
+                event.uv_texture.clone(),
+                event.st_texture.clone(),
             ),
         );
         backend.services.event_publisher.publish(event);

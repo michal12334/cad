@@ -194,6 +194,7 @@ dependencies = [
 name = "backend_events"
 version = "0.1.0"
 dependencies = [
+ "bit-vec",
  "derive-new",
 ]
 
@@ -2303,6 +2304,7 @@ version = "0.1.0"
 dependencies = [
  "backend",
  "backend_events",
+ "bit-vec",
  "chrono",
  "egui",
  "infrastructure",
