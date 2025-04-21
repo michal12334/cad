@@ -59,8 +59,8 @@ impl Intersection {
                         .map(|st| object2.get_value(st.x, st.y)),
                 )
                 .collect(),
-            st_points: vec![],
-            uv_points: vec![],
+            uv_points: intersection.0.iter().map(|uv| (uv.x, uv.y)).collect(),
+            st_points: intersection.1.iter().map(|st| (st.x, st.y)).collect(),
         }
     }
 
