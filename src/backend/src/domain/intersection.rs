@@ -145,8 +145,8 @@ impl Intersection {
         max_distance: f32,
         self_intersection: bool,
     ) -> (Vec<Vector2<f32>>, Vec<Vector2<f32>>) {
-        let mut uv_points = vec![uv_start];
-        let mut st_points = vec![st_start];
+        let mut uv_points = vec![];
+        let mut st_points = vec![];
 
         let mut uv = uv_start;
         let mut st = st_start;
