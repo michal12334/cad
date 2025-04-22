@@ -28,6 +28,8 @@ impl IntersectionObject {
     }
 
     pub fn get_value(&self, u: f32, v: f32) -> Vector3 {
+        let u = Self::clamp(u, 0.0, self.value_range.0, self.wrap_u);
+        let v = Self::clamp(v, 0.0, self.value_range.1, self.wrap_v);
         (self.value_getter)(u, v)
     }
 
