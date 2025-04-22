@@ -1,6 +1,9 @@
 use math::vector3::Vector3;
 
+use super::intersection::IntersectionObjectId;
+
 pub struct IntersectionObject {
+    pub id: IntersectionObjectId,
     pub value_range: (f32, f32),
     pub value_getter: Box<dyn Fn(f32, f32) -> Vector3>,
     pub wrap_u: bool,
@@ -9,12 +12,14 @@ pub struct IntersectionObject {
 
 impl IntersectionObject {
     pub fn new(
+        id: IntersectionObjectId,
         value_range: (f32, f32),
         value_getter: impl Fn(f32, f32) -> Vector3 + 'static,
         wrap_u: bool,
         wrap_v: bool,
     ) -> Self {
         Self {
+            id,
             value_range,
             value_getter: Box::new(value_getter),
             wrap_u,

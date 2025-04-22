@@ -7,7 +7,7 @@ use crate::{
     cqrs::cqrs::Command,
     domain::{
         events::intersections::intersection_created::IntersectionCreated,
-        intersection::{Intersection, IntersectionObjectId},
+        intersection::Intersection, intersection_object::IntersectionObject,
     },
 };
 
@@ -27,48 +27,70 @@ pub enum IntersectionObjectIdDTO {
 impl Command<FindIntersection> for FindIntersection {
     fn execute(command: &FindIntersection, app_state: Rc<RefCell<Backend>>) {
         let mut backend = app_state.borrow_mut();
-        if let IntersectionObjectIdDTO::Torus(id1) = command.id1 {
-            if let IntersectionObjectIdDTO::Torus(id2) = command.id2 {
-                let torus1 = &backend.storage.toruses[&id1];
-                let torus2 = &backend.storage.toruses[&id2];
-                let cursor_position = backend.storage.cursor.transformer.position;
-                let cursor_position = Vector3::new(
-                    cursor_position.0 as f32,
-                    cursor_position.1 as f32,
-                    cursor_position.2 as f32,
-                );
 
-                let intersection = Intersection::from_objects(
-                    command.intersection_id,
-                    format!("Intersection {}-{}", id1, id2),
-                    IntersectionObjectId::Torus(id1),
-                    IntersectionObjectId::Torus(id2),
-                    &torus1.get_intersection_object(),
-                    &torus2.get_intersection_object(),
-                    &cursor_position,
-                    200,
-                );
+        let intersection_object1 = get_intersection_object(&command.id1, &mut backend);
+        let intersection_object2 = get_intersection_object(&command.id2, &mut backend);
 
-                let event = IntersectionCreated::new(
-                    intersection.id,
-                    intersection.name.clone(),
-                    intersection.uv_texture.clone(),
-                    intersection.st_texture.clone(),
-                );
+        let cursor_position = backend.storage.cursor.transformer.position;
+        let cursor_position = Vector3::new(
+            cursor_position.0 as f32,
+            cursor_position.1 as f32,
+            cursor_position.2 as f32,
+        );
 
-                backend
-                    .storage
-                    .intersections
-                    .insert(command.intersection_id, intersection);
+        let intersection = Intersection::from_objects(
+            command.intersection_id,
+            format!(
+                "Intersection {}-{}",
+                intersection_object1.id, intersection_object2.id
+            ),
+            intersection_object1.id.clone(),
+            intersection_object2.id.clone(),
+            &intersection_object1,
+            &intersection_object2,
+            &cursor_position,
+            200,
+        );
 
-                drop(backend);
+        let event = IntersectionCreated::new(
+            intersection.id,
+            intersection.name.clone(),
+            intersection.uv_texture.clone(),
+            intersection.st_texture.clone(),
+        );
 
-                let backend = app_state.borrow();
+        backend
+            .storage
+            .intersections
+            .insert(command.intersection_id, intersection);
 
-                backend.services.event_publisher.publish(Rc::new(event));
-            }
-        } else {
-            // Handle other types of intersection objects
+        drop(backend);
+
+        let backend = app_state.borrow();
+
+        backend.services.event_publisher.publish(Rc::new(event));
+    }
+}
+
+fn get_intersection_object(
+    id: &IntersectionObjectIdDTO,
+    backend: &mut Backend,
+) -> IntersectionObject {
+    match id {
+        IntersectionObjectIdDTO::Torus(id) => {
+            let torus = backend.storage.toruses.get(id).unwrap();
+            torus.get_intersection_object()
+        }
+        IntersectionObjectIdDTO::SurfaceC0(id) => {
+            let surface = backend.storage.surfaces_c0.get(id).unwrap();
+            let points = backend.storage.points.values().cloned().collect::<Vec<_>>();
+            surface.get_intersection_object(&points)
+        }
+        IntersectionObjectIdDTO::SurfaceC2(id) => {
+            let surface = backend.storage.surfaces_c2.get(id).unwrap();
+            let points = backend.storage.points.values().cloned().collect::<Vec<_>>();
+            // surface.get_intersection_object(&points)
+            todo!()
         }
     }
 }

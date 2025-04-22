@@ -6,6 +6,7 @@ use math::vector4::Vector4;
 use crate::domain::mesh::Mesh;
 use crate::domain::transformer::Transformer;
 
+use super::intersection::IntersectionObjectId;
 use super::intersection_object::IntersectionObject;
 
 pub struct Torus {
@@ -102,6 +103,7 @@ impl Torus {
         let model_matrix = self.transformer.get_model_matrix();
 
         IntersectionObject::new(
+            IntersectionObjectId::Torus(self.id),
             (2.0 * PI, 2.0 * PI),
             move |u, v| {
                 let x = (major_radius + minor_radius * v.cos()) * u.cos();

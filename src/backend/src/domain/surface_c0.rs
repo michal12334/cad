@@ -1,3 +1,9 @@
+use math::vector3::Vector3;
+
+use super::{
+    intersection::IntersectionObjectId, intersection_object::IntersectionObject, point::Point,
+};
+
 pub struct SurfaceC0 {
     pub id: u64,
     pub name: String,
@@ -62,5 +68,74 @@ impl SurfaceC0 {
                 self.points[i] = SurfaceC0Point { id: new_point };
             }
         }
+    }
+
+    pub fn get_intersection_object(&self, points: &[Point]) -> IntersectionObject {
+        let points = self
+            .points
+            .iter()
+            .map(|p| {
+                let point = points.iter().find(|&point| point.id == p.id).unwrap();
+                Vector3::new(
+                    point.transformer.position.0 as f32,
+                    point.transformer.position.1 as f32,
+                    point.transformer.position.2 as f32,
+                )
+            })
+            .collect::<Vec<_>>();
+
+        let size = self.size;
+
+        IntersectionObject::new(
+            IntersectionObjectId::SurfaceC0(self.id),
+            (self.size.0 as f32, self.size.1 as f32),
+            move |u, v| {
+                let ui = u as usize;
+                let vi = v as usize;
+
+                let u = u - u.floor();
+                let v = v - v.floor();
+
+                let patch = [
+                    (3 * ui, 3 * vi),
+                    (3 * ui + 1, 3 * vi),
+                    (3 * ui + 2, 3 * vi),
+                    (3 * ui + 3, 3 * vi),
+                    (3 * ui, 3 * vi + 1),
+                    (3 * ui + 1, 3 * vi + 1),
+                    (3 * ui + 2, 3 * vi + 1),
+                    (3 * ui + 3, 3 * vi + 1),
+                    (3 * ui, 3 * vi + 2),
+                    (3 * ui + 1, 3 * vi + 2),
+                    (3 * ui + 2, 3 * vi + 2),
+                    (3 * ui + 3, 3 * vi + 2),
+                    (3 * ui, 3 * vi + 3),
+                    (3 * ui + 1, 3 * vi + 3),
+                    (3 * ui + 2, 3 * vi + 3),
+                    (3 * ui + 3, 3 * vi + 3),
+                ]
+                .iter()
+                .map(|&(x, y)| points[x * (size.1 as usize * 3 + 1) + y])
+                .collect::<Vec<_>>();
+
+                let iu = 1.0 - u;
+                let b0u = iu * iu * iu;
+                let b1u = 3.0 * iu * iu * u;
+                let b2u = 3.0 * iu * u * u;
+                let b3u = u * u * u;
+                let iv = 1.0 - v;
+                let b0v = iv * iv * iv;
+                let b1v = 3.0 * iv * iv * v;
+                let b2v = 3.0 * iv * v * v;
+                let b3v = v * v * v;
+
+                b0v * (b0u * patch[0] + b1u * patch[1] + b2u * patch[2] + b3u * patch[3])
+                    + b1v * (b0u * patch[4] + b1u * patch[5] + b2u * patch[6] + b3u * patch[7])
+                    + b2v * (b0u * patch[8] + b1u * patch[9] + b2u * patch[10] + b3u * patch[11])
+                    + b3v * (b0u * patch[12] + b1u * patch[13] + b2u * patch[14] + b3u * patch[15])
+            },
+            false,
+            false,
+        )
     }
 }

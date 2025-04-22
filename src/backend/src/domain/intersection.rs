@@ -1,4 +1,4 @@
-use std::collections::VecDeque;
+use std::{collections::VecDeque, fmt::Display};
 
 use bit_vec::BitVec;
 use itertools::Itertools;
@@ -23,10 +23,21 @@ pub struct Intersection {
     pub st_texture: Vec<BitVec>,
 }
 
+#[derive(Debug, Clone)]
 pub enum IntersectionObjectId {
     Torus(u64),
     SurfaceC0(u64),
     SurfaceC2(u64),
+}
+
+impl Display for IntersectionObjectId {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            IntersectionObjectId::Torus(id) => write!(f, "T{}", id),
+            IntersectionObjectId::SurfaceC0(id) => write!(f, "SC0 {}", id),
+            IntersectionObjectId::SurfaceC2(id) => write!(f, "SC2 {}", id),
+        }
+    }
 }
 
 impl Intersection {
