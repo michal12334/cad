@@ -89,8 +89,7 @@ fn get_intersection_object(
         IntersectionObjectIdDTO::SurfaceC2(id) => {
             let surface = backend.storage.surfaces_c2.get(id).unwrap();
             let points = backend.storage.points.values().cloned().collect::<Vec<_>>();
-            // surface.get_intersection_object(&points)
-            todo!()
+            surface.get_intersection_object(&points)
         }
     }
 }
