@@ -1,3 +1,5 @@
+use std::collections::VecDeque;
+
 use bit_vec::BitVec;
 use itertools::Itertools;
 use line_drawing::Bresenham;
@@ -320,7 +322,7 @@ impl Intersection {
             .iter()
             .map(|(u, v)| {
                 let u = (u / value_ranges.0 * texture_size as f32).round() as usize;
-                let v: usize = (v / value_ranges.1 * texture_size as f32).round() as usize;
+                let v = (v / value_ranges.1 * texture_size as f32).round() as usize;
 
                 (u as i64, v as i64)
             })
@@ -400,6 +402,57 @@ impl Intersection {
                     result[u].set(v, true);
                 }
             });
+
+        let mut queue = VecDeque::new();
+        let mut visited = vec![false; texture_size * texture_size];
+
+        let first_point = result
+            .iter()
+            .enumerate()
+            .flat_map(|(i, x)| x.iter().enumerate().map(move |(j, y)| (i, j, y)))
+            .find(|(_, _, y)| !*y)
+            .unwrap();
+        queue.push_back((first_point.0, first_point.1));
+        visited[first_point.0 * texture_size + first_point.1] = true;
+
+        while !queue.is_empty() {
+            let (u, v) = queue.pop_front().unwrap();
+
+            result[u].set(v, true);
+
+            for (du, dv) in &[(1, 0), (-1, 0), (0, 1), (0, -1)] {
+                let mut new_u = u as isize + du;
+                let mut new_v = v as isize + dv;
+
+                if wrap_u {
+                    if new_u < 0 {
+                        new_u += texture_size as isize;
+                    } else if new_u >= texture_size as isize {
+                        new_u -= texture_size as isize;
+                    }
+                }
+                if wrap_v {
+                    if new_v < 0 {
+                        new_v += texture_size as isize;
+                    } else if new_v >= texture_size as isize {
+                        new_v -= texture_size as isize;
+                    }
+                }
+
+                if new_u >= 0
+                    && new_u < texture_size as isize
+                    && new_v >= 0
+                    && new_v < texture_size as isize
+                {
+                    let new_u = new_u as usize;
+                    let new_v = new_v as usize;
+                    if !visited[new_u * texture_size + new_v] && !result[new_u][new_v] {
+                        queue.push_back((new_u, new_v));
+                        visited[new_u * texture_size + new_v] = true;
+                    }
+                }
+            }
+        }
 
         result
     }
