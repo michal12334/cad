@@ -6,6 +6,8 @@ use line_drawing::Bresenham;
 use math::vector3::Vector3;
 use nalgebra::{Matrix4, Vector2, Vector4};
 
+use crate::extensions::iterator_extensions::IteratorExtensions;
+
 use super::intersection_object::IntersectionObject;
 
 pub struct Intersection {
@@ -67,6 +69,7 @@ impl Intersection {
             object1.value_range,
             object1.wrap_u,
             object1.wrap_v,
+            intersection.2,
         );
         let st_texture = Self::get_texture(
             texture_size,
@@ -74,6 +77,7 @@ impl Intersection {
             object2.value_range,
             object2.wrap_u,
             object2.wrap_v,
+            intersection.2,
         );
 
         Self {
@@ -105,7 +109,7 @@ impl Intersection {
         object2: &IntersectionObject,
         cursor_position: &Vector3,
     ) -> Option<(Vector2<f32>, Vector2<f32>)> {
-        let x = (0..100)
+        (0..100)
             .cartesian_product(0..100)
             .cartesian_product(0..100)
             .cartesian_product(0..100)
@@ -121,7 +125,7 @@ impl Intersection {
                 ((p - q).to_nalgebra().norm(), p, q, u, v, s, t)
             })
             .filter(|(dist, _, _, _, _, _, _)| *dist < 0.1)
-            .sorted_by(|x, y| {
+            .min_by(|x, y| {
                 let dx = (x.1 - *cursor_position).to_nalgebra().norm();
                 let dy = (y.1 - *cursor_position).to_nalgebra().norm();
 
@@ -132,9 +136,6 @@ impl Intersection {
                 let st = Vector2::new(s, t);
                 (uv, st)
             })
-            .next();
-
-        x
     }
 
     fn find_intersection(
@@ -146,7 +147,7 @@ impl Intersection {
         rough: bool,
         max_distance: f32,
         self_intersection: bool,
-    ) -> (Vec<Vector2<f32>>, Vec<Vector2<f32>>) {
+    ) -> (Vec<Vector2<f32>>, Vec<Vector2<f32>>, bool) {
         let mut uv_points = vec![];
         let mut st_points = vec![];
 
@@ -198,7 +199,7 @@ impl Intersection {
                 if distance_newton > distance {
                     if step <= 0.0001 {
                         if found_first_bound {
-                            return (uv_points, st_points);
+                            return (uv_points, st_points, false);
                         }
                         found_first_bound = true;
                         break;
@@ -273,7 +274,7 @@ impl Intersection {
                     > 0.1
             {
                 if found_first_bound {
-                    return (uv_points, st_points);
+                    return (uv_points, st_points, false);
                 }
                 uv = uv_start;
                 st = st_start;
@@ -296,7 +297,7 @@ impl Intersection {
                 .norm()
                     < step
             {
-                break;
+                return (uv_points, st_points, true);
             }
 
             if uv_points.len() > 1000000 {
@@ -306,7 +307,7 @@ impl Intersection {
             println!("{}", uv_points.len());
         }
 
-        (uv_points, st_points)
+        (uv_points, st_points, false)
     }
 
     fn get_texture(
@@ -315,11 +316,13 @@ impl Intersection {
         value_ranges: (f32, f32),
         wrap_u: bool,
         wrap_v: bool,
+        wrap: bool,
     ) -> Vec<BitVec> {
         let mut result = vec![BitVec::from_elem(texture_size, false); texture_size];
 
         uv_points
             .iter()
+            .chain_if([uv_points[0]].iter(), wrap)
             .map(|(u, v)| {
                 let u = (u / value_ranges.0 * texture_size as f32).round() as usize;
                 let v = (v / value_ranges.1 * texture_size as f32).round() as usize;
