@@ -47,7 +47,6 @@ use crate::domain::intersection::Intersection;
 use crate::object::Object;
 use crate::object_id::ObjectId;
 use crate::ui::Ui;
-use egui::ColorImage;
 
 impl Ui {
     pub fn build_selected_object_transformation_panel(

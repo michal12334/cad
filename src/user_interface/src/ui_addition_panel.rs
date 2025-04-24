@@ -1,5 +1,4 @@
 use backend::cqrs::gregories::calculate_gregories::CalculateGregories;
-use backend::cqrs::intersections::find_intersection::FindIntersection;
 use backend::cqrs::points::merge_selected_points::MergeSelectedPoints;
 use rfd::FileDialog;
 
@@ -22,6 +21,7 @@ use crate::object::Object;
 use crate::object::Object::{BezierC0, Point, Torus};
 use crate::popups::add_surface_c0_popup::AddSurfaceC0Popup;
 use crate::popups::add_surface_c2_popup::AddSurfaceC2Popup;
+use crate::popups::find_intersection_popup::FindIntersectionPopup;
 use crate::ui::Ui;
 
 type DomainBezierC0 = crate::domain::bezier_c0::BezierC0;
@@ -93,12 +93,10 @@ impl Ui {
                     .take(2)
                     .collect::<Vec<_>>();
                 if ids.len() == 2 {
-                    let id = cqrs.handle(&NewId {});
-                    cqrs.execute(&FindIntersection {
-                        id1: ids[0],
-                        id2: ids[1],
-                        intersection_id: id,
-                    });
+                    self.popup = Some(Box::new(FindIntersectionPopup::new([
+                        ids[0].clone(),
+                        ids[1].clone(),
+                    ])));
                 }
             }
         });
