@@ -13,6 +13,9 @@ pub struct FindIntersectionPopup {
     is_closed: bool,
     ids: [IntersectionObjectIdDTO; 2],
     texture_size: usize,
+    newton_factor: f32,
+    rough: bool,
+    max_distance: f32,
 }
 
 impl FindIntersectionPopup {
@@ -21,6 +24,9 @@ impl FindIntersectionPopup {
             is_closed: false,
             ids,
             texture_size: 200,
+            newton_factor: 0.2,
+            rough: false,
+            max_distance: 0.0000001,
         }
     }
 }
@@ -36,6 +42,24 @@ impl Popup for FindIntersectionPopup {
             });
 
             ui.horizontal(|ui| {
+                egui::DragValue::new(&mut self.newton_factor)
+                    .clamp_range(0.01..=1.0)
+                    .speed(0.01)
+                    .ui(ui);
+                ui.label("newton factor");
+            });
+
+            ui.horizontal(|ui| {
+                egui::DragValue::new(&mut self.max_distance)
+                    .clamp_range(0.0000001..=0.1)
+                    .speed(0.0000001)
+                    .ui(ui);
+                ui.label("max distance");
+            });
+
+            ui.checkbox(&mut self.rough, "Rough");
+
+            ui.horizontal(|ui| {
                 if ui.button("Find").clicked() {
                     let id = cqrs.handle(&NewId {});
                     cqrs.execute(&FindIntersection {
@@ -43,6 +67,9 @@ impl Popup for FindIntersectionPopup {
                         id2: self.ids[1],
                         intersection_id: id,
                         texture_size: self.texture_size,
+                        newton_factor: self.newton_factor,
+                        rough: self.rough,
+                        max_distance: self.max_distance,
                     });
 
                     self.is_closed = true;

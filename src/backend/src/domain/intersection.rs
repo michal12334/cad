@@ -50,6 +50,9 @@ impl Intersection {
         object2: &IntersectionObject,
         cursor_position: &Vector3,
         texture_size: usize,
+        newton_factor: f32,
+        rough: bool,
+        max_distance: f32,
     ) -> Self {
         let uvst = Self::find_starting_points(object1, object2, cursor_position);
 
@@ -58,9 +61,9 @@ impl Intersection {
             object2,
             uvst.unwrap().0,
             uvst.unwrap().1,
-            0.2,
-            false,
-            0.0000001,
+            newton_factor,
+            rough,
+            max_distance,
             false,
         );
 

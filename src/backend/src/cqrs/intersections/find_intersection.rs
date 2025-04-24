@@ -16,6 +16,9 @@ pub struct FindIntersection {
     pub id2: IntersectionObjectIdDTO,
     pub intersection_id: u64,
     pub texture_size: usize,
+    pub newton_factor: f32,
+    pub rough: bool,
+    pub max_distance: f32,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -51,6 +54,9 @@ impl Command<FindIntersection> for FindIntersection {
             &intersection_object2,
             &cursor_position,
             command.texture_size,
+            command.newton_factor,
+            command.rough,
+            command.max_distance,
         );
 
         let event = IntersectionCreated::new(
