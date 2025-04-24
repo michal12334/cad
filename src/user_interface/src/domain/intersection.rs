@@ -15,9 +15,11 @@ pub struct Intersection {
 impl Intersection {
     pub fn get_texture(t: &[BitVec]) -> ImageData {
         let mut data = Vec::new();
-        for i in 0..t.len() {
-            for j in 0..t[i].len() {
-                if t[i][j] {
+        let ts = t.len();
+        let s = 200usize;
+        for i in 0..s {
+            for j in 0..s {
+                if t[i * ts / s][j * ts / s] {
                     data.push(255);
                     data.push(0);
                     data.push(0);
@@ -30,9 +32,6 @@ impl Intersection {
                 }
             }
         }
-        ImageData::Color(Arc::new(ColorImage::from_rgba_unmultiplied(
-            [200, 200],
-            &data,
-        )))
+        ImageData::Color(Arc::new(ColorImage::from_rgba_unmultiplied([s, s], &data)))
     }
 }
