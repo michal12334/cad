@@ -1,5 +1,8 @@
 use backend::cqrs::gregories::rename_gregory::RenameGregory;
 use backend::cqrs::gregories::update_gregory_settings::UpdateGregorySettings;
+use backend::cqrs::intersections::set_intersection_textures_draw::{
+    SetIntersectionTexturesDraw, TextureDrawDTO,
+};
 use egui::{Checkbox, ComboBox, DragValue, Resize, ScrollArea, Slider, TextureOptions, Widget};
 use std::f32::consts::PI;
 
@@ -43,7 +46,7 @@ use crate::domain::bezier_c0::BezierC0;
 use crate::domain::bezier_c2::BezierC2;
 use crate::domain::bezier_int::BezierInt;
 use crate::domain::gregory::Gregory;
-use crate::domain::intersection::Intersection;
+use crate::domain::intersection::{Intersection, TextureDraw};
 use crate::object::Object;
 use crate::object_id::ObjectId;
 use crate::ui::Ui;
@@ -959,6 +962,35 @@ impl Ui {
 
         ui.image((uv_texture.id(), uv_texture.size_vec2()));
 
+        let mut draw_red = intersection.uv_draw.contains(TextureDraw::Red);
+        let mut draw_green = intersection.uv_draw.contains(TextureDraw::Green);
+
+        if ui.checkbox(&mut draw_red, "Draw red").changed() {
+            intersection.uv_draw = if draw_red {
+                intersection.uv_draw | TextureDraw::Red
+            } else {
+                intersection.uv_draw - TextureDraw::Red
+            };
+            cqrs.execute(&SetIntersectionTexturesDraw {
+                intersection_id: intersection.id,
+                uv_draw: TextureDrawDTO::from_bits(intersection.uv_draw.bits()).unwrap(),
+                st_draw: TextureDrawDTO::from_bits(intersection.st_draw.bits()).unwrap(),
+            });
+        }
+
+        if ui.checkbox(&mut draw_green, "Draw green").changed() {
+            intersection.uv_draw = if draw_green {
+                intersection.uv_draw | TextureDraw::Green
+            } else {
+                intersection.uv_draw - TextureDraw::Green
+            };
+            cqrs.execute(&SetIntersectionTexturesDraw {
+                intersection_id: intersection.id,
+                uv_draw: TextureDrawDTO::from_bits(intersection.uv_draw.bits()).unwrap(),
+                st_draw: TextureDrawDTO::from_bits(intersection.st_draw.bits()).unwrap(),
+            });
+        }
+
         ui.label("st texture");
 
         let st_texture = if let Some(texture) = &intersection.st_texture_handle {
@@ -974,6 +1006,35 @@ impl Ui {
         };
 
         ui.image((st_texture.id(), st_texture.size_vec2()));
+
+        let mut draw_red = intersection.st_draw.contains(TextureDraw::Red);
+        let mut draw_green = intersection.st_draw.contains(TextureDraw::Green);
+
+        if ui.checkbox(&mut draw_red, "Draw red").changed() {
+            intersection.st_draw = if draw_red {
+                intersection.st_draw | TextureDraw::Red
+            } else {
+                intersection.st_draw - TextureDraw::Red
+            };
+            cqrs.execute(&SetIntersectionTexturesDraw {
+                intersection_id: intersection.id,
+                uv_draw: TextureDrawDTO::from_bits(intersection.uv_draw.bits()).unwrap(),
+                st_draw: TextureDrawDTO::from_bits(intersection.st_draw.bits()).unwrap(),
+            });
+        }
+
+        if ui.checkbox(&mut draw_green, "Draw green").changed() {
+            intersection.st_draw = if draw_green {
+                intersection.st_draw | TextureDraw::Green
+            } else {
+                intersection.st_draw - TextureDraw::Green
+            };
+            cqrs.execute(&SetIntersectionTexturesDraw {
+                intersection_id: intersection.id,
+                uv_draw: TextureDrawDTO::from_bits(intersection.uv_draw.bits()).unwrap(),
+                st_draw: TextureDrawDTO::from_bits(intersection.st_draw.bits()).unwrap(),
+            });
+        }
     }
 
     fn build_stereoscopy_settings_panel(&mut self, ui: &mut egui::Ui) {

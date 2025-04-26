@@ -1,6 +1,7 @@
 use std::{collections::VecDeque, fmt::Display};
 
 use bit_vec::BitVec;
+use bitflags::bitflags;
 use itertools::Itertools;
 use line_drawing::Bresenham;
 use math::vector3::Vector3;
@@ -22,6 +23,8 @@ pub struct Intersection {
     pub uv_texture: Vec<BitVec>,
     pub st_texture: Vec<BitVec>,
     pub wrap: bool,
+    pub uv_draw: TextureDraw,
+    pub st_draw: TextureDraw,
 }
 
 #[derive(Debug, Clone)]
@@ -29,6 +32,16 @@ pub enum IntersectionObjectId {
     Torus(u64),
     SurfaceC0(u64),
     SurfaceC2(u64),
+}
+
+bitflags! {
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+    pub struct TextureDraw: u32 {
+        const True = 0b00000001;
+        const False = 0b00000010;
+
+        const Both = Self::True.bits() | Self::False.bits();
+    }
 }
 
 impl Display for IntersectionObjectId {
@@ -117,7 +130,17 @@ impl Intersection {
             uv_texture,
             st_texture,
             wrap: intersection.2,
+            uv_draw: TextureDraw::Both,
+            st_draw: TextureDraw::Both,
         }
+    }
+
+    pub fn set_uv_draw(&mut self, draw: TextureDraw) {
+        self.uv_draw = draw;
+    }
+
+    pub fn set_st_draw(&mut self, draw: TextureDraw) {
+        self.st_draw = draw;
     }
 
     fn find_starting_points(

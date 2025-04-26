@@ -10,7 +10,9 @@ use backend::processes::gregories::publishers::{
     GregoryRenamedPublisher, GregorySettingsUpdatedPublisher,
 };
 use backend::processes::gregories::recalculate_gregories_on_point_moved::RecalculateGregoriesOnPointMoved;
-use backend::processes::intersections::publishers::IntersectionCreatedPublisher;
+use backend::processes::intersections::publishers::{
+    IntersectionCreatedPublisher, IntersectionTexturesDrawSetPublisher,
+};
 use drawing::drawers::gregory_drawer::GregoryDrawer;
 use drawing::drawers::intersection_drawer::IntersectionDrawer;
 use drawing::processes::common::rebuild_storage_on_selected_points_merged::RebuildStorageOnSelectedPointsMerged;
@@ -377,6 +379,11 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(IntersectionCreatedPublisher {
+            backend: app_state.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(IntersectionTexturesDrawSetPublisher {
             backend: app_state.clone(),
         });
 

@@ -16,3 +16,4 @@ backend_events = { path = "../backend_events" }
 math = { path = "../math" }
 infrastructure = { path = "../infrastructure" }
 bit-vec = "0.8.0"
+bitflags = "2.9.0"

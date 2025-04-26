@@ -3,7 +3,11 @@ use std::{any::Any, cell::RefCell, rc::Rc};
 use backend_events::intersections::intersection_created::IntersectionCreated;
 use infrastructure::consumer::{AnyConsumer, Consumer};
 
-use crate::{domain::intersection::Intersection, object::Object, ui::Ui};
+use crate::{
+    domain::intersection::{Intersection, TextureDraw},
+    object::Object,
+    ui::Ui,
+};
 
 pub struct SyncIntersectionCreation {
     pub ui: Rc<RefCell<Ui>>,
@@ -19,6 +23,8 @@ impl Consumer<IntersectionCreated> for SyncIntersectionCreation {
             uv_texture: Intersection::get_texture(&event.uv_texture),
             st_texture_handle: None,
             st_texture: Intersection::get_texture(&event.st_texture),
+            uv_draw: TextureDraw::Both,
+            st_draw: TextureDraw::Both,
         }));
     }
 }

@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use bit_vec::BitVec;
+use bitflags::bitflags;
 use egui::{ColorImage, ImageData, TextureHandle};
 
 pub struct Intersection {
@@ -10,6 +11,18 @@ pub struct Intersection {
     pub uv_texture: ImageData,
     pub st_texture_handle: Option<TextureHandle>,
     pub st_texture: ImageData,
+    pub uv_draw: TextureDraw,
+    pub st_draw: TextureDraw,
+}
+
+bitflags! {
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+    pub struct TextureDraw: u32 {
+        const Red = 0b00000001;
+        const Green = 0b00000010;
+
+        const Both = Self::Red.bits() | Self::Green.bits();
+    }
 }
 
 impl Intersection {
