@@ -8,3 +8,5 @@ edition = "2021"
 [dependencies]
 bit-vec = "0.8.0"
 derive-new = "0.7.0"
+
+math = { path = "../math" }

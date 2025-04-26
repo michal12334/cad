@@ -2,7 +2,7 @@ use backend::domain::vertex::Vertex;
 use glium::glutin::surface::WindowSurface;
 use glium::{Display, DrawParameters, Frame, Program, Surface};
 
-use backend::domain::intersection::Intersection;
+use crate::drawing::domain::intersection::Intersection;
 
 pub struct IntersectionDrawer {
     program: Program,
@@ -44,34 +44,16 @@ impl IntersectionDrawer {
     pub fn draw(
         &self,
         target: &mut Frame,
-        display: &Display<WindowSurface>,
         intersection: &Intersection,
         perspective: &math::matrix4::Matrix4,
         view_matrix: &math::matrix4::Matrix4,
         color: [f32; 4],
         drawing_parameters: &DrawParameters,
     ) {
-        let vertex_buffer = glium::VertexBuffer::new(
-            display,
-            &intersection
-                .intersection_points
-                .iter()
-                .map(|p| Vertex {
-                    position: [p.x, p.y, p.z],
-                })
-                .collect::<Vec<_>>(),
-        )
-        .unwrap();
-        let indices = glium::IndexBuffer::new(
-            display,
-            glium::index::PrimitiveType::Points,
-            &(0..intersection.intersection_points.len() as u32).collect::<Vec<_>>(),
-        )
-        .unwrap();
         target
             .draw(
-                &vertex_buffer,
-                &indices,
+                &intersection.vertex_buffer,
+                &intersection.index_buffer,
                 &self.program,
                 &uniform! {
                     perspective: perspective.data,

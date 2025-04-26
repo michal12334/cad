@@ -64,6 +64,8 @@ impl Command<FindIntersection> for FindIntersection {
             intersection.name.clone(),
             intersection.uv_texture.clone(),
             intersection.st_texture.clone(),
+            intersection.intersection_points.clone(),
+            intersection.wrap,
         );
 
         backend

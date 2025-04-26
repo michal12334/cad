@@ -21,6 +21,7 @@ pub struct Intersection {
     pub texture_size: usize,
     pub uv_texture: Vec<BitVec>,
     pub st_texture: Vec<BitVec>,
+    pub wrap: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -115,6 +116,7 @@ impl Intersection {
             texture_size,
             uv_texture,
             st_texture,
+            wrap: intersection.2,
         }
     }
 

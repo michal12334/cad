@@ -19,6 +19,8 @@ impl Consumer<IntersectionCreated> for IntersectionCreatedPublisher {
                 event.name.clone(),
                 event.uv_texture.clone(),
                 event.st_texture.clone(),
+                event.points.clone(),
+                event.wrap,
             ),
         );
         backend.services.event_publisher.publish(event);

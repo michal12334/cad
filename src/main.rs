@@ -18,6 +18,7 @@ use drawing::processes::gregories::add_gregory_on_gregory_created::AddGregoryOnG
 use drawing::processes::gregories::delete_gregory_on_gregory_deleted::DeleteGregoryOnGregoryDeleted;
 use drawing::processes::gregories::update_gregory_on_gregory_mesh_recalculated::UpdateGregoryOnGregoryMeshRecalculated;
 use drawing::processes::gregories::update_greogry_settings_on_gregory_settings_updated::UpdateGreogrySettingsOnGregorySettingsUpdated;
+use drawing::processes::intersections::add_intersection_on_intersection_created::AddIntersectionOnIntersectionCreated;
 use egui::Color32;
 use glium::{Blend, BlendingFunction, LinearBlendingFactor, PolygonMode, Surface};
 use user_interface::processes::fetch_objects_on_selected_points_merged::FetchObjectsOnSelectedPointsMerged;
@@ -659,6 +660,12 @@ fn main() {
         .add_consumer(DeleteGregoryOnGregoryDeleted {
             drawing_storage: drawing_storage.clone(),
         });
+    event_bus
+        .borrow_mut()
+        .add_consumer(AddIntersectionOnIntersectionCreated {
+            drawing_storage: drawing_storage.clone(),
+            display: display.clone(),
+        });
 
     let torus_drawer = TorusDrawer::new(&display);
     let point_drawer = PointDrawer::new(&display);
@@ -908,8 +915,8 @@ fn main() {
                         gregory_drawer.draw_vectors(&mut target, gregory, &perspective, &view_matrix, Color32::LIGHT_GREEN.to_normalized_gamma_f32(), &draw_params);
                     }
 
-                    for intersection in app_state.storage.intersections.values() {
-                        intersection_drawer.draw(&mut target, &display, &intersection, &perspective, &view_matrix, color, &draw_params);
+                    for intersection in drawing_storage.borrow().intersections.values() {
+                        intersection_drawer.draw(&mut target, &intersection, &perspective, &view_matrix, color, &draw_params);
                     }
 
                     let center_point = cqrs.get(&SelectedObjectsCenter);
