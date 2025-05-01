@@ -218,8 +218,8 @@ impl SurfaceC0Drawer {
                     swap_xy: false,
                     is_cylinder: surface.is_cylinder,
                     tex: surface.texture.sampled()
-                    .minify_filter(glium::uniforms::MinifySamplerFilter::Nearest)
-                    .magnify_filter(glium::uniforms::MagnifySamplerFilter::Nearest),
+                        .minify_filter(glium::uniforms::MinifySamplerFilter::Nearest)
+                        .magnify_filter(glium::uniforms::MagnifySamplerFilter::Nearest),
                 },
                 &drawing_parameters,
             )
@@ -237,8 +237,8 @@ impl SurfaceC0Drawer {
                     swap_xy: true,
                     is_cylinder: surface.is_cylinder,
                     tex: surface.texture.sampled()
-                    .minify_filter(glium::uniforms::MinifySamplerFilter::Nearest)
-                    .magnify_filter(glium::uniforms::MagnifySamplerFilter::Nearest),
+                        .minify_filter(glium::uniforms::MinifySamplerFilter::Nearest)
+                        .magnify_filter(glium::uniforms::MagnifySamplerFilter::Nearest),
                 },
                 &drawing_parameters,
             )

@@ -23,6 +23,7 @@ use drawing::processes::gregories::update_greogry_settings_on_gregory_settings_u
 use drawing::processes::intersections::add_intersection_on_intersection_created::AddIntersectionOnIntersectionCreated;
 use drawing::processes::intersections::update_objects_textures_on_intersection_textures_draw_set::UpdateObjectsTexturesOnIntersectionTexturesDrawSet;
 use drawing::processes::surfaces_c0::update_surface_c0_texture::UpdateSurfaceC0TextureConsumer;
+use drawing::processes::surfaces_c2::update_surface_c2_texture::UpdateSurfaceC2TextureConsumer;
 use egui::Color32;
 use glium::{Blend, BlendingFunction, LinearBlendingFactor, PolygonMode, Surface};
 use user_interface::processes::fetch_objects_on_selected_points_merged::FetchObjectsOnSelectedPointsMerged;
@@ -683,6 +684,13 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(UpdateSurfaceC0TextureConsumer {
+            drawing_storage: drawing_storage.clone(),
+            cqrs: CQRS::new(app_state.clone()),
+            display: display.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(UpdateSurfaceC2TextureConsumer {
             drawing_storage: drawing_storage.clone(),
             cqrs: CQRS::new(app_state.clone()),
             display: display.clone(),
