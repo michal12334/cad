@@ -8,8 +8,10 @@ use crate::drawing::domain::surface_c2::SurfaceC2;
 
 use super::domain::gregory::Gregory;
 use super::domain::intersection::Intersection;
+use super::domain::torus::Torus;
 
 pub struct DrawingStorage {
+    pub toruses: HashMap<u64, Torus>,
     pub beziers_c0: HashMap<u64, BezierC0>,
     pub beziers_c2: HashMap<u64, BezierC2>,
     pub beziers_int: HashMap<u64, BezierInt>,
@@ -22,6 +24,7 @@ pub struct DrawingStorage {
 impl DrawingStorage {
     pub fn new() -> Self {
         Self {
+            toruses: HashMap::new(),
             beziers_c0: HashMap::new(),
             beziers_c2: HashMap::new(),
             beziers_int: HashMap::new(),

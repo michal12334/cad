@@ -7,3 +7,4 @@ pub mod intersections;
 pub mod points;
 pub mod surfaces_c0;
 pub mod surfaces_c2;
+pub mod toruses;

@@ -5,3 +5,4 @@ pub mod gregory;
 pub mod intersection;
 pub mod surface_c0;
 pub mod surface_c2;
+pub mod torus;

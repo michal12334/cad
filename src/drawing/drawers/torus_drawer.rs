@@ -1,7 +1,7 @@
 use glium::glutin::surface::WindowSurface;
 use glium::{Display, DrawParameters, Frame, Program, Surface};
 
-use backend::domain::torus::Torus;
+use crate::drawing::domain::torus::Torus;
 
 pub struct TorusDrawer {
     program: Program,
@@ -51,22 +51,14 @@ impl TorusDrawer {
         color: [f32; 4],
         drawing_parameters: &DrawParameters,
     ) {
-        let vertex_buffer = glium::VertexBuffer::new(display, &torus.mesh.vertices).unwrap();
-        let indices = glium::IndexBuffer::new(
-            display,
-            glium::index::PrimitiveType::LinesList,
-            &torus.mesh.indices,
-        )
-        .unwrap();
-        let model_matrix = torus.transformer.get_model_matrix();
         target
             .draw(
-                &vertex_buffer,
-                &indices,
+                &torus.vertex_buffer,
+                &torus.index_buffer,
                 &self.program,
                 &uniform! {
                     perspective: perspective.data,
-                    model_matrix: model_matrix.data,
+                    model_matrix: torus.model_matrix.data,
                     view: view_matrix.data,
                     obj_color: color
                 },

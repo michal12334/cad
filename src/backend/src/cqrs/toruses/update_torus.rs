@@ -3,6 +3,8 @@ use std::rc::Rc;
 
 use crate::backend::Backend;
 use crate::cqrs::cqrs::Command;
+use crate::domain::events::toruses::torus_updated::TorusUpdated;
+use crate::domain::torus::Torus;
 
 pub struct UpdateTorus {
     pub id: u64,
@@ -14,17 +16,30 @@ pub struct UpdateTorus {
 
 impl Command<UpdateTorus> for UpdateTorus {
     fn execute(command: &UpdateTorus, app_state: Rc<RefCell<Backend>>) {
-        let mut app_state = app_state.borrow_mut();
+        let mut backend = app_state.borrow_mut();
         if command.minor_radius >= command.major_radius {
             return;
         }
 
-        let torus = app_state.storage.toruses.get_mut(&command.id).unwrap();
+        let torus = backend.storage.toruses.get_mut(&command.id).unwrap();
         torus.update(
             command.major_radius,
             command.minor_radius,
             command.major_segments,
             command.minor_segments,
         );
+
+        let event = TorusUpdated::new(
+            torus.id,
+            torus.major_radius,
+            torus.minor_radius,
+            torus.major_segments,
+            torus.minor_segments,
+        );
+
+        drop(backend);
+
+        let backend = app_state.borrow();
+        backend.services.event_publisher.publish(Rc::new(event));
     }
 }

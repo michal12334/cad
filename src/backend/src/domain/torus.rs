@@ -3,7 +3,6 @@ use std::f32::consts::PI;
 use math::vector3::Vector3;
 use math::vector4::Vector4;
 
-use crate::domain::mesh::Mesh;
 use crate::domain::transformer::Transformer;
 
 use super::intersection::IntersectionObjectId;
@@ -19,7 +18,6 @@ pub struct Torus {
     pub minor_segments: u32,
 
     pub transformer: Transformer,
-    pub mesh: Mesh,
 }
 
 impl Torus {
@@ -31,8 +29,6 @@ impl Torus {
         minor_segments: u32,
         transformer: Transformer,
     ) -> Self {
-        let mesh = Mesh::from_torus(major_radius, minor_radius, major_segments, minor_segments);
-
         Self {
             id,
             name: format!("Torus {}", id),
@@ -41,7 +37,6 @@ impl Torus {
             major_segments,
             minor_segments,
             transformer,
-            mesh,
         }
     }
 
@@ -54,8 +49,6 @@ impl Torus {
         minor_segments: u32,
         transformer: Transformer,
     ) -> Self {
-        let mesh = Mesh::from_torus(major_radius, minor_radius, major_segments, minor_segments);
-
         Self {
             id,
             name,
@@ -64,7 +57,6 @@ impl Torus {
             major_segments,
             minor_segments,
             transformer,
-            mesh,
         }
     }
 
@@ -79,7 +71,6 @@ impl Torus {
         self.minor_radius = minor_radius;
         self.major_segments = major_segments;
         self.minor_segments = minor_segments;
-        self.mesh = Mesh::from_torus(major_radius, minor_radius, major_segments, minor_segments);
     }
 
     pub fn transform(

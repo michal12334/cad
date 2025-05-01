@@ -6,3 +6,4 @@ pub mod gregories;
 pub mod intersections;
 pub mod surfaces_c0;
 pub mod surfaces_c2;
+pub mod toruses;

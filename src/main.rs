@@ -13,6 +13,9 @@ use backend::processes::gregories::recalculate_gregories_on_point_moved::Recalcu
 use backend::processes::intersections::publishers::{
     IntersectionCreatedPublisher, IntersectionTexturesDrawSetPublisher,
 };
+use backend::processes::toruses::publishers::{
+    TorusCreatedPublisher, TorusDeletedPublisher, TorusTransformedPublisher, TorusUpdatedPublisher,
+};
 use drawing::drawers::gregory_drawer::GregoryDrawer;
 use drawing::drawers::intersection_drawer::IntersectionDrawer;
 use drawing::processes::common::rebuild_storage_on_selected_points_merged::RebuildStorageOnSelectedPointsMerged;
@@ -24,6 +27,10 @@ use drawing::processes::intersections::add_intersection_on_intersection_created:
 use drawing::processes::intersections::update_objects_textures_on_intersection_textures_draw_set::UpdateObjectsTexturesOnIntersectionTexturesDrawSet;
 use drawing::processes::surfaces_c0::update_surface_c0_texture::UpdateSurfaceC0TextureConsumer;
 use drawing::processes::surfaces_c2::update_surface_c2_texture::UpdateSurfaceC2TextureConsumer;
+use drawing::processes::toruses::add_torus_on_torus_created::AddTorusOnTorusCreated;
+use drawing::processes::toruses::delete_torus_on_torus_deleted::DeleteTorusOnTorusDeleted;
+use drawing::processes::toruses::transform_torus_on_torus_transformed::TransformTorusOnTorusTransformed;
+use drawing::processes::toruses::update_torus_on_torus_updated::UpdateTorusOnTorusUpdated;
 use egui::Color32;
 use glium::{Blend, BlendingFunction, LinearBlendingFactor, PolygonMode, Surface};
 use user_interface::processes::fetch_objects_on_selected_points_merged::FetchObjectsOnSelectedPointsMerged;
@@ -389,6 +396,20 @@ fn main() {
         .add_consumer(IntersectionTexturesDrawSetPublisher {
             backend: app_state.clone(),
         });
+    event_bus.borrow_mut().add_consumer(TorusCreatedPublisher {
+        backend: app_state.clone(),
+    });
+    event_bus.borrow_mut().add_consumer(TorusUpdatedPublisher {
+        backend: app_state.clone(),
+    });
+    event_bus
+        .borrow_mut()
+        .add_consumer(TorusTransformedPublisher {
+            backend: app_state.clone(),
+        });
+    event_bus.borrow_mut().add_consumer(TorusDeletedPublisher {
+        backend: app_state.clone(),
+    });
 
     event_bus
         .borrow_mut()
@@ -695,6 +716,26 @@ fn main() {
             cqrs: CQRS::new(app_state.clone()),
             display: display.clone(),
         });
+    event_bus.borrow_mut().add_consumer(AddTorusOnTorusCreated {
+        drawing_storage: drawing_storage.clone(),
+        display: display.clone(),
+    });
+    event_bus
+        .borrow_mut()
+        .add_consumer(UpdateTorusOnTorusUpdated {
+            drawing_storage: drawing_storage.clone(),
+            display: display.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(TransformTorusOnTorusTransformed {
+            drawing_storage: drawing_storage.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(DeleteTorusOnTorusDeleted {
+            drawing_storage: drawing_storage.clone(),
+        });
 
     let torus_drawer = TorusDrawer::new(&display);
     let point_drawer = PointDrawer::new(&display);
@@ -794,7 +835,7 @@ fn main() {
                     let perspective = math::matrix4::Matrix4::perspective_stereoscopy(fov, width as f32 / height as f32, 0.1, 1024.0, -100.0 - eye_distance / 2.0, 100.0 - eye_distance / 2.0);
                     let view_matrix = math::matrix4::Matrix4::view(camera_direction * camera_distant * (-1.0) - (math::matrix4::Matrix4::rotation_y(camera_angle.y) * math::matrix4::Matrix4::rotation_x(camera_angle.x) * Vector4::new(1.0, 0.0, 0.0, 0.0)).xyz() * (eye_distance / 2.0), camera_direction, camera_up);
 
-                    for torus in app_state.storage.toruses.iter() {
+                    for torus in drawing_storage.borrow().toruses.iter() {
                         torus_drawer.draw(&mut target, &display, &torus.1, &perspective, &view_matrix, right_eye_color, &draw_params_stereo);
                     }
 
@@ -861,7 +902,7 @@ fn main() {
 
                     target.clear_depth(1.0);
 
-                    for torus in app_state.storage.toruses.iter() {
+                    for torus in drawing_storage.borrow().toruses.iter() {
                         torus_drawer.draw(&mut target, &display, &torus.1, &perspective, &view_matrix, left_eye_color, &draw_params_stereo);
                     }
 
@@ -926,7 +967,7 @@ fn main() {
                 } else {
                     let perspective = math::matrix4::Matrix4::perspective(std::f32::consts::PI / 3.0, width as f32 / height as f32, 0.1, 1024.0);
 
-                    for torus in app_state.storage.toruses.iter() {
+                    for torus in drawing_storage.borrow().toruses.iter() {
                         let color = if app_state.storage.selected_objects.iter().any(|so| so.torus_id == Some(*torus.0)) { selected_color } else { color };
                         torus_drawer.draw(&mut target, &display, &torus.1, &perspective, &view_matrix, color, &draw_params);
                     }

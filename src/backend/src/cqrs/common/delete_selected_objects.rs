@@ -10,6 +10,7 @@ use crate::domain::events::beziers_int::bezier_int_deleted::BezierIntDeleted;
 use crate::domain::events::gregories::gregory_deleted::GregoryDeleted;
 use crate::domain::events::surfaces_c0::surface_c0_deleted::SurfaceC0Deleted;
 use crate::domain::events::surfaces_c2::surface_c2_deleted::SurfaceC2Deleted;
+use crate::domain::events::toruses::torus_deleted::TorusDeleted;
 
 pub struct DeleteSelectedObjects;
 
@@ -104,6 +105,13 @@ impl Command<DeleteSelectedObjects> for DeleteSelectedObjects {
                     .any(|g| g.related_points().contains(&point.id))
         });
 
+        let deleted_toruses = backend
+            .storage
+            .selected_objects
+            .iter()
+            .filter_map(|object| object.torus_id)
+            .collect::<Vec<_>>();
+
         let deleted_beziers_c0 = backend
             .storage
             .selected_objects
@@ -151,6 +159,12 @@ impl Command<DeleteSelectedObjects> for DeleteSelectedObjects {
         drop(binding);
 
         let backend = app_state.borrow();
+        deleted_toruses.iter().for_each(|id| {
+            backend
+                .services
+                .event_publisher
+                .publish(Rc::new(TorusDeleted::new(*id)));
+        });
         deleted_beziers_c0.iter().for_each(|id| {
             backend
                 .services
