@@ -1,4 +1,3 @@
-use backend::domain::vertex::Vertex;
 use glium::glutin::surface::WindowSurface;
 use glium::{Display, DrawParameters, Frame, Program, Surface};
 

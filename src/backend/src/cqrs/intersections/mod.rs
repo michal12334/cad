@@ -1,2 +1,3 @@
 pub mod find_intersection;
+pub mod intersection_object_texture;
 pub mod set_intersection_textures_draw;

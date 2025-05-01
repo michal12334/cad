@@ -40,6 +40,8 @@ impl Command<SetIntersectionTexturesDraw> for SetIntersectionTexturesDraw {
             intersection.id,
             intersection.uv_draw,
             intersection.st_draw,
+            intersection.object1_id.clone(),
+            intersection.object2_id.clone(),
         );
         drop(backend);
         let backend = app_state.borrow();

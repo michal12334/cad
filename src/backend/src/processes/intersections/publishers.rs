@@ -1,13 +1,18 @@
 use std::{any::Any, cell::RefCell, rc::Rc};
 
-use backend_events::intersections::intersection_textures_draw_set::TextureDraw;
+use backend_events::intersections::intersection_textures_draw_set::{
+    IntersectionObjectIdDTO, TextureDraw,
+};
 use infrastructure::consumer::{AnyConsumer, Consumer};
 
 use crate::{
     backend::Backend,
-    domain::events::intersections::{
-        intersection_created::IntersectionCreated,
-        intersection_textures_draw_set::IntersectionTexturesDrawSet,
+    domain::{
+        events::intersections::{
+            intersection_created::IntersectionCreated,
+            intersection_textures_draw_set::IntersectionTexturesDrawSet,
+        },
+        intersection::IntersectionObjectId,
     },
 };
 
@@ -50,9 +55,19 @@ impl Consumer<IntersectionTexturesDrawSet> for IntersectionTexturesDrawSetPublis
                 event.id,
                 TextureDraw::from_bits(event.uv_draw.bits()).unwrap(),
                 TextureDraw::from_bits(event.st_draw.bits()).unwrap(),
+                map_id(&event.id1),
+                map_id(&event.id2),
             ),
         );
         backend.services.event_publisher.publish(event);
+    }
+}
+
+fn map_id(domain_id: &IntersectionObjectId) -> IntersectionObjectIdDTO {
+    match domain_id {
+        IntersectionObjectId::Torus(id) => IntersectionObjectIdDTO::Torus(*id),
+        IntersectionObjectId::SurfaceC0(id) => IntersectionObjectIdDTO::SurfaceC0(*id),
+        IntersectionObjectId::SurfaceC2(id) => IntersectionObjectIdDTO::SurfaceC2(*id),
     }
 }
 

@@ -21,6 +21,8 @@ use drawing::processes::gregories::delete_gregory_on_gregory_deleted::DeleteGreg
 use drawing::processes::gregories::update_gregory_on_gregory_mesh_recalculated::UpdateGregoryOnGregoryMeshRecalculated;
 use drawing::processes::gregories::update_greogry_settings_on_gregory_settings_updated::UpdateGreogrySettingsOnGregorySettingsUpdated;
 use drawing::processes::intersections::add_intersection_on_intersection_created::AddIntersectionOnIntersectionCreated;
+use drawing::processes::intersections::update_objects_textures_on_intersection_textures_draw_set::UpdateObjectsTexturesOnIntersectionTexturesDrawSet;
+use drawing::processes::surfaces_c0::update_surface_c0_texture::UpdateSurfaceC0TextureConsumer;
 use egui::Color32;
 use glium::{Blend, BlendingFunction, LinearBlendingFactor, PolygonMode, Surface};
 use user_interface::processes::fetch_objects_on_selected_points_merged::FetchObjectsOnSelectedPointsMerged;
@@ -671,6 +673,18 @@ fn main() {
         .borrow_mut()
         .add_consumer(AddIntersectionOnIntersectionCreated {
             drawing_storage: drawing_storage.clone(),
+            display: display.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(UpdateObjectsTexturesOnIntersectionTexturesDrawSet {
+            bus: event_bus.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(UpdateSurfaceC0TextureConsumer {
+            drawing_storage: drawing_storage.clone(),
+            cqrs: CQRS::new(app_state.clone()),
             display: display.clone(),
         });
 

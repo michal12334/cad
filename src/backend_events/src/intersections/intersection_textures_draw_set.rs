@@ -6,6 +6,8 @@ pub struct IntersectionTexturesDrawSet {
     pub id: u64,
     pub uv_draw: TextureDraw,
     pub st_draw: TextureDraw,
+    pub id1: IntersectionObjectIdDTO,
+    pub id2: IntersectionObjectIdDTO,
 }
 
 bitflags! {
@@ -16,4 +18,11 @@ bitflags! {
 
         const Both = Self::True.bits() | Self::False.bits();
     }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum IntersectionObjectIdDTO {
+    Torus(u64),
+    SurfaceC0(u64),
+    SurfaceC2(u64),
 }

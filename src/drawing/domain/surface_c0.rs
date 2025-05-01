@@ -1,18 +1,20 @@
 use glium::glutin::surface::WindowSurface;
 use glium::index::PrimitiveType;
-use glium::{Display, IndexBuffer, VertexBuffer};
+use glium::{Display, IndexBuffer, Rect, Texture2d, VertexBuffer};
 
 use backend::cqrs::points::point_details::PointDTO;
-use backend::domain::vertex::Vertex;
+use backend::domain::vertex::VertexUV;
 
 pub struct SurfaceC0 {
     pub id: u64,
     pub draw_polygon: bool,
     pub tess_level: u8,
     pub is_cylinder: bool,
-    pub vertex_buffer: VertexBuffer<Vertex>,
+    pub vertex_buffer: VertexBuffer<VertexUV>,
     pub surface_index_buffer: IndexBuffer<u32>,
     pub polygon_index_buffer: IndexBuffer<u32>,
+    pub uvs: Vec<(f32, f32)>,
+    pub texture: Texture2d,
 }
 
 impl SurfaceC0 {
@@ -23,18 +25,32 @@ impl SurfaceC0 {
         display: &Display<WindowSurface>,
         is_cylinder: bool,
     ) -> Self {
+        let uvs = (0..points.len())
+            .map(|i| {
+                let s0 = size.0 as usize * 3 + 1;
+                let s1 = size.1 as usize * 3 + 1;
+                let v = i / s1;
+                let u = i % s1;
+                let v = v as f32 / (s0 - 1) as f32;
+                let u = u as f32 / (s1 - 1) as f32;
+                (u, v)
+            })
+            .collect::<Vec<_>>();
+
         let vertex_buffer = VertexBuffer::new(
             display,
             &points
                 .iter()
-                .map(|p| Vertex {
+                .zip(uvs.iter())
+                .map(|(p, (u, v))| VertexUV {
                     position: [
                         p.transformer.position.0 as f32,
                         p.transformer.position.1 as f32,
                         p.transformer.position.2 as f32,
                     ],
+                    uv: [*u, *v],
                 })
-                .collect::<Vec<Vertex>>(),
+                .collect::<Vec<_>>(),
         )
         .unwrap();
 
@@ -91,6 +107,27 @@ impl SurfaceC0 {
         )
         .unwrap();
 
+        let texture = Texture2d::empty_with_format(
+            display,
+            glium::texture::UncompressedFloatFormat::F32,
+            glium::texture::MipmapsOption::NoMipmap,
+            1,
+            1,
+        )
+        .unwrap();
+
+        let data = vec![vec![1f32; 1]; 1];
+
+        texture.write(
+            Rect {
+                left: 0,
+                bottom: 0,
+                width: 1,
+                height: 1,
+            },
+            data.clone(),
+        );
+
         Self {
             id,
             draw_polygon: false,
@@ -99,6 +136,8 @@ impl SurfaceC0 {
             vertex_buffer,
             surface_index_buffer,
             polygon_index_buffer,
+            uvs,
+            texture,
         }
     }
 
@@ -115,15 +154,21 @@ impl SurfaceC0 {
             display,
             &points
                 .iter()
-                .map(|p| Vertex {
+                .zip(self.uvs.iter())
+                .map(|(p, (u, v))| VertexUV {
                     position: [
                         p.transformer.position.0 as f32,
                         p.transformer.position.1 as f32,
                         p.transformer.position.2 as f32,
                     ],
+                    uv: [*u, *v],
                 })
-                .collect::<Vec<Vertex>>(),
+                .collect::<Vec<_>>(),
         )
         .unwrap();
+    }
+
+    pub fn update_texture(&mut self, texture: Texture2d) {
+        self.texture = texture;
     }
 }

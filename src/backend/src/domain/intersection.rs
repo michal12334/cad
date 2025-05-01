@@ -27,7 +27,7 @@ pub struct Intersection {
     pub st_draw: TextureDraw,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum IntersectionObjectId {
     Torus(u64),
     SurfaceC0(u64),

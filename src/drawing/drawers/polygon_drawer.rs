@@ -1,8 +1,6 @@
 use glium::glutin::surface::WindowSurface;
 use glium::{Display, DrawParameters, Frame, IndexBuffer, Program, Surface, VertexBuffer};
 
-use backend::domain::vertex::Vertex;
-
 pub struct PolygonDrawer {
     program: Program,
 }
@@ -40,11 +38,11 @@ impl PolygonDrawer {
         Self { program }
     }
 
-    pub fn draw<T: glium::index::Index>(
+    pub fn draw<TIndex: glium::index::Index, TVertex: glium::vertex::Vertex>(
         &self,
         target: &mut Frame,
-        vertex_buffer: &VertexBuffer<Vertex>,
-        index_buffer: &IndexBuffer<T>,
+        vertex_buffer: &VertexBuffer<TVertex>,
+        index_buffer: &IndexBuffer<TIndex>,
         perspective: &math::matrix4::Matrix4,
         view_matrix: &math::matrix4::Matrix4,
         color: [f32; 4],

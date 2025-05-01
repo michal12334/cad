@@ -14,29 +14,46 @@ impl SurfaceC0Drawer {
             #version 410 core
     
             in vec3 position;
+            in vec2 uv;
+
+            out vec2 out_uv;
             
             uniform mat4 perspective;
             uniform mat4 view;
     
             void main() {
                 gl_Position = perspective * view * vec4(position, 1.0);
+                out_uv = uv;
             }
         "#;
 
         let fragment_shader = r#"
             #version 410 core
+
+            in vec2 uv;
     
             out vec4 color;
             
             uniform vec4 obj_color;
+
+            uniform sampler2D tex;
     
             void main() {
-                color = obj_color;
+                float value = texture(tex, uv).x;
+                if (value == 1.0) {
+                    color = obj_color;
+                } else {
+                    color = vec4(0.0, 0.0, 0.0, 0.0);
+                }
             }
         "#;
 
         let tessellation_control_shader = r#"
             #version 410 core
+
+            in vec2 out_uv[];
+
+            out vec2 out_uvs[];
 
             layout(vertices = 16) out;
 
@@ -44,6 +61,7 @@ impl SurfaceC0Drawer {
 
             void main() {
                 gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
+                out_uvs[gl_InvocationID] = out_uv[gl_InvocationID];
 
                 gl_TessLevelOuter[0] = tess_level;
                 gl_TessLevelOuter[1] = tess_level;
@@ -54,6 +72,10 @@ impl SurfaceC0Drawer {
             #version 410 core
 
             layout(isolines, equal_spacing) in;
+
+            in vec2 out_uvs[];
+
+            out vec2 uv;
             
             uniform bool swap_xy;
             uniform bool is_cylinder;
@@ -96,10 +118,50 @@ impl SurfaceC0Drawer {
                 return p;
             }
 
+            vec2 get_uv_value(float x, float y, vec2 uvs[16]) {
+                vec2 v11 = uvs[0];
+                vec2 v21 = uvs[1];
+                vec2 v31 = uvs[2];
+                vec2 v41 = uvs[3];
+                vec2 v12 = uvs[4];
+                vec2 v22 = uvs[5];
+                vec2 v32 = uvs[6];
+                vec2 v42 = uvs[7];
+                vec2 v13 = uvs[8];
+                vec2 v23 = uvs[9];
+                vec2 v33 = uvs[10];
+                vec2 v43 = uvs[11];
+                vec2 v14 = uvs[12];
+                vec2 v24 = uvs[13];
+                vec2 v34 = uvs[14];
+                vec2 v44 = uvs[15];
+
+                float ix = 1.0 - x;
+                float b0x = ix * ix * ix;
+                float b1x = 3.0 * ix * ix * x;
+                float b2x = 3.0 * ix * x * x;
+                float b3x = x * x * x;
+
+                float iy = 1.0 - y;
+                float b0y = iy * iy * iy;
+                float b1y = 3.0 * iy * iy * y;
+                float b2y = 3.0 * iy * y * y;
+                float b3y = y * y * y;
+
+                vec2 p = b0x * (b0y * v11 + b1y * v12 + b2y * v13 + b3y * v14) +
+                         b1x * (b0y * v21 + b1y * v22 + b2y * v23 + b3y * v24) +
+                         b2x * (b0y * v31 + b1y * v32 + b2y * v33 + b3y * v34) +
+                         b3x * (b0y * v41 + b1y * v42 + b2y * v43 + b3y * v44);
+            
+                return p;
+            }
+
             void main() {
                 vec4 positions[16];
+                vec2 uvs[16];
                 for (int i = 0; i < 16; i++) {
                     positions[i] = gl_in[i].gl_Position;
+                    uvs[i] = out_uvs[i];
                 }
                 float x = gl_TessCoord.x;
                 float y = gl_TessCoord.y * float(gl_TessLevelOuter[0]) / float(gl_TessLevelOuter[0] - 1);
@@ -114,6 +176,7 @@ impl SurfaceC0Drawer {
                 }
 
                 gl_Position = get_bernstein_value(x, y, positions);
+                uv = get_uv_value(x, y, uvs);
             }
         "#;
 
@@ -154,6 +217,9 @@ impl SurfaceC0Drawer {
                     tess_level: tess_level as i32,
                     swap_xy: false,
                     is_cylinder: surface.is_cylinder,
+                    tex: surface.texture.sampled()
+                    .minify_filter(glium::uniforms::MinifySamplerFilter::Nearest)
+                    .magnify_filter(glium::uniforms::MagnifySamplerFilter::Nearest),
                 },
                 &drawing_parameters,
             )
@@ -170,6 +236,9 @@ impl SurfaceC0Drawer {
                     tess_level: tess_level as i32,
                     swap_xy: true,
                     is_cylinder: surface.is_cylinder,
+                    tex: surface.texture.sampled()
+                    .minify_filter(glium::uniforms::MinifySamplerFilter::Nearest)
+                    .magnify_filter(glium::uniforms::MagnifySamplerFilter::Nearest),
                 },
                 &drawing_parameters,
             )
