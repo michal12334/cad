@@ -967,9 +967,9 @@ fn main() {
                 } else {
                     let perspective = math::matrix4::Matrix4::perspective(std::f32::consts::PI / 3.0, width as f32 / height as f32, 0.1, 1024.0);
 
-                    for torus in drawing_storage.borrow().toruses.iter() {
-                        let color = if app_state.storage.selected_objects.iter().any(|so| so.torus_id == Some(*torus.0)) { selected_color } else { color };
-                        torus_drawer.draw(&mut target, &display, &torus.1, &perspective, &view_matrix, color, &draw_params);
+                    for torus in drawing_storage.borrow().toruses.values() {
+                        let color = if app_state.storage.selected_objects.iter().any(|so| so.torus_id == Some(torus.id)) { selected_color } else { color };
+                        torus_drawer.draw(&mut target, &display, &torus, &perspective, &view_matrix, color, &draw_params);
                     }
 
                     for point in app_state.storage.points.iter() {
