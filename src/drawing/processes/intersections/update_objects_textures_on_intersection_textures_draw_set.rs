@@ -11,6 +11,7 @@ use infrastructure::{
 use crate::drawing::processes::{
     surfaces_c0::update_surface_c0_texture::UpdateSurfaceC0Texture,
     surfaces_c2::update_surface_c2_texture::UpdateSurfaceC2Texture,
+    toruses::update_torus_texture::UpdateTorusTexture,
 };
 
 pub struct UpdateObjectsTexturesOnIntersectionTexturesDrawSet {
@@ -20,7 +21,10 @@ pub struct UpdateObjectsTexturesOnIntersectionTexturesDrawSet {
 impl Consumer<IntersectionTexturesDrawSet> for UpdateObjectsTexturesOnIntersectionTexturesDrawSet {
     fn consume(&self, event: &IntersectionTexturesDrawSet) {
         match event.id1 {
-            IntersectionObjectIdDTO::Torus(id) => {}
+            IntersectionObjectIdDTO::Torus(id) => self
+                .bus
+                .borrow()
+                .publish(Rc::new(UpdateTorusTexture { id })),
             IntersectionObjectIdDTO::SurfaceC0(id) => self
                 .bus
                 .borrow()
@@ -31,7 +35,10 @@ impl Consumer<IntersectionTexturesDrawSet> for UpdateObjectsTexturesOnIntersecti
                 .publish(Rc::new(UpdateSurfaceC2Texture { id })),
         }
         match event.id2 {
-            IntersectionObjectIdDTO::Torus(id) => {}
+            IntersectionObjectIdDTO::Torus(id) => self
+                .bus
+                .borrow()
+                .publish(Rc::new(UpdateTorusTexture { id })),
             IntersectionObjectIdDTO::SurfaceC0(id) => self
                 .bus
                 .borrow()

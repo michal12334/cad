@@ -13,6 +13,9 @@ impl TorusDrawer {
             #version 140
     
             in vec3 position;
+            in vec2 uv;
+
+            out vec2 out_uv;
             
             uniform mat4 perspective;
             uniform mat4 model_matrix;
@@ -20,18 +23,28 @@ impl TorusDrawer {
     
             void main() {
                 gl_Position = perspective * view * model_matrix * vec4(position, 1.0);
+                out_uv = uv;
             }
         "#;
 
         let fragment_shader_src = r#"
             #version 140
+
+            in vec2 out_uv;
     
             out vec4 color;
             
             uniform vec4 obj_color;
+
+            uniform sampler2D tex;
     
             void main() {
-                color = obj_color;
+                float value = texture(tex, out_uv).x;
+                if (value == 1.0) {
+                    color = obj_color;
+                } else {
+                    color = vec4(0.0, 0.0, 0.0, 0.0);
+                }
             }
         "#;
 
@@ -44,7 +57,6 @@ impl TorusDrawer {
     pub fn draw(
         &self,
         target: &mut Frame,
-        display: &Display<WindowSurface>,
         torus: &Torus,
         perspective: &math::matrix4::Matrix4,
         view_matrix: &math::matrix4::Matrix4,
@@ -60,7 +72,10 @@ impl TorusDrawer {
                     perspective: perspective.data,
                     model_matrix: torus.model_matrix.data,
                     view: view_matrix.data,
-                    obj_color: color
+                    obj_color: color,
+                    tex: torus.texture.sampled()
+                        .minify_filter(glium::uniforms::MinifySamplerFilter::Nearest)
+                        .magnify_filter(glium::uniforms::MagnifySamplerFilter::Nearest),
                 },
                 &drawing_parameters,
             )

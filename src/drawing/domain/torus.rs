@@ -1,15 +1,16 @@
-use backend::domain::vertex::Vertex;
+use backend::domain::vertex::VertexUV;
 use glium::glutin::surface::WindowSurface;
 use glium::index::PrimitiveType;
-use glium::{Display, IndexBuffer, VertexBuffer};
+use glium::{Display, IndexBuffer, Rect, Texture2d, VertexBuffer};
 use math::matrix4::Matrix4;
 use math::vector4::Vector4;
 
 pub struct Torus {
     pub id: u64,
-    pub vertex_buffer: VertexBuffer<Vertex>,
+    pub vertex_buffer: VertexBuffer<VertexUV>,
     pub index_buffer: IndexBuffer<u32>,
     pub model_matrix: Matrix4,
+    pub texture: Texture2d,
 }
 
 impl Torus {
@@ -36,8 +37,12 @@ impl Torus {
                 let z = (major_radius + minor_radius * v.cos()) * u.sin();
                 let y = minor_radius * v.sin();
 
-                vertices.push(Vertex {
+                vertices.push(VertexUV {
                     position: [x as f32, y as f32, z as f32],
+                    uv: [
+                        j as f32 / (minor_segments - 1) as f32,
+                        i as f32 / (major_segments - 1) as f32,
+                    ],
                 });
 
                 indices.push(j + i * minor_segments);
@@ -61,11 +66,33 @@ impl Torus {
                 ))
                 * Matrix4::scale(scale.0 as f32, scale.1 as f32, scale.2 as f32);
 
+        let texture = Texture2d::empty_with_format(
+            display,
+            glium::texture::UncompressedFloatFormat::F32,
+            glium::texture::MipmapsOption::NoMipmap,
+            1,
+            1,
+        )
+        .unwrap();
+
+        let data = vec![vec![1f32; 1]; 1];
+
+        texture.write(
+            Rect {
+                left: 0,
+                bottom: 0,
+                width: 1,
+                height: 1,
+            },
+            data.clone(),
+        );
+
         Self {
             id,
             vertex_buffer,
             index_buffer,
             model_matrix,
+            texture,
         }
     }
 
@@ -89,8 +116,12 @@ impl Torus {
                 let z = (major_radius + minor_radius * v.cos()) * u.sin();
                 let y = minor_radius * v.sin();
 
-                vertices.push(Vertex {
+                vertices.push(VertexUV {
                     position: [x as f32, y as f32, z as f32],
+                    uv: [
+                        j as f32 / (minor_segments - 1) as f32,
+                        i as f32 / (major_segments - 1) as f32,
+                    ],
                 });
 
                 indices.push(j + i * minor_segments);
@@ -123,5 +154,9 @@ impl Torus {
                     rotation.3 as f32,
                 ))
                 * Matrix4::scale(scale.0 as f32, scale.1 as f32, scale.2 as f32);
+    }
+
+    pub fn update_texture(&mut self, texture: Texture2d) {
+        self.texture = texture;
     }
 }

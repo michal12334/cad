@@ -31,6 +31,7 @@ use drawing::processes::toruses::add_torus_on_torus_created::AddTorusOnTorusCrea
 use drawing::processes::toruses::delete_torus_on_torus_deleted::DeleteTorusOnTorusDeleted;
 use drawing::processes::toruses::transform_torus_on_torus_transformed::TransformTorusOnTorusTransformed;
 use drawing::processes::toruses::update_torus_on_torus_updated::UpdateTorusOnTorusUpdated;
+use drawing::processes::toruses::update_torus_texture::UpdateTorusTextureConsumer;
 use egui::Color32;
 use glium::{Blend, BlendingFunction, LinearBlendingFactor, PolygonMode, Surface};
 use user_interface::processes::fetch_objects_on_selected_points_merged::FetchObjectsOnSelectedPointsMerged;
@@ -736,6 +737,13 @@ fn main() {
         .add_consumer(DeleteTorusOnTorusDeleted {
             drawing_storage: drawing_storage.clone(),
         });
+    event_bus
+        .borrow_mut()
+        .add_consumer(UpdateTorusTextureConsumer {
+            drawing_storage: drawing_storage.clone(),
+            cqrs: CQRS::new(app_state.clone()),
+            display: display.clone(),
+        });
 
     let torus_drawer = TorusDrawer::new(&display);
     let point_drawer = PointDrawer::new(&display);
@@ -836,7 +844,7 @@ fn main() {
                     let view_matrix = math::matrix4::Matrix4::view(camera_direction * camera_distant * (-1.0) - (math::matrix4::Matrix4::rotation_y(camera_angle.y) * math::matrix4::Matrix4::rotation_x(camera_angle.x) * Vector4::new(1.0, 0.0, 0.0, 0.0)).xyz() * (eye_distance / 2.0), camera_direction, camera_up);
 
                     for torus in drawing_storage.borrow().toruses.iter() {
-                        torus_drawer.draw(&mut target, &display, &torus.1, &perspective, &view_matrix, right_eye_color, &draw_params_stereo);
+                        torus_drawer.draw(&mut target, &torus.1, &perspective, &view_matrix, right_eye_color, &draw_params_stereo);
                     }
 
                     for point in app_state.storage.points.iter() {
@@ -903,7 +911,7 @@ fn main() {
                     target.clear_depth(1.0);
 
                     for torus in drawing_storage.borrow().toruses.iter() {
-                        torus_drawer.draw(&mut target, &display, &torus.1, &perspective, &view_matrix, left_eye_color, &draw_params_stereo);
+                        torus_drawer.draw(&mut target, &torus.1, &perspective, &view_matrix, left_eye_color, &draw_params_stereo);
                     }
 
                     for point in app_state.storage.points.iter() {
@@ -969,7 +977,7 @@ fn main() {
 
                     for torus in drawing_storage.borrow().toruses.values() {
                         let color = if app_state.storage.selected_objects.iter().any(|so| so.torus_id == Some(torus.id)) { selected_color } else { color };
-                        torus_drawer.draw(&mut target, &display, &torus, &perspective, &view_matrix, color, &draw_params);
+                        torus_drawer.draw(&mut target, &torus, &perspective, &view_matrix, color, &draw_params);
                     }
 
                     for point in app_state.storage.points.iter() {
