@@ -986,6 +986,7 @@ fn main() {
                     }
 
                     for gregory in drawing_storage.borrow().gregories.values() {
+                        let color = if app_state.storage.selected_objects.iter().any(|so| so.gregory_id == Some(gregory.id)) { selected_color } else { color };
                         gregory_drawer.draw_surface(&mut target, gregory, &perspective, &view_matrix, color, &draw_params);
                     }
 
@@ -994,6 +995,7 @@ fn main() {
                     }
 
                     for intersection in drawing_storage.borrow().intersections.values() {
+                        let color = if app_state.storage.selected_objects.iter().any(|so| so.intersection_id == Some(intersection.id)) { selected_color } else { color };
                         intersection_drawer.draw(&mut target, &intersection, &perspective, &view_matrix, color, &draw_params);
                     }
 
@@ -1005,14 +1007,17 @@ fn main() {
                     }
 
                     for bezier in drawing_storage.borrow().beziers_c0.values() {
+                        let color = if app_state.storage.selected_objects.iter().any(|so| so.bezier_c0_id == Some(bezier.id)) { selected_color } else { color };
                         bezier_c0_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, color, width, height, &draw_params);
                     }
 
                     for bezier in drawing_storage.borrow().beziers_c2.values() {
+                        let color = if app_state.storage.selected_objects.iter().any(|so| so.bezier_c2_id == Some(bezier.id)) { selected_color } else { color };
                         bezier_c2_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, color, width, height, &draw_params);
                     }
 
                     for bezier in drawing_storage.borrow().beziers_int.values() {
+                        let color = if app_state.storage.selected_objects.iter().any(|so| so.bezier_int_id == Some(bezier.id)) { selected_color } else { color };
                         bezier_int_drawer.draw(&mut target, &bezier, &perspective, &view_matrix, color, width, height, &draw_params);
                     }
 
@@ -1033,6 +1038,7 @@ fn main() {
                     }
 
                     for surface in drawing_storage.borrow().surfaces_c0.values() {
+                        let color = if app_state.storage.selected_objects.iter().any(|so| so.surface_c0_id == Some(surface.id)) { selected_color } else { color };
                         surface_c0_drawer.draw(&mut target, &surface, &perspective, &view_matrix, color, surface.tess_level, &draw_params);
                     }
 
@@ -1041,6 +1047,7 @@ fn main() {
                     }
 
                     for surface in drawing_storage.borrow().surfaces_c2.values() {
+                        let color = if app_state.storage.selected_objects.iter().any(|so| so.surface_c2_id == Some(surface.id)) { selected_color } else { color };
                         surface_c2_drawer.draw(&mut target, &surface, &perspective, &view_matrix, color, surface.tess_level, &draw_params);
                     }
 
