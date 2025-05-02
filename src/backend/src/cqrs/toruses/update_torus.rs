@@ -4,7 +4,6 @@ use std::rc::Rc;
 use crate::backend::Backend;
 use crate::cqrs::cqrs::Command;
 use crate::domain::events::toruses::torus_updated::TorusUpdated;
-use crate::domain::torus::Torus;
 
 pub struct UpdateTorus {
     pub id: u64,

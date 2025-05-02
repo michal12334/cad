@@ -3,6 +3,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use backend::cqrs::gregories::all_gregories::AllGregories;
+use backend::cqrs::toruses::all_toruses::AllToruses;
 use glium::glutin::surface::WindowSurface;
 use glium::Display;
 
@@ -27,6 +28,7 @@ use crate::drawing::domain::bezier_int::BezierInt;
 use crate::drawing::domain::gregory::Gregory;
 use crate::drawing::domain::surface_c0::SurfaceC0;
 use crate::drawing::domain::surface_c2::SurfaceC2;
+use crate::drawing::domain::torus::Torus;
 use crate::drawing::drawing_storage::DrawingStorage;
 
 pub struct RebuildStorageOnSceneLoaded {
@@ -38,11 +40,29 @@ pub struct RebuildStorageOnSceneLoaded {
 impl Consumer<SceneLoaded> for RebuildStorageOnSceneLoaded {
     fn consume(&self, _: &SceneLoaded) {
         let mut drawing_storage = self.drawing_storage.borrow_mut();
+        drawing_storage.toruses.clear();
         drawing_storage.beziers_c0.clear();
         drawing_storage.beziers_c2.clear();
         drawing_storage.beziers_int.clear();
         drawing_storage.surfaces_c0.clear();
         drawing_storage.surfaces_c2.clear();
+
+        for torus in self.cqrs.get(&AllToruses {}) {
+            drawing_storage.toruses.insert(
+                torus.id,
+                Torus::new(
+                    torus.id,
+                    torus.major_radius,
+                    torus.minor_radius,
+                    torus.major_segments,
+                    torus.minor_segments,
+                    torus.transformer.position,
+                    torus.transformer.rotation,
+                    torus.transformer.scale,
+                    &self.display,
+                ),
+            );
+        }
 
         for bezier_c0 in self.cqrs.get(&AllBeziersC0 {}) {
             let points = self.cqrs.get(&BezierC0Points { id: bezier_c0.id });
