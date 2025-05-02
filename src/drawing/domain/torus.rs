@@ -28,8 +28,8 @@ impl Torus {
         let mut vertices = Vec::new();
         let mut indices = Vec::new();
 
-        for i in 0..major_segments {
-            for j in 0..minor_segments {
+        for i in 0..(major_segments + 1) {
+            for j in 0..(minor_segments + 1) {
                 let u = i as f64 / major_segments as f64 * 2.0 * std::f64::consts::PI;
                 let v = j as f64 / minor_segments as f64 * 2.0 * std::f64::consts::PI;
 
@@ -45,16 +45,18 @@ impl Torus {
                     ],
                 });
 
-                indices.push(j + i * minor_segments);
-                indices.push(((j + 1) % minor_segments) + i * minor_segments);
-                indices.push(j + i * minor_segments);
-                indices.push(j + ((i + 1) % major_segments) * minor_segments);
+                if i < major_segments && j < minor_segments {
+                    indices.push(j + i * (minor_segments + 1));
+                    indices.push((j + 1) + i * (minor_segments + 1));
+                    indices.push(j + i * (minor_segments + 1));
+                    indices.push(j + (i + 1) * (minor_segments + 1));
+                }
             }
         }
 
         let vertex_buffer = VertexBuffer::new(display, &vertices).unwrap();
 
-        let index_buffer = IndexBuffer::new(display, PrimitiveType::LineStrip, &indices).unwrap();
+        let index_buffer = IndexBuffer::new(display, PrimitiveType::LinesList, &indices).unwrap();
 
         let model_matrix =
             Matrix4::translation(position.0 as f32, position.1 as f32, position.2 as f32)
@@ -107,8 +109,8 @@ impl Torus {
         let mut vertices = Vec::new();
         let mut indices = Vec::new();
 
-        for i in 0..major_segments {
-            for j in 0..minor_segments {
+        for i in 0..(major_segments + 1) {
+            for j in 0..(minor_segments + 1) {
                 let u = i as f64 / major_segments as f64 * 2.0 * std::f64::consts::PI;
                 let v = j as f64 / minor_segments as f64 * 2.0 * std::f64::consts::PI;
 
@@ -124,16 +126,18 @@ impl Torus {
                     ],
                 });
 
-                indices.push(j + i * minor_segments);
-                indices.push(((j + 1) % minor_segments) + i * minor_segments);
-                indices.push(j + i * minor_segments);
-                indices.push(j + ((i + 1) % major_segments) * minor_segments);
+                if i < major_segments && j < minor_segments {
+                    indices.push(j + i * (minor_segments + 1));
+                    indices.push((j + 1) + i * (minor_segments + 1));
+                    indices.push(j + i * (minor_segments + 1));
+                    indices.push(j + (i + 1) * (minor_segments + 1));
+                }
             }
         }
 
         let vertex_buffer = VertexBuffer::new(display, &vertices).unwrap();
 
-        let index_buffer = IndexBuffer::new(display, PrimitiveType::LineStrip, &indices).unwrap();
+        let index_buffer = IndexBuffer::new(display, PrimitiveType::LinesList, &indices).unwrap();
 
         self.vertex_buffer = vertex_buffer;
         self.index_buffer = index_buffer;
