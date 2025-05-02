@@ -105,11 +105,18 @@ impl SurfaceC0 {
             IntersectionObjectId::SurfaceC0(self.id),
             (self.size.0 as f32, self.size.1 as f32),
             move |u, v| {
-                let ui = u as usize;
-                let vi = v as usize;
+                let mut ui = u as usize;
+                let mut vi = v as usize;
 
-                let u = u - u.floor();
-                let v = v - v.floor();
+                if ui == size.0 as usize {
+                    ui = ui - 1;
+                }
+                if vi == size.1 as usize {
+                    vi = vi - 1;
+                }
+
+                let u = u - ui as f32;
+                let v = v - vi as f32;
 
                 let patch = [
                     (3 * ui, 3 * vi),
