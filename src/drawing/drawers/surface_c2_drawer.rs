@@ -43,7 +43,7 @@ impl SurfaceC2Drawer {
                 if (value == 1.0) {
                     color = obj_color;
                 } else {
-                    color = vec4(0.0, 0.0, 0.0, 0.0);
+                    discard;
                 }
             }
         "#;
