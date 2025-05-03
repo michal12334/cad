@@ -59,6 +59,11 @@ impl Command<FindIntersection> for FindIntersection {
             command.max_distance,
         );
 
+        if intersection.is_none() {
+            return;
+        }
+        let intersection = intersection.unwrap();
+
         let event = IntersectionCreated::new(
             intersection.id,
             intersection.name.clone(),

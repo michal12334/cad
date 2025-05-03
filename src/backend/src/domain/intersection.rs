@@ -67,19 +67,19 @@ impl Intersection {
         newton_factor: f32,
         rough: bool,
         max_distance: f32,
-    ) -> Self {
-        let uvst = Self::find_starting_points(object1, object2, cursor_position);
+    ) -> Option<Self> {
+        let uvst = Self::find_starting_points(object1, object2, cursor_position)?;
 
         let intersection = Self::find_intersection(
             object1,
             object2,
-            uvst.unwrap().0,
-            uvst.unwrap().1,
+            uvst.0,
+            uvst.1,
             newton_factor,
             rough,
             max_distance,
             false,
-        );
+        )?;
 
         let uv_points = intersection
             .0
@@ -108,7 +108,7 @@ impl Intersection {
             intersection.2,
         );
 
-        Self {
+        Some(Self {
             id,
             name,
             object1_id,
@@ -132,7 +132,7 @@ impl Intersection {
             wrap: intersection.2,
             uv_draw: TextureDraw::Both,
             st_draw: TextureDraw::Both,
-        }
+        })
     }
 
     pub fn set_uv_draw(&mut self, draw: TextureDraw) {
@@ -186,7 +186,7 @@ impl Intersection {
         rough: bool,
         max_distance: f32,
         self_intersection: bool,
-    ) -> (Vec<Vector2<f32>>, Vec<Vector2<f32>>, bool) {
+    ) -> Option<(Vec<Vector2<f32>>, Vec<Vector2<f32>>, bool)> {
         let mut uv_points = vec![];
         let mut st_points = vec![];
 
@@ -238,7 +238,7 @@ impl Intersection {
                 if distance_newton > distance {
                     if step <= 0.0001 {
                         if found_first_bound {
-                            return (uv_points, st_points, false);
+                            return Some((uv_points, st_points, false));
                         }
                         found_first_bound = true;
                         break;
@@ -313,7 +313,7 @@ impl Intersection {
                     > 0.1
             {
                 if found_first_bound {
-                    return (uv_points, st_points, false);
+                    return Some((uv_points, st_points, false));
                 }
                 uv = uv_start;
                 st = st_start;
@@ -336,7 +336,7 @@ impl Intersection {
                 .norm()
                     < step
             {
-                return (uv_points, st_points, true);
+                return Some((uv_points, st_points, true));
             }
 
             if uv_points.len() > 1000000 {
@@ -346,7 +346,7 @@ impl Intersection {
             println!("{}", uv_points.len());
         }
 
-        (uv_points, st_points, false)
+        None
     }
 
     fn get_texture(
