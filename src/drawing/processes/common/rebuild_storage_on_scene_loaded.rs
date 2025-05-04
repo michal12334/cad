@@ -3,6 +3,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use backend::cqrs::gregories::all_gregories::AllGregories;
+use backend::cqrs::intersections::all_intersections::AllIntersections;
 use backend::cqrs::toruses::all_toruses::AllToruses;
 use glium::glutin::surface::WindowSurface;
 use glium::Display;
@@ -26,6 +27,7 @@ use crate::drawing::domain::bezier_c0::BezierC0;
 use crate::drawing::domain::bezier_c2::BezierC2;
 use crate::drawing::domain::bezier_int::BezierInt;
 use crate::drawing::domain::gregory::Gregory;
+use crate::drawing::domain::intersection::Intersection;
 use crate::drawing::domain::surface_c0::SurfaceC0;
 use crate::drawing::domain::surface_c2::SurfaceC2;
 use crate::drawing::domain::torus::Torus;
@@ -133,6 +135,18 @@ impl Consumer<SceneLoaded> for RebuildStorageOnSceneLoaded {
                     &gregory.points,
                     &gregory.vectors,
                     gregory.draw_vectors,
+                    &self.display,
+                ),
+            );
+        }
+
+        for intersection in self.cqrs.get(&AllIntersections {}) {
+            drawing_storage.intersections.insert(
+                intersection.id,
+                Intersection::new(
+                    intersection.id,
+                    &intersection.points,
+                    intersection.wrap,
                     &self.display,
                 ),
             );

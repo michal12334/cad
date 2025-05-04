@@ -1,4 +1,5 @@
 use backend::cqrs::gregories::all_gregories::AllGregories;
+use backend::cqrs::intersections::all_intersections::AllIntersections;
 use chrono::{DateTime, Local};
 use egui::ScrollArea;
 use itertools::Itertools;
@@ -18,6 +19,7 @@ use backend::cqrs::toruses::all_toruses::AllToruses;
 use backend::cqrs::toruses::torus_details::TransformerDTO;
 
 use crate::domain::gregory::Gregory;
+use crate::domain::intersection::{Intersection, TextureDraw};
 use crate::object::Object;
 use crate::object::Object::{BezierC0, BezierC2, BezierInt, Point, SurfaceC0, SurfaceC2, Torus};
 use crate::object_id::ObjectId;
@@ -113,6 +115,18 @@ impl Ui {
                     name: g.name.clone(),
                     tess_level: g.tess_level,
                     draw_vectors: g.draw_vectors,
+                })
+            }))
+            .chain(cqrs.get(&AllIntersections).iter().map(|i| {
+                Object::Intersection(Intersection {
+                    id: i.id,
+                    name: i.name.clone(),
+                    uv_texture_handle: None,
+                    uv_texture: Intersection::get_texture(&i.uv_texture),
+                    st_texture_handle: None,
+                    st_texture: Intersection::get_texture(&i.st_texture),
+                    uv_draw: TextureDraw::from_bits(i.uv_draw.bits()).unwrap(),
+                    st_draw: TextureDraw::from_bits(i.st_draw.bits()).unwrap(),
                 })
             }))
             .sorted_by_key(|object| object.get_id())
