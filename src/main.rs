@@ -11,7 +11,8 @@ use backend::processes::gregories::publishers::{
 };
 use backend::processes::gregories::recalculate_gregories_on_point_moved::RecalculateGregoriesOnPointMoved;
 use backend::processes::intersections::publishers::{
-    IntersectionCreatedPublisher, IntersectionTexturesDrawSetPublisher,
+    IntersectionCreatedPublisher, IntersectionDeletedPublisher,
+    IntersectionTexturesDrawSetPublisher,
 };
 use backend::processes::toruses::publishers::{
     TorusCreatedPublisher, TorusDeletedPublisher, TorusTransformedPublisher, TorusUpdatedPublisher,
@@ -24,6 +25,7 @@ use drawing::processes::gregories::delete_gregory_on_gregory_deleted::DeleteGreg
 use drawing::processes::gregories::update_gregory_on_gregory_mesh_recalculated::UpdateGregoryOnGregoryMeshRecalculated;
 use drawing::processes::gregories::update_greogry_settings_on_gregory_settings_updated::UpdateGreogrySettingsOnGregorySettingsUpdated;
 use drawing::processes::intersections::add_intersection_on_intersection_created::AddIntersectionOnIntersectionCreated;
+use drawing::processes::intersections::delete_intersection_on_intersection_deleted::DeleteIntersectionOnIntersectionDeleted;
 use drawing::processes::intersections::update_objects_textures_on_intersection_textures_draw_set::UpdateObjectsTexturesOnIntersectionTexturesDrawSet;
 use drawing::processes::surfaces_c0::update_surface_c0_texture::UpdateSurfaceC0TextureConsumer;
 use drawing::processes::surfaces_c2::update_surface_c2_texture::UpdateSurfaceC2TextureConsumer;
@@ -411,6 +413,11 @@ fn main() {
     event_bus.borrow_mut().add_consumer(TorusDeletedPublisher {
         backend: app_state.clone(),
     });
+    event_bus
+        .borrow_mut()
+        .add_consumer(IntersectionDeletedPublisher {
+            backend: app_state.clone(),
+        });
 
     event_bus
         .borrow_mut()
@@ -743,6 +750,11 @@ fn main() {
             drawing_storage: drawing_storage.clone(),
             cqrs: CQRS::new(app_state.clone()),
             display: display.clone(),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(DeleteIntersectionOnIntersectionDeleted {
+            drawing_storage: drawing_storage.clone(),
         });
 
     let torus_drawer = TorusDrawer::new(&display);

@@ -9,7 +9,7 @@ use crate::{
     backend::Backend,
     domain::{
         events::intersections::{
-            intersection_created::IntersectionCreated,
+            intersection_created::IntersectionCreated, intersection_deleted::IntersectionDeleted,
             intersection_textures_draw_set::IntersectionTexturesDrawSet,
         },
         intersection::IntersectionObjectId,
@@ -72,6 +72,26 @@ fn map_id(domain_id: &IntersectionObjectId) -> IntersectionObjectIdDTO {
 }
 
 impl AnyConsumer for IntersectionTexturesDrawSetPublisher {
+    fn consume_any(&self, message: Rc<dyn Any>) {
+        self.consume_any_impl(message);
+    }
+}
+
+pub struct IntersectionDeletedPublisher {
+    pub backend: Rc<RefCell<Backend>>,
+}
+
+impl Consumer<IntersectionDeleted> for IntersectionDeletedPublisher {
+    fn consume(&self, event: &IntersectionDeleted) {
+        let backend = self.backend.borrow();
+        let event = Rc::new(
+            backend_events::intersections::intersection_deleted::IntersectionDeleted::new(event.id),
+        );
+        backend.services.event_publisher.publish(event);
+    }
+}
+
+impl AnyConsumer for IntersectionDeletedPublisher {
     fn consume_any(&self, message: Rc<dyn Any>) {
         self.consume_any_impl(message);
     }
