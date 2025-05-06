@@ -37,17 +37,20 @@ impl Query<IntersectionObjectTexture, Vec<Vec<f32>>> for IntersectionObjectTextu
             .unwrap_or(0);
         let mut texture_data = vec![vec![1.0; size]; size];
 
-        for (texture, draw) in textures {
-            let ts = texture.len();
-            for i in 0..ts {
-                for j in 0..ts {
-                    if texture[i][j] && !draw.contains(TextureDraw::True) {
-                        texture_data[i * size / ts][j * size / ts] = 0.0;
-                    }
-                    if !texture[i][j] && !draw.contains(TextureDraw::False) {
-                        texture_data[i * size / ts][j * size / ts] = 0.0;
+        for i in 0..size {
+            for j in 0..size {
+                let mut value = 1.0;
+                for (texture, draw) in textures.iter() {
+                    let ts = texture.len();
+                    if texture[i * ts / size][j * ts / size] && !draw.contains(TextureDraw::True) {
+                        value = 0.0;
+                    } else if !texture[i * ts / size][j * ts / size]
+                        && !draw.contains(TextureDraw::False)
+                    {
+                        value = 0.0;
                     }
                 }
+                texture_data[i][j] = value;
             }
         }
 
