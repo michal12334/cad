@@ -3,6 +3,7 @@ use backend::cqrs::gregories::update_gregory_settings::UpdateGregorySettings;
 use backend::cqrs::intersections::set_intersection_textures_draw::{
     SetIntersectionTexturesDraw, TextureDrawDTO,
 };
+use backend::cqrs::intersections::transform_intersection_into_bezier_int::TransformIntersectionIntoBezierInt;
 use egui::{Checkbox, ComboBox, DragValue, Resize, ScrollArea, Slider, TextureOptions, Widget};
 use std::f32::consts::PI;
 
@@ -1033,6 +1034,12 @@ impl Ui {
                 intersection_id: intersection.id,
                 uv_draw: TextureDrawDTO::from_bits(intersection.uv_draw.bits()).unwrap(),
                 st_draw: TextureDrawDTO::from_bits(intersection.st_draw.bits()).unwrap(),
+            });
+        }
+
+        if ui.button("Transform into bezier int").clicked() {
+            cqrs.execute(&TransformIntersectionIntoBezierInt {
+                id: intersection.id,
             });
         }
     }

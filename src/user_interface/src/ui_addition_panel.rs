@@ -7,18 +7,16 @@ use backend::cqrs::beziers_c0::bezier_c0_details::BezierC0Details;
 use backend::cqrs::beziers_c2::add_bezier_c2::AddBezierC2;
 use backend::cqrs::beziers_c2::bezier_c2_details::BezierC2Details;
 use backend::cqrs::beziers_int::add_bezier_int::AddBezierInt;
-use backend::cqrs::beziers_int::bezier_int_details::BezierIntDetails;
 use backend::cqrs::common::load_scene::LoadScene;
 use backend::cqrs::common::new_id::NewId;
 use backend::cqrs::common::save_scene::SaveScene;
 use backend::cqrs::cqrs::CQRS;
 use backend::cqrs::points::add_point::AddPoint;
-use backend::cqrs::points::point_details::PointDetails;
 use backend::cqrs::toruses::add_torus::AddTorus;
 use backend::cqrs::toruses::torus_details::TorusDetails;
 
 use crate::object::Object;
-use crate::object::Object::{BezierC0, Point, Torus};
+use crate::object::Object::{BezierC0, Torus};
 use crate::popups::add_surface_c0_popup::AddSurfaceC0Popup;
 use crate::popups::add_surface_c2_popup::AddSurfaceC2Popup;
 use crate::popups::find_intersection_popup::FindIntersectionPopup;
@@ -26,7 +24,6 @@ use crate::ui::Ui;
 
 type DomainBezierC0 = crate::domain::bezier_c0::BezierC0;
 type DomainBezierC2 = crate::domain::bezier_c2::BezierC2;
-type DomainBezierInt = crate::domain::bezier_int::BezierInt;
 
 impl Ui {
     pub fn build_object_addition_panel(&mut self, ui: &mut egui::Ui, cqrs: &mut CQRS) {
@@ -45,7 +42,6 @@ impl Ui {
             if ui.button("Add Point").clicked() {
                 let id = cqrs.handle(&NewId {});
                 cqrs.execute(&AddPoint { id });
-                self.objects.push(Point(cqrs.get(&PointDetails { id })));
             }
             if ui.button("Merge Points").clicked() {
                 cqrs.execute(&MergeSelectedPoints);
@@ -69,10 +65,6 @@ impl Ui {
             if ui.button("Add Bezier Int").clicked() {
                 let id = cqrs.handle(&NewId {});
                 cqrs.execute(&AddBezierInt { id });
-                self.objects
-                    .push(Object::BezierInt(DomainBezierInt::from_dto(
-                        &cqrs.get(&BezierIntDetails { id }),
-                    )));
             }
         });
         ui.horizontal(|ui| {

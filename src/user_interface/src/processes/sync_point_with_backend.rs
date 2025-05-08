@@ -2,6 +2,9 @@ use std::any::Any;
 use std::cell::RefCell;
 use std::rc::Rc;
 
+use backend::cqrs::cqrs::CQRS;
+use backend::cqrs::points::point_details::PointDetails;
+use backend_events::points::point_created::PointCreated;
 use backend_events::points::point_moved::PointMoved;
 use infrastructure::consumer::{AnyConsumer, Consumer};
 
@@ -28,6 +31,25 @@ impl Consumer<PointMoved> for SyncPointPositionWithBackend {
 }
 
 impl AnyConsumer for SyncPointPositionWithBackend {
+    fn consume_any(&self, message: Rc<dyn Any>) {
+        self.consume_any_impl(message);
+    }
+}
+
+pub struct SyncPointCreationWithBackend {
+    pub ui: Rc<RefCell<Ui>>,
+    pub cqrs: CQRS,
+}
+
+impl Consumer<PointCreated> for SyncPointCreationWithBackend {
+    fn consume(&self, event: &PointCreated) {
+        let mut ui = self.ui.borrow_mut();
+        ui.objects
+            .push(Object::Point(self.cqrs.get(&PointDetails { id: event.id })));
+    }
+}
+
+impl AnyConsumer for SyncPointCreationWithBackend {
     fn consume_any(&self, message: Rc<dyn Any>) {
         self.consume_any_impl(message);
     }

@@ -73,7 +73,7 @@ use backend::processes::beziers_int::publishers::{
 };
 use backend::processes::beziers_int::update_bezier_int_points_on_point_moved::UpdateBezierIntPointsOnPointMoved;
 use backend::processes::common::publishers::SceneLoadedPublisher;
-use backend::processes::points::publishers::PointMovedPublisher;
+use backend::processes::points::publishers::{PointCreatedPublisher, PointMovedPublisher};
 use backend::processes::surfaces_c0::move_surface_c0_point_on_point_moved::MoveSurfaceC0PointOnPointMoved;
 use backend::processes::surfaces_c0::publishers::{
     SurfaceC0CreatedPublisher, SurfaceC0DeletedPublisher, SurfaceC0PointsSelectedPublisher,
@@ -98,9 +98,12 @@ use user_interface::processes::sync_bezier_c2_with_backend::{
     SyncBezierC2PointPositionsWithBackend,
 };
 use user_interface::processes::sync_bezier_int_with_backend::{
-    SyncBezierIntAddedPointWithBackend, SyncBezierIntPointsDeletedWithBackend,
+    SyncBezierIntAddedPointWithBackend, SyncBezierIntCreationWithBackend,
+    SyncBezierIntPointsDeletedWithBackend,
 };
-use user_interface::processes::sync_point_with_backend::SyncPointPositionWithBackend;
+use user_interface::processes::sync_point_with_backend::{
+    SyncPointCreationWithBackend, SyncPointPositionWithBackend,
+};
 use user_interface::ui::Ui;
 
 use crate::drawing::drawers::bezier_c0_drawer::BezierC0Drawer;
@@ -418,6 +421,9 @@ fn main() {
         .add_consumer(IntersectionDeletedPublisher {
             backend: app_state.clone(),
         });
+    event_bus.borrow_mut().add_consumer(PointCreatedPublisher {
+        backend: app_state.clone(),
+    });
 
     event_bus
         .borrow_mut()
@@ -485,6 +491,18 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(FetchObjectsOnSelectedPointsMerged {
+            ui: ui.clone(),
+            cqrs: CQRS::new(app_state.clone()),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(SyncPointCreationWithBackend {
+            ui: ui.clone(),
+            cqrs: CQRS::new(app_state.clone()),
+        });
+    event_bus
+        .borrow_mut()
+        .add_consumer(SyncBezierIntCreationWithBackend {
             ui: ui.clone(),
             cqrs: CQRS::new(app_state.clone()),
         });
