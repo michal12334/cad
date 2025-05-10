@@ -36,7 +36,7 @@ impl Popup for FindIntersectionPopup {
         egui::Window::new("Find Intersection").show(context, |ui| {
             ui.horizontal(|ui| {
                 egui::DragValue::new(&mut self.texture_size)
-                    .clamp_range(100..=2000)
+                    .clamp_range(100..=10000)
                     .ui(ui);
                 ui.label("texture size");
             });
