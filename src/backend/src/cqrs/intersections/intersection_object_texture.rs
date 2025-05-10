@@ -20,15 +20,21 @@ impl Query<IntersectionObjectTexture, Vec<Vec<f32>>> for IntersectionObjectTextu
             .storage
             .intersections
             .values()
-            .filter_map(|intersection| {
-                if intersection.object1_id == domain_id {
-                    Some((intersection.uv_texture.clone(), intersection.uv_draw))
-                } else if intersection.object2_id == domain_id {
-                    Some((intersection.st_texture.clone(), intersection.st_draw))
-                } else {
-                    None
-                }
+            .flat_map(|intersection| {
+                [
+                    if intersection.object1_id == domain_id {
+                        Some((intersection.uv_texture.clone(), intersection.uv_draw))
+                    } else {
+                        None
+                    },
+                    if intersection.object2_id == domain_id {
+                        Some((intersection.st_texture.clone(), intersection.st_draw))
+                    } else {
+                        None
+                    },
+                ]
             })
+            .filter_map(|texture| texture)
             .collect::<Vec<_>>();
         let size = textures
             .iter()
