@@ -77,20 +77,6 @@ impl Ui {
             if ui.button("Add Gregory").clicked() {
                 cqrs.execute(&CalculateGregories);
             }
-            if ui.button("Find Intesection").clicked() {
-                let ids = self
-                    .selected_objects
-                    .iter()
-                    .filter_map(|x| x.get_intersection_object_id())
-                    .take(2)
-                    .collect::<Vec<_>>();
-                if ids.len() == 2 {
-                    self.popup = Some(Box::new(FindIntersectionPopup::new([
-                        ids[0].clone(),
-                        ids[1].clone(),
-                    ])));
-                }
-            }
         });
         ui.horizontal(|ui| {
             if ui.button("Save").clicked() {
@@ -107,6 +93,20 @@ impl Ui {
                     cqrs.execute(&LoadScene {
                         file_path: path.to_str().unwrap().to_string(),
                     });
+                }
+            }
+            if ui.button("Find Intesection").clicked() {
+                let ids = self
+                    .selected_objects
+                    .iter()
+                    .filter_map(|x| x.get_intersection_object_id())
+                    .take(2)
+                    .collect::<Vec<_>>();
+                if ids.len() == 2 {
+                    self.popup = Some(Box::new(FindIntersectionPopup::new([
+                        ids[0].clone(),
+                        ids[1].clone(),
+                    ])));
                 }
             }
         });
