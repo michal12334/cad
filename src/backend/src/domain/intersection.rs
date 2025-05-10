@@ -70,6 +70,8 @@ impl Intersection {
     ) -> Option<Self> {
         let uvst = Self::find_starting_points(object1, object2, cursor_position)?;
 
+        println!("uvst: {:?}", uvst);
+
         let intersection = Self::find_intersection(
             object1,
             object2,
@@ -78,7 +80,7 @@ impl Intersection {
             newton_factor,
             rough,
             max_distance,
-            false,
+            object1_id == object2_id,
         )?;
 
         let uv_points = intersection
@@ -148,6 +150,8 @@ impl Intersection {
         object2: &IntersectionObject,
         cursor_position: &Vector3,
     ) -> Option<(Vector2<f32>, Vector2<f32>)> {
+        let self_intersection = object1.id == object2.id;
+
         (0..100)
             .cartesian_product(0..100)
             .cartesian_product(0..100)
@@ -164,6 +168,16 @@ impl Intersection {
                 ((p - q).to_nalgebra().norm(), p, q, u, v, s, t)
             })
             .filter(|(dist, _, _, _, _, _, _)| *dist < 0.1)
+            .filter(|(_, _, _, u, v, s, t)| {
+                if !self_intersection {
+                    return true;
+                }
+
+                (u - s).abs() > 0.1
+                    && (v - t).abs() > 0.1
+                    && (!object1.wrap_u || (*u > 0.1 && *s > 0.1))
+                    && (!object1.wrap_v || (*v > 0.1 && *t > 0.1))
+            })
             .min_by(|x, y| {
                 let dx = (x.1 - *cursor_position).to_nalgebra().norm();
                 let dy = (y.1 - *cursor_position).to_nalgebra().norm();
@@ -305,12 +319,19 @@ impl Intersection {
                 st_points.insert(0, st_newton);
             }
 
-            if out_of_bounds
+            if (out_of_bounds
                 && (object1.get_value(uv_newton.x, uv_newton.y)
                     - object2.get_value(st_newton.x, st_newton.y))
                 .to_nalgebra()
                 .norm()
-                    > 0.1
+                    > 0.1)
+                || (self_intersection
+                    && ((uv_newton - st_newton).norm() < 0.01
+                        || (object1.get_value(uv_newton.x, uv_newton.y)
+                            - object2.get_value(st_newton.x, st_newton.y))
+                        .to_nalgebra()
+                        .norm()
+                            > 0.1))
             {
                 if found_first_bound {
                     return Some((uv_points, st_points, false));

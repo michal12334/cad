@@ -20,6 +20,7 @@ use crate::object::Object::{BezierC0, Torus};
 use crate::popups::add_surface_c0_popup::AddSurfaceC0Popup;
 use crate::popups::add_surface_c2_popup::AddSurfaceC2Popup;
 use crate::popups::find_intersection_popup::FindIntersectionPopup;
+use crate::popups::find_self_intersection_popup::FindSelfIntersectionPopup;
 use crate::ui::Ui;
 
 type DomainBezierC0 = crate::domain::bezier_c0::BezierC0;
@@ -107,6 +108,8 @@ impl Ui {
                         ids[0].clone(),
                         ids[1].clone(),
                     ])));
+                } else if ids.len() == 1 {
+                    self.popup = Some(Box::new(FindSelfIntersectionPopup::new(ids[0].clone())));
                 }
             }
         });
