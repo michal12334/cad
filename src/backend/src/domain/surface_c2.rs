@@ -86,6 +86,30 @@ impl SurfaceC2 {
 
         let size = self.size;
 
+        let wrap_u = (0..self.size.1 as usize)
+            .flat_map(|x| [x, x + 1, x + 2, x + 3])
+            .all(|v| {
+                self.points[v].id
+                    == self.points[(self.size.0 as usize - 3) * (self.size.1 as usize + 3) + v].id
+                    && self.points[(self.size.1 as usize + 3) + v].id
+                        == self.points[(self.size.0 as usize - 2) * (self.size.1 as usize + 3) + v]
+                            .id
+                    && self.points[2 * (self.size.1 as usize + 3) + v].id
+                        == self.points[(self.size.0 as usize - 1) * (self.size.1 as usize + 3) + v]
+                            .id
+            });
+
+        let wrap_v = (0..self.size.0 as usize)
+            .flat_map(|x| [x, x + 1, x + 2, x + 3])
+            .all(|u| {
+                self.points[u * (self.size.1 as usize + 3) + 0].id
+                    == self.points[u * (self.size.1 as usize + 3) + self.size.0 as usize - 3].id
+                    && self.points[u * (self.size.1 as usize + 3) + 1].id
+                        == self.points[u * (self.size.1 as usize + 3) + self.size.0 as usize - 2].id
+                    && self.points[u * (self.size.1 as usize + 3) + 2].id
+                        == self.points[u * (self.size.1 as usize + 3) + self.size.0 as usize - 1].id
+            });
+
         IntersectionObject::new(
             IntersectionObjectId::SurfaceC2(self.id),
             (self.size.0 as f32, self.size.1 as f32),
@@ -143,8 +167,8 @@ impl SurfaceC2 {
                     + b2v * (b0u * patch[8] + b1u * patch[9] + b2u * patch[10] + b3u * patch[11])
                     + b3v * (b0u * patch[12] + b1u * patch[13] + b2u * patch[14] + b3u * patch[15])
             },
-            false,
-            false,
+            wrap_u,
+            wrap_v,
         )
     }
 }
