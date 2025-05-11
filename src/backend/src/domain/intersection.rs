@@ -119,12 +119,6 @@ impl Intersection {
                 .0
                 .iter()
                 .map(|uv| object1.get_value(uv.x, uv.y))
-                .chain(
-                    intersection
-                        .1
-                        .iter()
-                        .map(|st| object2.get_value(st.x, st.y)),
-                )
                 .collect(),
             uv_points,
             st_points,
