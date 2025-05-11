@@ -13,6 +13,7 @@ use crate::{
         point::Point,
         transformer::LittleTransformer,
     },
+    extensions::iterator_extensions::IteratorExtensions,
 };
 
 pub struct TransformIntersectionIntoBezierInt {
@@ -25,6 +26,7 @@ impl Command<TransformIntersectionIntoBezierInt> for TransformIntersectionIntoBe
         let points = backend.storage.intersections[&command.id]
             .intersection_points
             .clone();
+        let wrap = backend.storage.intersections[&command.id].wrap;
         let id_generator = &mut backend.services.id_generator;
         let points = points
             .iter()
@@ -37,7 +39,14 @@ impl Command<TransformIntersectionIntoBezierInt> for TransformIntersectionIntoBe
                 )
             })
             .collect::<Vec<_>>();
-        let bezier_int = BezierInt::new(id_generator.next(), points.clone());
+        let bezier_int = BezierInt::new(
+            id_generator.next(),
+            points
+                .iter()
+                .cloned()
+                .chain_if([points[0].clone()].into_iter(), wrap)
+                .collect(),
+        );
         let point_created_events = points
             .iter()
             .map(|p| PointCreated::new(p.id, p.name.clone()))
