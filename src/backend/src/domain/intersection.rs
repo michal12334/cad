@@ -182,7 +182,14 @@ impl Intersection {
                 let dx = (x.1 - *cursor_position).to_nalgebra().norm();
                 let dy = (y.1 - *cursor_position).to_nalgebra().norm();
 
-                dx.partial_cmp(&dy).unwrap_or(std::cmp::Ordering::Equal)
+                let lx = x.0.log(0.1) as i32;
+                let ly = y.0.log(0.1) as i32;
+
+                if lx == ly {
+                    dx.partial_cmp(&dy).unwrap_or(std::cmp::Ordering::Equal)
+                } else {
+                    lx.cmp(&ly)
+                }
             })
             .map(|(_, _, _, u, v, s, t)| {
                 let uv = Vector2::new(u, v);
