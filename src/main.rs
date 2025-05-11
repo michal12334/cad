@@ -38,7 +38,9 @@ use egui::Color32;
 use glium::{Blend, BlendingFunction, LinearBlendingFactor, PolygonMode, Surface};
 use user_interface::processes::fetch_objects_on_selected_points_merged::FetchObjectsOnSelectedPointsMerged;
 use user_interface::processes::sync_greogry_with_backend::{SyncGregoryCreation, SyncGregoryName};
-use user_interface::processes::sync_intersection_with_backend::SyncIntersectionCreation;
+use user_interface::processes::sync_intersection_with_backend::{
+    SyncIntersectionCreation, SyncIntersectionDeletion,
+};
 use winit::event::ElementState::Pressed;
 use winit::event::MouseButton;
 use winit::{event, event_loop};
@@ -470,6 +472,9 @@ fn main() {
     event_bus
         .borrow_mut()
         .add_consumer(SyncIntersectionCreation { ui: ui.clone() });
+    event_bus
+        .borrow_mut()
+        .add_consumer(SyncIntersectionDeletion { ui: ui.clone() });
     event_bus
         .borrow_mut()
         .add_consumer(SelectedSurfaceC0PointsOnSurfaceC0PointsSelected {

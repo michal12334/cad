@@ -52,6 +52,7 @@ impl Command<TransformIntersectionIntoBezierInt> for TransformIntersectionIntoBe
             .storage
             .beziers_int
             .insert(bezier_int.id, bezier_int);
+        backend.storage.intersections.remove(&command.id);
         drop(backend);
         let backend = app_state.borrow();
         backend
